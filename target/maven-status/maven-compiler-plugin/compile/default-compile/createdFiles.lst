@@ -1,0 +1,8 @@
+com/microsoft/azuresamples/webapp/authentication/AuthorizationRedirectServlet.class
+com/microsoft/azuresamples/webapp/authentication/SignInServlet.class
+com/microsoft/azuresamples/webapp/Config.class
+com/microsoft/azuresamples/webapp/authentication/SignOutServlet.class
+com/microsoft/azuresamples/webapp/authentication/SignInStatusServlet.class
+com/microsoft/azuresamples/webapp/authentication/TokenDetailsServlet.class
+com/microsoft/azuresamples/webapp/authentication/AuthSessionAttributes.class
+com/microsoft/azuresamples/webapp/AuthenticationService.class
