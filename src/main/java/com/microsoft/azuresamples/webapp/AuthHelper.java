@@ -7,7 +7,7 @@ import java.net.MalformedURLException;
 public class AuthHelper {
     private ConfidentialClientApplication confClientInstance;
 
-    private ConfidentialClientApplication getConfidentialClientInstance() {
+    public ConfidentialClientApplication getConfidentialClientInstance() {
         if (confClientInstance == null)
             return instantiateConfidentialClient();
         return confClientInstance;

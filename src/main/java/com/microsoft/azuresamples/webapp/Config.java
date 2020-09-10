@@ -5,30 +5,37 @@ import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 import java.io.IOException;
 import java.util.Properties;
+import java.util.logging.Logger;
 
 @WebListener
 public class Config implements ServletContextListener {
-    private static Properties props;
+    private static final Properties props = Config.instantiateProperties();
 
-    public void contextInitialized(ServletContextEvent event) {
-        instantiateProperties();
-    }
-    public void contextDestroyed(ServletContextEvent event) {
+    @Override
+    public void contextInitialized(final ServletContextEvent event) {
+        // Fill this in if need be
     }
 
-    private void instantiateProperties() {
+    @Override
+    public void contextDestroyed(final ServletContextEvent event) {
+        // Fill this in if need be.
+    }
+
+    private static Properties instantiateProperties() {
+        Properties props = new Properties();
         try {
-            props = new Properties();
-            props.load(getClass().getResourceAsStream("application.properties"));
+            props.load(Config.class.getClassLoader().getResourceAsStream("authentication.properties"));
             System.out.println(props.getProperty("aad.clientId"));
+            return props;
 
-        } catch (IOException ex) {
+        } catch (final IOException ex) {
             ex.printStackTrace();
             System.out.println("couldn't load properties file");
         }
+        return props;
     }
 
-    public static String getProperty(String key) {
+    public static String getProperty(final String key) {
         if (props != null)
             return props.getProperty(key);
 

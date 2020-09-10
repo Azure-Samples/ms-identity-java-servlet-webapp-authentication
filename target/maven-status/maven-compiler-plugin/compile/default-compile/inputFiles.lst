@@ -1,8 +1,0 @@
-/Users/v-saesla/identity/java-tomcat-webapp/src/main/java/com/microsoft/azuresamples/webapp/authentication/TokenDetailsServlet.java
-/Users/v-saesla/identity/java-tomcat-webapp/src/main/java/com/microsoft/azuresamples/webapp/Config.java
-/Users/v-saesla/identity/java-tomcat-webapp/src/main/java/com/microsoft/azuresamples/webapp/authentication/SignInServlet.java
-/Users/v-saesla/identity/java-tomcat-webapp/src/main/java/com/microsoft/azuresamples/webapp/authentication/SignOutServlet.java
-/Users/v-saesla/identity/java-tomcat-webapp/src/main/java/com/microsoft/azuresamples/webapp/AuthenticationService.java
-/Users/v-saesla/identity/java-tomcat-webapp/src/main/java/com/microsoft/azuresamples/webapp/authentication/SignInStatusServlet.java
-/Users/v-saesla/identity/java-tomcat-webapp/src/main/java/com/microsoft/azuresamples/webapp/authentication/AuthSessionAttributes.java
-/Users/v-saesla/identity/java-tomcat-webapp/src/main/java/com/microsoft/azuresamples/webapp/authentication/AuthorizationRedirectServlet.java

@@ -12,11 +12,7 @@ import java.util.Arrays;
 import java.util.List;
 
 
-@WebServlet(
-        name = "TokenDetailsServlet",
-        urlPatterns = "/auth_token_details"
-
-)
+@WebServlet(name = "TokenDetailsServlet", urlPatterns = "/auth_token_details")
 public class TokenDetailsServlet extends HttpServlet {
 
     private final String[] exClaims = {"iat", "exp", "nbf", "uti", "aio"};
@@ -26,9 +22,10 @@ public class TokenDetailsServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         AuthSessionAttributes sessionAttributes = (AuthSessionAttributes) req.getSession().getAttribute("msal_auth_session_attributes");
+
         req.setAttribute("name", "ADMIN");
         req.setAttribute("bodyContent", "auth/status.jsp");
-        RequestDispatcher view = req.getRequestDispatcher("../index.jsp");
+        RequestDispatcher view = req.getRequestDispatcher("index.jsp");
         view.forward(req, resp);
     }
 }
