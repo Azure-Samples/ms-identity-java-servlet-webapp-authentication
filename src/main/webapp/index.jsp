@@ -1,3 +1,6 @@
+<%@ page session="true" %>
+<jsp:useBean id="msalAuth" scope="session" class="com.microsoft.azuresamples.webapp.authentication.MsalAuthSession" />
+
 <!doctype html>
 <html lang="en">
 <head>
@@ -16,7 +19,7 @@
 
 <div class="container body-content">
     <% String bodyContent=(String)request.getAttribute("bodyContent"); %>
-    <% if(name != null){ %>
+    <% if(bodyContent != null){ %>
         <jsp:include page="<%= bodyContent %>" ></jsp:include>
     <% } %>
 </div>

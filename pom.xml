@@ -39,14 +39,11 @@
             <artifactId>msal4j</artifactId>
             <version>1.6.2</version>
         </dependency>
-
-<!--        SHOULD WE USE THIS? -->
-<!--        <dependency>-->
-<!--            <groupId>com.nimbusds</groupId>-->
-<!--            <artifactId>oauth2-oidc-sdk</artifactId>-->
-<!--            <version>8.19</version>-->
-<!--            <scope>runtime</scope>-->
-<!--        </dependency>-->
+        <dependency>
+            <groupId>jstl</groupId>
+            <artifactId>jstl</artifactId>
+            <version>1.2</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -70,7 +67,7 @@
 <!--                </configuration>-->
                 <configuration>
                     <url>http://localhost:8080/manager/text</url>
-                    <path>/java-servlet-webapp-authentication</path>
+                    <path>/ms-identity-java-servlet-webapp-authentication</path>
                     <username>azure-samples</username>
                     <password>azure-samples</password>
                 </configuration>

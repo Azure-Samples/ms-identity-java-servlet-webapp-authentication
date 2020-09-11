@@ -1,3 +1,6 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ page import ="java.util.*"%>
+
 <div class="card">
     <h5 class="card-header bg-primary">
         ID Token Details
@@ -5,14 +8,9 @@
     <div class="card-body">
         <!-- <h5 class="card-title"></h5> -->
         <p class="card-text">
-            <%if (session. get attribute msal_authenticated == true) {
-                // TODO: revise this pseudocode
-                // token claims = session. get attribute token id claims
-                //for claim, value in session.msal_id_token_claims.items(){
-                    // if (claim not in exclude_claims)
-                        out.println(String.format("<b> %s:</b> %s </br>", claim, value));
-                //}
-            }
+            <c:forEach items="${claims}" var="claim">
+                <b> ${claim.key} :</b> ${claim.value} <br/>
+            </c:forEach>
         </p>
         <!-- <div class="card-footer"></div> -->
     </div>

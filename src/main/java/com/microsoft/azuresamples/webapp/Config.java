@@ -6,6 +6,9 @@ import javax.servlet.annotation.WebListener;
 import java.io.IOException;
 import java.util.Properties;
 import java.util.logging.Logger;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import com.microsoft.azuresamples.webapp.authentication.MsalAuthSession;
 
 @WebListener
 public class Config implements ServletContextListener {
@@ -22,7 +25,7 @@ public class Config implements ServletContextListener {
     }
 
     private static Properties instantiateProperties() {
-        Properties props = new Properties();
+        final Properties props = new Properties();
         try {
             props.load(Config.class.getClassLoader().getResourceAsStream("authentication.properties"));
             System.out.println(props.getProperty("aad.clientId"));
@@ -41,6 +44,16 @@ public class Config implements ServletContextListener {
 
         System.out.println("couldn't load properties file");
         return null;
+    }
+
+    public static MsalAuthSession configureMsalSessionAttributes(final HttpServletRequest req) {
+        final HttpSession session = req.getSession();
+        MsalAuthSession sessAttribs =(MsalAuthSession) session.getAttribute(MsalAuthSession.SESSION_KEY);
+        if ( sessAttribs == null) {
+            sessAttribs = new MsalAuthSession();
+            session.setAttribute(MsalAuthSession.SESSION_KEY, sessAttribs);
+        }
+        return sessAttribs;
     }
 }
 
