@@ -18,25 +18,19 @@ import com.microsoft.azuresamples.webapp.Config;
 public class TokenDetailsServlet extends HttpServlet {
 
     private final String[] exClaims = {"iat", "exp", "nbf", "uti", "aio"};
-    private HashMap<String,String> fakeClaims = new HashMap<>();
     private final List<String> excludeClaims = Arrays.asList(exClaims);
 
     @Override
     protected void doGet(final HttpServletRequest req, final HttpServletResponse resp)
             throws ServletException, IOException {
-        final MsalAuthSession thething = Config.configureMsalSessionAttributes(req);
+        final MsalAuthSession msalAuth = Config.configureMsalSessionAttributes(req);
         
-        fakeClaims.put("iat", "the iat claim");
-        fakeClaims.put("issuer", "the issuer claim");
         HashMap<String,String> claimsToDisplay = new HashMap<>();
-        fakeClaims.forEach((k,v) -> {
+        msalAuth.getIdTokenClaims().forEach((k,v) -> {
             if (!excludeClaims.contains(k))
                 claimsToDisplay.put(k, v);
         });
-        claimsToDisplay.forEach((k,v) -> {
-            System.out.println("key " + k + " value " + v);
-        });
-        req.setAttribute("claims", claimsToDisplay);
+        req.setAttribute("claims", msalAuth);
         req.setAttribute("bodyContent", "auth/token.jsp");
         final RequestDispatcher view = req.getRequestDispatcher("index.jsp");
         view.forward(req, resp);

@@ -2,6 +2,7 @@ package com.microsoft.azuresamples.webapp.authentication;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class MsalAuthSession implements Serializable {
@@ -9,14 +10,14 @@ public class MsalAuthSession implements Serializable {
     public static final String SESSION_KEY = "msalAuth";
     private boolean authenticated = false;
     private String username = null;
-    private List<String> idTokenClaims = new ArrayList<>();
+    private HashMap<String,String> idTokenClaims = new HashMap<>();
     private String tokenAcquisitionResult = null;
 
-    public List<String> getIdTokenClaims() {
+    public HashMap<String,String> getIdTokenClaims() {
         return idTokenClaims;
     }
 
-    public void setIdTokenClaims(final List<String> idTokenClaims) {
+    public void setIdTokenClaims(final HashMap<String,String> idTokenClaims) {
         this.idTokenClaims = idTokenClaims;
     }
 
