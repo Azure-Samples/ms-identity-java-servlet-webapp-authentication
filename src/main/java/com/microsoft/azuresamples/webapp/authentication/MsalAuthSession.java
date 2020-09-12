@@ -1,9 +1,8 @@
 package com.microsoft.azuresamples.webapp.authentication;
+import javax.servlet.http.HttpSession;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 public class MsalAuthSession implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -12,6 +11,16 @@ public class MsalAuthSession implements Serializable {
     private String username = null;
     private HashMap<String,String> idTokenClaims = new HashMap<>();
     private String tokenAcquisitionResult = null;
+
+    public static MsalAuthSession getMsalAuthSession(final HttpSession session) {
+        MsalAuthSession msalAuth =(MsalAuthSession) session.getAttribute(MsalAuthSession.SESSION_KEY);
+        if ( msalAuth == null) {
+            msalAuth = new MsalAuthSession();
+            session.setAttribute(MsalAuthSession.SESSION_KEY, msalAuth);
+        }
+        
+        return msalAuth;
+    }
 
     public HashMap<String,String> getIdTokenClaims() {
         return idTokenClaims;

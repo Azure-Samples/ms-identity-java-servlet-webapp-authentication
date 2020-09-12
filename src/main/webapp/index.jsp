@@ -1,5 +1,7 @@
+<%@ page import="com.microsoft.azuresamples.webapp.authentication.*" %>
 <%@ page session="true" %>
 <jsp:useBean id="msalAuth" scope="session" class="com.microsoft.azuresamples.webapp.authentication.MsalAuthSession" />
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <!doctype html>
 <html lang="en">
@@ -18,10 +20,7 @@
 <%@ include file="navbar.jsp" %>
 
 <div class="container body-content">
-    <% String bodyContent=(String)request.getAttribute("bodyContent"); %>
-    <% if(bodyContent != null){ %>
-        <jsp:include page="<%= bodyContent %>" ></jsp:include>
-    <% } %>
+        <jsp:include page="${bodyContent}" ></jsp:include>
 </div>
 
 <footer style="text-align: center;">
