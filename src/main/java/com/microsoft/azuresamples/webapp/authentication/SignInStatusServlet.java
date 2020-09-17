@@ -17,8 +17,6 @@ import com.microsoft.azuresamples.webapp.Config;
 
 import java.io.IOException;
 
-@ManagedBean
-@SessionScoped
 @WebServlet(name = "SignInStatusServlet", urlPatterns = "/auth_sign_in_status")
 public class SignInStatusServlet extends HttpServlet {
 

@@ -1,7 +1,5 @@
-
 package com.microsoft.azuresamples.webapp.authentication;
 
-import javax.ejb.EJB;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -12,7 +10,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import com.microsoft.azuresamples.webapp.Config;
 
 @WebServlet(name = "TokenDetailsServlet", urlPatterns = "/auth_token_details")
 public class TokenDetailsServlet extends HttpServlet {
