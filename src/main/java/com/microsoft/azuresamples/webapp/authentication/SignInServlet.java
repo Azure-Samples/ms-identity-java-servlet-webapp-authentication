@@ -15,6 +15,11 @@ public class SignInServlet extends HttpServlet {
 
     @Override
     protected void doGet(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
-        AuthHelper.doAuthorizationRequest(req, resp);
+        try {
+            AuthHelper.redirectToAuthorizationEndpoint(req, resp);
+        } catch (Exception ex){
+            System.out.println(ex.getMessage());
+            ex.printStackTrace();
+        }
     }
 }

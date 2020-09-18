@@ -2,11 +2,8 @@ package com.microsoft.azuresamples.webapp;
 
 import com.microsoft.aad.msal4j.*;
 import com.microsoft.azuresamples.webapp.authentication.MsalAuthSession;
-
-import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URISyntaxException;
+import java.net.URLEncoder;
 import java.util.Collections;
 import java.util.Date;
 import java.util.UUID;
@@ -17,23 +14,38 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 public class AuthHelper {
-    private static ConfidentialClientApplication confClientInstance;
     private static final String AUTHORITY = Config.getProperty("aad.authority");
     private static final String CLIENT_ID = Config.getProperty("aad.clientId");
     private static final String SECRET = Config.getProperty("aad.secret");
     private static final String SCOPES = Config.getProperty("aad.scopes");
     private static final Long STATE_TTL = Long.parseLong(Config.getProperty("app.stateTTL"));
     private static final String REDIRECT_URI = Config.getProperty("app.redirectUri");
+    private static final String HOME_PAGE = Config.getProperty("app.homePage");
+    private static final String SIGN_OUT = Config.getProperty("aad.signOut");
 
-    public static ConfidentialClientApplication getConfidentialClientInstance(String serializedTokenCache) {
-        if (confClientInstance == null)
-            return instantiateConfidentialClient();
-        confClientInstance.tokenCache().deserialize(serializedTokenCache);
-        return confClientInstance;
+    public static ConfidentialClientApplication getConfidentialClientInstance(String serializedTokenCache) throws Exception {
+        ConfidentialClientApplication confClientInstance = null;
+        System.out.println("CLIENT SECRET IS " + SECRET);
+        try {
+            IClientSecret secret = ClientCredentialFactory.createFromSecret(SECRET);
+            confClientInstance = ConfidentialClientApplication
+                    .builder(CLIENT_ID, secret)
+                    .b2cAuthority(AUTHORITY)
+                    .build();
+            confClientInstance.tokenCache().deserialize(serializedTokenCache);
+            return confClientInstance;
+        } catch (final Exception ex) {
+            System.out.println("Failed to create Confidential Client Application");
+            throw ex;
+        }
     }
 
-    public static void doAuthorizationRequest(final HttpServletRequest req, final HttpServletResponse resp)
-            throws IOException {
+    public static void redirectToSignoutEndpoint(final HttpServletRequest req, final HttpServletResponse resp) throws Exception {
+        req.getSession().invalidate();
+        resp.sendRedirect(SIGN_OUT + "?post_logout_redirect_uri=" + URLEncoder.encode(HOME_PAGE, "UTF-8"));
+    }
+
+    public static void redirectToAuthorizationEndpoint(final HttpServletRequest req, final HttpServletResponse resp) throws Exception {
         final String state = UUID.randomUUID().toString();
         final String nonce = UUID.randomUUID().toString();
 
@@ -41,38 +53,52 @@ public class AuthHelper {
         msalAuthSession.setStateAndNonce(state, nonce);
 
         resp.setStatus(302);
-        final String redirectUrl = getAuthorizationRequestUrl(SCOPES, state, nonce);
+        final String redirectUrl = getAuthorizationRequestUrl(req, SCOPES, state, nonce);
         resp.sendRedirect(redirectUrl);
+    }
+
+    private static String getAuthorizationRequestUrl(final HttpServletRequest req, final String scopes, final String state, final String nonce) throws Exception {
+        final AuthorizationRequestUrlParameters parameters = AuthorizationRequestUrlParameters
+                .builder(REDIRECT_URI, Collections.singleton(scopes)).responseMode(ResponseMode.QUERY)
+                .prompt(Prompt.SELECT_ACCOUNT).state(state).nonce(nonce).build();
+
+        return getConfidentialClientInstance(getMsalAuthSession(req.getSession()).getTokenCache()).getAuthorizationRequestUrl(parameters).toString();
     }
 
     public static IAuthenticationResult processAuthCodeRedirect(final HttpServletRequest req) throws Exception {
         final String state = req.getParameter("state");
         final String authCode = req.getParameter("code");
-        MsalAuthSession msalAuth = MsalAuthSession.getMsalAuthSession(req.getSession());
+        MsalAuthSession msalAuth = getMsalAuthSession(req.getSession());
         final ConfidentialClientApplication client = AuthHelper.getConfidentialClientInstance(msalAuth.getTokenCache());
         IAuthenticationResult result = null;
 
         if (authCode != null && validateState(req.getSession(), state)) {
             System.out.println("auth code is " + authCode);
-            final AuthorizationCodeParameters authParams = AuthorizationCodeParameters.builder(
-                    authCode,
-                    new URI(req.getRequestURL().toString())
-                    ).build();
+            try {
+            final AuthorizationCodeParameters authParams = 
+                    AuthorizationCodeParameters.builder
+                    (authCode, new URI(req.getRequestURL().toString()))
+                    .build();
 
-                    final Future<IAuthenticationResult> future = 
-                        client.acquireToken(authParams);
-                    result = future.get();
-                    if (result == null) {
-                        System.out.println("AuthHelper: acquire token result was null");
-                        msalAuth.setAuthenticated(false);
-                        msalAuth.setUsername(null);
-                        
-                    } else {
-                        msalAuth.setTokenCache(client.tokenCache().serialize());
-                        msalAuth.setAuthenticated(true);
-                        msalAuth.setUsername(result.account().username());
-                    }
-                    return result;
+            
+            Future<IAuthenticationResult> future = client.acquireToken(authParams);
+            result = future.get();
+            } catch (Exception ex) {
+                System.out.println("Unable to exchane auth code for token");
+                System.out.print(ex.getMessage());
+                ex.printStackTrace();
+            }
+            if (result == null || !AuthHelper.validateNonce(req.getSession(), "nonce obtained from result")) {
+                System.out.println("AuthHelper: acquire token result was null");
+                msalAuth.setAuthenticated(false);
+                msalAuth.setUsername(null);
+                
+            } else {
+                msalAuth.setTokenCache(client.tokenCache().serialize());
+                msalAuth.setAuthenticated(true);
+                msalAuth.setUsername(result.account().username());
+            }
+            return result;
         }
         System.out.println("AuthHelper: Couldn't process AuthCode");
         return result;
@@ -108,25 +134,17 @@ public class AuthHelper {
         return MsalAuthSession.getMsalAuthSession(session);
     }
 
-    private static String getAuthorizationRequestUrl(final String scopes, final String state, final String nonce) {
-        final AuthorizationRequestUrlParameters parameters = AuthorizationRequestUrlParameters
-                .builder(REDIRECT_URI, Collections.singleton(scopes)).responseMode(ResponseMode.QUERY)
-                .scopes(Collections.singleton(scopes))
-                .prompt(Prompt.SELECT_ACCOUNT).state(state).build();
-
-        return getConfidentialClientInstance("").getAuthorizationRequestUrl(parameters).toString();
-    }
-
-    private static ConfidentialClientApplication instantiateConfidentialClient() {
-        try {
-            confClientInstance = ConfidentialClientApplication
-                    .builder(CLIENT_ID, ClientCredentialFactory.createFromSecret(SECRET)).b2cAuthority(AUTHORITY)
-                    .build();
-        } catch (final MalformedURLException ex) {
-            System.out.println("Failed to create Confidential Client Application");
-        }
-        return confClientInstance;
-    }
+    // private static ConfidentialClientApplication instantiateConfidentialClient() {
+    //     System.out.println("CLIENT SECRET IS " + SECRET);
+    //     try {
+    //         confClientInstance = ConfidentialClientApplication
+    //                 .builder(CLIENT_ID, ClientCredentialFactory.createFromSecret(SECRET)).authority(AUTHORITY)
+    //                 .build();
+    //     } catch (final MalformedURLException ex) {
+    //         System.out.println("Failed to create Confidential Client Application");
+    //     }
+    //     return confClientInstance;
+    // }
 
 
 }

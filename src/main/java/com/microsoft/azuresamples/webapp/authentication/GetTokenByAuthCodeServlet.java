@@ -16,17 +16,16 @@ public class GetTokenByAuthCodeServlet extends HttpServlet {
     
     @Override
     protected void doGet(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
-        IAuthenticationResult result = null;
-        MsalAuthSession msalAuth = MsalAuthSession.getMsalAuthSession(req.getSession());
         try {
-            result = AuthHelper.processAuthCodeRedirect(req);
+            AuthHelper.processAuthCodeRedirect(req);
         } catch (Exception e) {
             System.out.println(e.getMessage());
             e.printStackTrace();
             System.out.println("Unable to process getting token by Auth Code: /auth_redirect endpoint");
         }
-
-        req.getRequestDispatcher("/auth_sign_in_status").forward(req, resp);
+        resp.setStatus(302);
+        resp.sendRedirect(req.getContextPath().toString() + "/auth_sign_in_status");
+        // req.getRequestDispatcher("/auth_sign_in_status").forward(req, resp);
     }
 
 }
