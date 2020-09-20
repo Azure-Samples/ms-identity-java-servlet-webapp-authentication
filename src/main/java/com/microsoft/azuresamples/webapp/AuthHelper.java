@@ -75,10 +75,10 @@ public class AuthHelper {
         if (authCode != null && validateState(req.getSession(), state)) {
             System.out.println("auth code is " + authCode);
             try {
-            final AuthorizationCodeParameters authParams = 
-                    AuthorizationCodeParameters.builder
-                    (authCode, new URI(req.getRequestURL().toString()))
-                    .build();
+            final AuthorizationCodeParameters authParams = AuthorizationCodeParameters
+                .builder(authCode, new URI(req.getRequestURL().toString()))
+                .scopes(Collections.singleton(SCOPES))
+                .build();
 
             
             Future<IAuthenticationResult> future = client.acquireToken(authParams);
