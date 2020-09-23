@@ -1,51 +1,62 @@
 package com.microsoft.azuresamples.webapp;
 
-import javax.ejb.EJB;
-import javax.enterprise.inject.New;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Properties;
+import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import com.microsoft.azuresamples.webapp.authentication.MsalAuthSession;
 
 @WebListener
 public class Config implements ServletContextListener {
-    private static final Properties props = Config.instantiateProperties();
-    
+    public static Logger logger = Logger.getLogger("Logger");
+    private static Properties props = Config.instantiateProperties();
+
     @Override
     public void contextInitialized(final ServletContextEvent event) {
-        // Fill this in if need be
+        // do something here if necessary
     }
 
     @Override
     public void contextDestroyed(final ServletContextEvent event) {
-        // Fill this in if need be.
+        Config.logger.log(Level.INFO, "EXITING.");
     }
 
     private static Properties instantiateProperties() {
         final Properties props = new Properties();
         try {
             props.load(Config.class.getClassLoader().getResourceAsStream("authentication.properties"));
-            System.out.println(props.getProperty("aad.clientId"));
-            return props;
-
         } catch (final IOException ex) {
             ex.printStackTrace();
-            System.out.println("couldn't load properties file");
+            Config.logger.log(Level.SEVERE, "Could not load properties file. Exiting");
+            Config.logger.log(Level.SEVERE, Arrays.toString(ex.getStackTrace()));
+            System.exit(1);
+            return null;
         }
         return props;
     }
 
     public static String getProperty(final String key) {
-        if (props != null)
-            return props.getProperty(key);
-
-        System.out.println("couldn't load properties file");
-        return null;
+        String prop = null;
+        if (props != null) {
+            prop = Config.props.getProperty(key);
+            if (prop != null){
+                Config.logger.log(Level.INFO, "{0} is {1}", new String[]{key, prop});
+                return prop;
+            } else {
+                Config.logger.log(Level.SEVERE, "Could not load {0}! EXITING!", key);
+                System.exit(1);
+                return null; 
+            }
+        } else {
+            Config.logger.log(Level.SEVERE, "Could not load property reader! EXITING!");
+                System.exit(1);
+                return null;
+        }
+        
+        
     }
 
     

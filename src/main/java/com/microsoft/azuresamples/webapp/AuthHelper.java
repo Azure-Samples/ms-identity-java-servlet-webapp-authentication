@@ -2,10 +2,14 @@ package com.microsoft.azuresamples.webapp;
 
 import com.microsoft.aad.msal4j.*;
 import com.microsoft.azuresamples.webapp.authentication.MsalAuthSession;
+
+import java.util.logging.Level;
 import java.net.URI;
 import java.net.URLEncoder;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+
 import java.util.UUID;
 import java.util.concurrent.Future;
 
@@ -22,10 +26,11 @@ public class AuthHelper {
     private static final String REDIRECT_URI = Config.getProperty("app.redirectUri");
     private static final String HOME_PAGE = Config.getProperty("app.homePage");
     private static final String SIGN_OUT = Config.getProperty("aad.signOut");
+    
 
-    public static ConfidentialClientApplication getConfidentialClientInstance(String serializedTokenCache) throws Exception {
+    public static ConfidentialClientApplication getConfidentialClientInstance(String serializedTokenCache) throws Exception{
         ConfidentialClientApplication confClientInstance = null;
-        System.out.println("CLIENT SECRET IS " + SECRET);
+        Config.logger.log(Level.INFO, "Getting confidential client instance");
         try {
             IClientSecret secret = ClientCredentialFactory.createFromSecret(SECRET);
             confClientInstance = ConfidentialClientApplication
@@ -33,11 +38,13 @@ public class AuthHelper {
                     .b2cAuthority(AUTHORITY)
                     .build();
             confClientInstance.tokenCache().deserialize(serializedTokenCache);
-            return confClientInstance;
         } catch (final Exception ex) {
-            System.out.println("Failed to create Confidential Client Application");
+            Config.logger.log(Level.SEVERE, "Failed to create Confidential Client Application.");
+            Config.logger.log(Level.SEVERE, ex.getMessage());
+            Config.logger.log(Level.SEVERE, Arrays.toString(ex.getStackTrace()));
             throw ex;
         }
+        return confClientInstance;
     }
 
     public static void redirectToSignoutEndpoint(final HttpServletRequest req, final HttpServletResponse resp) throws Exception {
@@ -52,17 +59,16 @@ public class AuthHelper {
         final MsalAuthSession msalAuthSession = getMsalAuthSession(req.getSession());
         msalAuthSession.setStateAndNonce(state, nonce);
 
-        resp.setStatus(302);
-        final String redirectUrl = getAuthorizationRequestUrl(req, SCOPES, state, nonce);
-        resp.sendRedirect(redirectUrl);
-    }
+        ConfidentialClientApplication client = getConfidentialClientInstance(msalAuthSession.getTokenCache());
 
-    private static String getAuthorizationRequestUrl(final HttpServletRequest req, final String scopes, final String state, final String nonce) throws Exception {
         final AuthorizationRequestUrlParameters parameters = AuthorizationRequestUrlParameters
-                .builder(REDIRECT_URI, Collections.singleton(scopes)).responseMode(ResponseMode.QUERY)
+                .builder(REDIRECT_URI, Collections.singleton(SCOPES)).responseMode(ResponseMode.QUERY)
                 .prompt(Prompt.SELECT_ACCOUNT).state(state).nonce(nonce).build();
 
-        return getConfidentialClientInstance(getMsalAuthSession(req.getSession()).getTokenCache()).getAuthorizationRequestUrl(parameters).toString();
+        final String redirectUrl = client.getAuthorizationRequestUrl(parameters).toString();
+
+        resp.setStatus(302);
+        resp.sendRedirect(redirectUrl);
     }
 
     public static IAuthenticationResult processAuthCodeRedirect(final HttpServletRequest req) throws Exception {
@@ -73,7 +79,7 @@ public class AuthHelper {
         IAuthenticationResult result = null;
 
         if (authCode != null && validateState(req.getSession(), state)) {
-            System.out.println("auth code is " + authCode);
+            Config.logger.log(Level.FINE, "Received AuthCode. Code is {0}", authCode);
             try {
             final AuthorizationCodeParameters authParams = AuthorizationCodeParameters
                 .builder(authCode, new URI(req.getRequestURL().toString()))
@@ -84,23 +90,24 @@ public class AuthHelper {
             Future<IAuthenticationResult> future = client.acquireToken(authParams);
             result = future.get();
             } catch (Exception ex) {
-                System.out.println("Unable to exchane auth code for token");
-                System.out.print(ex.getMessage());
-                ex.printStackTrace();
+                Config.logger.log(Level.WARNING, "Unable to exchange auth code for token");
+                Config.logger.log(Level.WARNING, ex.getMessage());
+                Config.logger.log(Level.WARNING, Arrays.toString(ex.getStackTrace()));
             }
-            if (result == null || !AuthHelper.validateNonce(req.getSession(), "nonce obtained from result")) {
-                System.out.println("AuthHelper: acquire token result was null");
+            if (result == null || !AuthHelper.validateNonce(req.getSession(), "placeholder: nonce obtained from token goes here")) {
+                Config.logger.log(Level.WARNING, "Acquire token by auth code was null");
                 msalAuth.setAuthenticated(false);
                 msalAuth.setUsername(null);
                 
             } else {
+                Config.logger.log(Level.INFO, "Acquire token by auth code was successful");
                 msalAuth.setTokenCache(client.tokenCache().serialize());
                 msalAuth.setAuthenticated(true);
                 msalAuth.setUsername(result.account().username());
             }
             return result;
         }
-        System.out.println("AuthHelper: Couldn't process AuthCode");
+        Config.logger.log(Level.WARNING, "Failed to process AuthCode");
         return result;
 
     }
@@ -115,7 +122,7 @@ public class AuthHelper {
                 || !savedState.equals(state)
                 || msalAuth.getStateDate().before(new Date(now.getTime() - (STATE_TTL * 1000)))) {
             
-            System.out.println("State mismatch or null or empty on validateState");
+            Config.logger.log(Level.WARNING, "State mismatch or null or empty on validateState");
             return false;
         }
         msalAuth.setState(null);
@@ -133,18 +140,4 @@ public class AuthHelper {
     public static MsalAuthSession getMsalAuthSession(final HttpSession session) {
         return MsalAuthSession.getMsalAuthSession(session);
     }
-
-    // private static ConfidentialClientApplication instantiateConfidentialClient() {
-    //     System.out.println("CLIENT SECRET IS " + SECRET);
-    //     try {
-    //         confClientInstance = ConfidentialClientApplication
-    //                 .builder(CLIENT_ID, ClientCredentialFactory.createFromSecret(SECRET)).authority(AUTHORITY)
-    //                 .build();
-    //     } catch (final MalformedURLException ex) {
-    //         System.out.println("Failed to create Confidential Client Application");
-    //     }
-    //     return confClientInstance;
-    // }
-
-
 }
