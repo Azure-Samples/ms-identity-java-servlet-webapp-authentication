@@ -3,7 +3,7 @@
 
 <div class="card">
     <h5 class="card-header bg-primary">
-        <% out.println(msalAuth.getAuthenticated()? "You're signed in!" : "You're signed out."); %>
+        <% out.println(msalAuth.getAuthenticated()? "You're signed in!" : "You're not signed in."); %>
     </h5>
     <div class="card-body">
         <!-- <h5 class="card-title"></h5> -->

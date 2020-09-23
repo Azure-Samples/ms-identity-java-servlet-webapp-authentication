@@ -6,11 +6,11 @@ products:
   - azure-active-directory  
   - azure-active-directory-b2c
   - azure-active-directory-domain
-name: Java Servlet Web App utilizing MSAL4J to authenticate users into Azure Active Directory B2C (Azure AD B2C)
+name: Java Servlet Web App using MSAL4J to authenticate users into Azure Active Directory B2C (Azure AD B2C)
 urlFragment: ms-identity-java-servlet-webapp-authentication
 description: "This sample demonstrates a Java Servlet WebApp application that authenticates users against Azure AD B2C"
 ---
-# Java Servlet Web App utilizing MSAL4J to authenticate users into Azure Active Directory B2C
+# Java Servlet Web App using MSAL4J to authenticate users into Azure Active Directory B2C
 
  1. [Overview](#overview)
  1. [Scenario](#scenario)
@@ -35,8 +35,8 @@ This sample demonstrates a Java Servlet web application that authenticates users
 
 ## Scenario
 
-1. The client Java Servlet web application uses **MSAL4J** to obtain an [ID Token](https://docs.microsoft.com/azure/active-directory/develop/id-tokens) from **Azure AD B2C**:
-2. The **ID Token** proves that the user has successfully authenticated against **Azure AD B2C**.
+1. The client Java Servlet web application uses **MSAL4J** to sign-in users and obtains an [ID Token](https://docs.microsoft.com/azure/active-directory/develop/id-tokens) from **Azure AD B2C**:
+2. The **ID Token** proves that the user has successfully authenticated against a **Azure AD B2C** tenant.
 
 ![Overview](./ReadmeFiles/topology.png)
 
@@ -46,7 +46,7 @@ This sample demonstrates a Java Servlet web application that authenticates users
 |-------------------|--------------------------------------------|
 | `AuthHelper.java` | Helper functions for authentication. |
 | `Config.java` | Runs on startup and configures properties reader and logger. |
-| `authentication.properties`| AAD and program configuration. |
+| `authentication.properties`| Azure AD and program configuration. |
 | `AuthenticationFilter.java`| Redirects unauthenticated requests to protected resources to a 401 page. |
 | `MsalAuthSession` | Instantiated with an HttpSession, stores all MSAL related session attributes in session attribute. |
 | `____Servlet.java`    | All of the endpoints available are named in the style ____Servlet.java |
