@@ -61,8 +61,12 @@ public class MsalAuthSession implements Serializable {
         return this.stateDate;
     }
 
-    public void setIdTokenClaims(final Map<String,String> idTokenClaims) {
-        this.idTokenClaims = idTokenClaims;
+    public void setIdTokenClaims(final Map<String,Object> idTokenClaims) {
+        this.idTokenClaims = new HashMap<>();
+        idTokenClaims.forEach((String claim, Object value) -> {
+            String val = value.toString();
+            this.idTokenClaims.put(claim, val);
+        });
         this.saveMsalAuthSession();
     }
 

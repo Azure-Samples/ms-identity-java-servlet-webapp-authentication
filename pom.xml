@@ -53,12 +53,12 @@
             <artifactId>jstl</artifactId>
             <version>1.2</version>
         </dependency>
-<!-- 
+
         <dependency>
             <groupId>com.nimbusds</groupId>
             <artifactId>nimbus-jose-jwt</artifactId>
             <version>9.0.1</version>
-        </dependency> -->
+        </dependency>
 
         
     </dependencies>
