@@ -1,13 +1,13 @@
-package com.microsoft.azuresamples.webapp.authentication;
+package com.microsoft.azuresamples.authenticationb2c;
 
 import java.io.IOException;
-
+import java.util.Arrays;
+import java.util.logging.Level;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import com.microsoft.azuresamples.webapp.AuthHelper;
 
 @WebServlet(name = "SignOutServlet", urlPatterns = "/auth_sign_out")
 public class SignOutServlet extends HttpServlet {
@@ -17,8 +17,9 @@ public class SignOutServlet extends HttpServlet {
         try {
             AuthHelper.redirectToSignoutEndpoint(req, resp);
         } catch (Exception ex){
-            System.out.println(ex.getMessage());
-            ex.printStackTrace();
+            Config.logger.log(Level.WARNING, "Unable to sign out");
+            Config.logger.log(Level.WARNING, ex.getMessage());
+            Config.logger.log(Level.WARNING, Arrays.toString(ex.getStackTrace()));
         }
     }
 }

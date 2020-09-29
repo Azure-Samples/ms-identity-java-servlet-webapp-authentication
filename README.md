@@ -7,7 +7,7 @@ products:
   - azure-active-directory-b2c
   - azure-active-directory-domain
 name: Java Servlet WebApp utilizing MSAL4J 1.7.0 to authenticate users into Azure Active Directory B2C (Azure AD B2C)
-urlFragment: ms-identity-java-servlet-webapp-authentication
+urlFragment: ms-identity-b2c-java-servlet-webapp-authentication
 description: "This sample demonstrates a Java Servlet WebApp application that authenticates users against Azure AD B2C"
 ---
 # Java Servlet WebApp utilizing MSAL4J 1.7.0 to authenticate users into Azure Active Directory B2C (Azure AD B2C)
@@ -46,8 +46,6 @@ This sample demonstrates a Java Servlet WebApp application that authenticates us
 
 ## Contents
 
-> Give a high-level folder structure of the sample.
-
 | File/folder       | Description                                |
 |-------------------|--------------------------------------------|
 | `AuthHelper.java` | Helper functions for authentication |
@@ -62,9 +60,9 @@ This sample demonstrates a Java Servlet WebApp application that authenticates us
 
 ## Prerequisites
 
-- JDK Version 8 or higher
-- Maven 3
-- Tomcat 9
+- [JDK Version 14 or higher](https://jdk.java.net/14/)
+- [Maven 3](https://maven.apache.org/download.cgi)
+- [Tomcat 9](https://tomcat.apache.org/download-90.cgi)
 - An **Azure AD B2C** tenant. For more information see: [How to get an Azure AD B2C tenant](https://docs.microsoft.com/azure/active-directory-b2c/tutorial-create-tenant)
 - A user account in your **Azure AD B2C**.
 
@@ -75,7 +73,7 @@ This sample demonstrates a Java Servlet WebApp application that authenticates us
 From your shell or command line:
 
 ```console
-git clone https://github.com/Azure-Samples/ms-identity-java-servlet-webapp-authentication.git
+git clone https://github.com/Azure-Samples/ms-identity-b2c-java-servlet-webapp-authentication.git
 ```
 
 or download and extract the repository .zip file.
@@ -101,20 +99,22 @@ As a first step you'll need to:
 
 ### Create User Flows and Custom Policies
 
-Please refer to: [Tutorial: Create user flows in Azure Active Directory B2C](https://docs.microsoft.com/azure/active-directory-b2c/tutorial-create-user-flows)
+Please refer to [Tutorial: Create user flows in Azure Active Directory B2C](https://docs.microsoft.com/azure/active-directory-b2c/tutorial-create-user-flows) to create common user flows like sign up, sign in, edit profile, and passowrd reset.
+
+You may consider creating [Custom policies in Azure Active Directory B2C](https://docs.microsoft.com/en-us/azure/active-directory-b2c/custom-policy-overview) as well, however, this is beyond the scope of this tutorial.
 
 ### Add External Identity Providers
 
 Please refer to: [Tutorial: Add identity providers to your applications in Azure Active Directory B2C](https://docs.microsoft.com/azure/active-directory-b2c/tutorial-add-identity-providers)
 
-### Register the WebApp app (ms-identity-java-servlet-webapp-authentication)
+### Register the WebApp app (ms-identity-b2c-java-servlet-webapp-authentication)
 
 1. Navigate to the [Azure portal](https://portal.azure.com) and select the **Azure AD B2C** service.
 1. Select the **App Registrataions** blade on the left, then select **New registration**.
 1. In the **Register an application page** that appears, enter your application's registration information:
-   - In the **Name** section, enter a meaningful application name that will be displayed to users of the app, for example `ms-identity-java-servlet-webapp-authentication`.
+   - In the **Name** section, enter a meaningful application name that will be displayed to users of the app, for example `ms-identity-b2c-java-servlet-webapp-authentication`.
    - Under **Supported account types**, select **Accounts in any organizational directory and personal Microsoft accounts (e.g. Skype, Xbox, Outlook.com)**.
-   - In the **Redirect URI (optional)** section, select **Web** in the combo-box and enter the following redirect URI: `http://localhost:8080/ms-identity-java-servlet-webapp-authentication/auth_redirect`.
+   - In the **Redirect URI (optional)** section, select **Web** in the combo-box and enter the following redirect URI: `http://localhost:8080/ms-identity-b2c-java-servlet-webapp-authentication/auth_redirect`.
 1. Select **Register** to create the application.
 1. In the app's registration screen, find and note the **Application (client) ID**. You use this value in your app's configuration file(s) later in your code.
 1. Select **Save** to save your changes.
@@ -126,17 +126,17 @@ Please refer to: [Tutorial: Add identity providers to your applications in Azure
    - The generated key value will be displayed when you click the **Add** button. Copy the generated value for use in the steps later.
    - You'll need this key later in your code's configuration files. This key value will not be displayed again, and is not retrievable by any other means, so make sure to note it from the Azure portal before navigating to any other screen or blade.
 
-#### Configure the WebApp app (ms-identity-java-servlet-webapp-authentication) to use your app registration
+#### Configure the WebApp app (ms-identity-b2c-java-servlet-webapp-authentication) to use your app registration
 
 Open the project in your IDE (like Visual Studio or Visual Studio Code) to configure the code.
 
 > In the steps below, "ClientID" is the same as "Application ID" or "AppId".
 
 1. Open the [authentication.properties](src/main/resources/authentication.properties) file.
-1. Find the key `aad.clientId` and replace the existing value with the application ID (clientId) of the `ms-identity-java-servlet-webapp-authentication` application from the Azure portal.
-1. Find the app key `aad.secret` and replace the existing value with the key you saved during the creation of the `ms-identity-java-servlet-webapp-authentication` application from the Azure portal.
-1. Find the app key `aad.authority` and replace the first instance of `YOUR_B2C_TENANT_HERE` with the name of the AAD B2C tenant in which you created the `ms-identity-java-servlet-webapp-authentication` application in the Azure portal.
-1. Find the app key `aad.authority` and replace the second instance of `YOUR_B2C_TENANT_HERE` with the name of the AAD B2C tenant in which you created the `ms-identity-java-servlet-webapp-authentication` application in the Azure portal.
+1. Find the key `aad.clientId` and replace the existing value with the application ID (clientId) of the `ms-identity-b2c-java-servlet-webapp-authentication` application from the Azure portal.
+1. Find the app key `aad.secret` and replace the existing value with the key you saved during the creation of the `ms-identity-b2c-java-servlet-webapp-authentication` application from the Azure portal.
+1. Find the app key `aad.authority` and replace the first instance of `YOUR_B2C_TENANT_HERE` with the name of the AAD B2C tenant in which you created the `ms-identity-b2c-java-servlet-webapp-authentication` application in the Azure portal.
+1. Find the app key `aad.authority` and replace the second instance of `YOUR_B2C_TENANT_HERE` with the name of the AAD B2C tenant in which you created the `ms-identity-b2c-java-servlet-webapp-authentication` application in the Azure portal.
 1. Find the app key `aad.scopes` and replace `YOUR_APP_ID_HERE` with the value you placed into `aad.clientId` in step 1 of this section.
 
 
@@ -147,7 +147,7 @@ Open the project in your IDE (like Visual Studio or Visual Studio Code) to confi
 
 <!-- ENTER CONFIGURATION STEPS FOR B2C USER-FLOWS/CUSTOM POLICIES BELOW -->
 
-<!-- 1. Find the key `Enter_the_Redirect_Uri_Here` and replace the existing value with the base address of the ms-identity-java-servlet-webapp-authentication project (by default `http://localhost:8080/ms-identity-java-servlet-webapp-authentication/index`). -->
+<!-- 1. Find the key `Enter_the_Redirect_Uri_Here` and replace the existing value with the base address of the ms-identity-b2c-java-servlet-webapp-authentication project (by default `http://localhost:8080/ms-identity-b2c-java-servlet-webapp-authentication/index`). -->
 
 <!-- ENTER CONFIGURATION STEPS FOR B2C USER-FLOWS/CUSTOM POLICIES BELOW -->
 
@@ -161,9 +161,9 @@ Open the project in your IDE (like Visual Studio or Visual Studio Code) to confi
 cd project-directory
 mvn package -f pom.xml
 ```
-1. Find the resulting `.war` file in `./target/ms-identity-java-servlet-webapp-authentication.war` and upload it to your server
-1. Ensure that the context path that the app is served on is `http://localhost:8080/ms-identity-java-servlet-webapp-authentication` (or change the addresses listed in the [authentication.properties](src/main/resources/authentication.properties) file and in the AAD app registration)
-1. Open your browser and navigate to `http://localhost:8080/ms-identity-java-servlet-webapp-authentication/index`
+1. Find the resulting `.war` file in `./target/ms-identity-b2c-java-servlet-webapp-authentication.war` and upload it to your server
+1. Ensure that the context path that the app is served on is `http://localhost:8080/ms-identity-b2c-java-servlet-webapp-authentication` (or change the addresses listed in the [authentication.properties](src/main/resources/authentication.properties) file and in the AAD app registration)
+1. Open your browser and navigate to `http://localhost:8080/ms-identity-b2c-java-servlet-webapp-authentication/index`
 
 ![Experience](./ReadmeFiles/app.png)
 
@@ -171,11 +171,12 @@ mvn package -f pom.xml
 
 - Note the signed-in or signed-out status displayed at the center of the screen.
 - Click the context-sensitive button at the top right (it will read `Sign In` on first run)
-- Follow the instructions on the next page to sign in with an account in the Azure AD tenant.
+- Follow the instructions on the next page to sign in with an account of your chosen identity provider.
 - Note the context-sensitive button now says `Sign out` and displays your username to its left.
 - The middle of the screen now has an option to click for ID Token Details: click it to see some of the ID token's decoded claims.
+- You also have the option of editing your profile. Click the link to edit details like your display name, place of residence, and profession.
 - You can also use the button on the top right to sign out.
-- After signing out, click this link to the [token details page](http://localhost:8080/ms-identity-java-servlet-webapp-authentication/auth_token_details) to observe how the app displays a `401: unauthorized` error instead of the ID token claims.
+- After signing out, click this link to the [token details page](http://localhost:8080/ms-identity-b2c-java-servlet-webapp-authentication/auth_token_details) to observe how the app displays a `401: unauthorized` error instead of the ID token claims.
 
 > :information_source: Did the sample not work for you as expected? Did you encounter issues trying this sample? Then please reach out to us using the [GitHub Issues](../issues) page.
 
@@ -189,7 +190,7 @@ This sample shows how to use [Microsoft Authentication Library \(MSAL\) for Java
 IClientSecret secret = ClientCredentialFactory.createFromSecret(SECRET);
 confClientInstance = ConfidentialClientApplication
                     .builder(CLIENT_ID, secret)
-                    .b2cAuthority(AUTHORITY)
+                    .b2cAuthority(authorityWithPolicy)
                     .build();
 ```
 * The following parameters need to be provided upon instantiation:
@@ -213,7 +214,13 @@ confClientInstance = ConfidentialClientApplication
     resp.setStatus(302);
     resp.sendRedirect(redirectUrl);
     ```
-1. The user is presented with a sign-in prompt by Azure Active Directory B2C. If the sign-in attempt is successful, the user's browser is redirected to our app's redirect endpoint. A valid request to this endpoint will contain an **authorization code**.
+    - **REDIRECT_URI**: Where AAD B2C will redirect the browser (along with auth code) after collecting user credentials.
+    - **SCOPES**: [Scopes](https://docs.microsoft.com/en-us/azure/active-directory-b2c/access-tokens#scopes) are permissions requested by the application. In our case, one of our scopes is the application itself's client ID. Normally, the three scopes `openid profile offline_access` would suffice for authentication with an ID Token response. However, MSAL4J requires all responses from AAD to have an Access Token as well. In order for AAD to dispense an access token, we request that our app need access to an external resource - in this case, our own client ID as a placeholder.
+    - **RsponseMode.QUERY**: AAD can return the response as form params in an HTTP POST request or querystring params in an HTTP GET request.
+    - **Prompt.SELECT_ACCOUNT**: AAD B2C should ask the user to select the account that they intend to authenticate against.
+    - **state**: a variable the app sets uniquely to this session on each token request, and destroys after receiving the corresponding AAD redirect callback. Ensures that AAD responses to the [/auth_redirect endpoint](.src/main/java/com/microsoft/azuresamples/authenticationb2c/AADRedirectServlet.java) actually originated from our server to prevent CSRF attacks.
+    - **nonce**: a variable the app sets uniquely to this session on each token request, and destroys after receiving the corresponding token. This nonce is transcribed to the resulting tokens AAD, thereby ensuring to our app that there is no token-replay attack occuring.
+1. The user is presented with a sign-in prompt by Azure Active Directory B2C. If the sign-in attempt is successful, the user's browser is redirected to our app's redirect endpoint. A valid request to this endpoint will contain an [**authorization code**](https://docs.microsoft.com/en-us/azure/active-directory-b2c/authorization-code-flow).
 1. Our ConfidentialClientApplication instance then exchanges this authorization code for an ID Token and Access Token from Azure Active Directory B2C.
 
     ```Java

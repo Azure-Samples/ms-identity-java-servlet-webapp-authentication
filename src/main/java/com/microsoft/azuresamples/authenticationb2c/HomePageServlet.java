@@ -1,4 +1,4 @@
-package com.microsoft.azuresamples.webapp.authentication;
+package com.microsoft.azuresamples.authenticationb2c;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -16,5 +16,3 @@ public class HomePageServlet extends HttpServlet {
     }
 
 }
-
-

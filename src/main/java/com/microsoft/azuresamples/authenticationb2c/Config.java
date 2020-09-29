@@ -1,4 +1,4 @@
-package com.microsoft.azuresamples.webapp;
+package com.microsoft.azuresamples.authenticationb2c;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -17,6 +17,7 @@ public class Config implements ServletContextListener {
     @Override
     public void contextInitialized(final ServletContextEvent event) {
         // do something here if necessary
+        logger.setLevel(Level.FINEST);
     }
 
     @Override
@@ -43,7 +44,7 @@ public class Config implements ServletContextListener {
         if (props != null) {
             prop = Config.props.getProperty(key);
             if (prop != null){
-                Config.logger.log(Level.INFO, "{0} is {1}", new String[]{key, prop});
+                Config.logger.log(Level.FINE, "{0} is {1}", new String[]{key, prop});
                 return prop;
             } else {
                 Config.logger.log(Level.SEVERE, "Could not load {0}! EXITING!", key);
@@ -55,12 +56,7 @@ public class Config implements ServletContextListener {
                 System.exit(1);
                 return null;
         }
-        
-        
     }
 
-    
 }
-
-
 

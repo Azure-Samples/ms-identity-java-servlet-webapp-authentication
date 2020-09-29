@@ -1,31 +1,36 @@
-package com.microsoft.azuresamples.webapp.authentication;
+package com.microsoft.azuresamples.authenticationb2c;
 
 import javax.servlet.http.HttpSession;
-
+import com.microsoft.aad.msal4j.IAuthenticationResult;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 public class MsalAuthSession implements Serializable {
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2L;
     public static final String SESSION_KEY = "msalAuth";
     private String nonce = null;
     private String state = null;
     private Date stateDate = null;
+    private String policy = null;
     private boolean authenticated = false;
     private String username = null;
     private Map<String,String> idTokenClaims = new HashMap<>();
-    private String tokenCache = "";
+    private String tokenCache = null;
+    private transient IAuthenticationResult authResult = null;
     private transient HttpSession session;
 
     public static MsalAuthSession getMsalAuthSession(final HttpSession session) {
         MsalAuthSession msalAuth =(MsalAuthSession) session.getAttribute(MsalAuthSession.SESSION_KEY);
         if ( msalAuth == null) {
+            Config.logger.info("msal auth was mcNULL");
             msalAuth = new MsalAuthSession();
-            session.setAttribute(MsalAuthSession.SESSION_KEY, msalAuth);
+        } else {
+            Config.logger.info("msal auth was not mcNULL");
         }
         msalAuth.session = session;
+        msalAuth.saveMsalAuthSession();
         return msalAuth;
     }
 
@@ -57,8 +62,16 @@ public class MsalAuthSession implements Serializable {
         return this.state;
     }
 
+    public String getPolicy() {
+        return this.policy;
+    }
+
     public Date getStateDate(){
         return this.stateDate;
+    }
+
+    public IAuthenticationResult getAuthResult(){
+        return this.authResult;
     }
 
     public void setIdTokenClaims(final Map<String,Object> idTokenClaims) {
@@ -67,6 +80,11 @@ public class MsalAuthSession implements Serializable {
             String val = value.toString();
             this.idTokenClaims.put(claim, val);
         });
+        this.saveMsalAuthSession();
+    }
+
+    public void clearIdTokenClaims() {
+        this.idTokenClaims = new HashMap<>();
         this.saveMsalAuthSession();
     }
 
@@ -96,10 +114,21 @@ public class MsalAuthSession implements Serializable {
         this.saveMsalAuthSession();
     }
 
-    public void setStateAndNonce(String state, String nonce) {
+    public void setPolicy(final String policy){
+        this.policy = policy;
+        this.saveMsalAuthSession();
+    }
+
+    public void setStateAndNonceAndPolicy(String state, String nonce, String policy) {
         this.state = state;
         this.nonce = nonce;
         this.stateDate = new Date();
+        this.policy = policy;
+        this.saveMsalAuthSession();
+    }
+
+    public void setAuthResult(IAuthenticationResult authResult){
+        this.authResult = authResult;
         this.saveMsalAuthSession();
     }
 }

@@ -1,11 +1,6 @@
 
-package com.microsoft.azuresamples.webapp.authentication;
+package com.microsoft.azuresamples.authenticationb2c;
 
-import javax.annotation.ManagedBean;
-import javax.annotation.Resource;
-import javax.ejb.EJB;
-import javax.enterprise.context.SessionScoped;
-import javax.inject.Inject;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;

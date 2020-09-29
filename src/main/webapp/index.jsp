@@ -1,6 +1,6 @@
-<%@ page import="com.microsoft.azuresamples.webapp.authentication.*" %>
+<%@ page import="com.microsoft.azuresamples.authenticationb2c.*" %>
 <%@ page session="true" %>
-<jsp:useBean id="msalAuth" scope="session" class="com.microsoft.azuresamples.webapp.authentication.MsalAuthSession" />
+<jsp:useBean id="msalAuth" scope="session" class="com.microsoft.azuresamples.authenticationb2c.MsalAuthSession" />
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <!doctype html>

@@ -1,4 +1,4 @@
-package com.microsoft.azuresamples.webapp.authentication;
+package com.microsoft.azuresamples.authenticationb2c;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -39,4 +39,3 @@ public class TokenDetailsServlet extends HttpServlet {
         return filteredClaims;
     }
 }
-
