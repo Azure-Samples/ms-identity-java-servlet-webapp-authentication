@@ -86,6 +86,8 @@ mvn install -f pom.xml
 ### Register the sample application with your Azure AD B2C tenant
 
 :warning: This sample comes with a pre-registered application for testing purposes. If you would like to use your own **Azure AD B2C** tenant and application, follow the steps below to register and configure the application in the **Azure Portal**. Otherwise, continue with the steps for [Running the sample](#running-the-sample).
+<details>
+  <summary>Expand this section to see manual steps for configuring your own tenant:</summary>
 
 ### Choose the Azure AD B2C tenant where you want to create your applications
 
@@ -138,17 +140,17 @@ Open the project in your IDE (like **Visual Studio Code**) to configure the code
 1. Find the app key `aad.signInPolicy` and replace it with the name of the sign-up/sign-in userflow policy you created in the AAD B2C tenant in which you created the `ms-identity-b2c-java-servlet-webapp-authentication` application in the Azure portal.
 1. Find the app key `aad.passwordResetPolicy` and replace it with the name of the password reset userflow policy you created in the AAD B2C tenant in which you created the `ms-identity-b2c-java-servlet-webapp-authentication` application in the Azure portal.
 1. Find the app key `aad.editProfilePolicy` and replace it with the name of the edit profile userflow policy you created in the AAD B2C tenant in which you created the `ms-identity-b2c-java-servlet-webapp-authentication` application in the Azure portal.
+</details>
 
 ## Running the sample
 
 1. Make certain that your Tomcat server is running and you have privileges to deploy a webapp to it.
 1. Make certain that it serves the web app on `http://localhost:8080` (or change the base addresses listed in the [authentication.properties](src/main/resources/authentication.properties) file and in the AAD app registration).
 1. Compile and package the project using **Maven**:
-
-```Shell
+    ```Shell
     cd project-directory
     mvn package -f pom.xml
-```
+    ```
 1. Find the resulting `.war` file in `./target/ms-identity-b2c-java-servlet-webapp-authentication.war` and upload it to your server.
 1. Ensure that the context path that the app is served on is `http://localhost:8080/ms-identity-b2c-java-servlet-webapp-authentication` (or change the addresses listed in the [authentication.properties](src/main/resources/authentication.properties) file and in the AAD app registration)
 1. Open your browser and navigate to `http://localhost:8080/ms-identity-b2c-java-servlet-webapp-authentication/index`
