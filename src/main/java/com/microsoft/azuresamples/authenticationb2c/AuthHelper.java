@@ -42,8 +42,6 @@ public class AuthHelper {
                     .b2cAuthority(authorityWithPolicy).build();
         } catch (final Exception ex) {
             Config.logger.log(Level.SEVERE, "Failed to create Confidential Client Application.");
-            Config.logger.log(Level.SEVERE, ex.getMessage());
-            Config.logger.log(Level.SEVERE, Arrays.toString(ex.getStackTrace()));
             throw ex;
         }
         return confClientInstance;
