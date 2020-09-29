@@ -76,7 +76,7 @@ git clone https://github.com/Azure-Samples/ms-identity-java-servlet-webapp-authe
 
 or download and extract the repository .zip file.
 
-> :warning: Given that the name of the sample is quite long, and so are the names of the referenced packages, you might want to clone it in a folder close to the root of your hard drive, to avoid maximum file path length limitations on Windows.
+> :warning: To avoid file path length limitations on Windows, clone the repository into a directory near the root of your hard drive.
 
 ### Step 2: Install project dependencies
 
