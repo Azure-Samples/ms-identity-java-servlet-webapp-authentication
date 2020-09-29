@@ -81,8 +81,8 @@ or download and extract the repository .zip file.
 ### Step 2: Install project dependencies
 
 ```Console
-    cd project-directory
-    mvn install -f pom.xml
+cd project-directory
+mvn install -f pom.xml
 ```
 
 ### Register the sample application with your Azure AD B2C tenant
