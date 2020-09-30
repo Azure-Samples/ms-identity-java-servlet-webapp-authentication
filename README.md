@@ -200,6 +200,7 @@ In this sample, these values are read from the [authentication.properties](src/m
 1. The first step of the sign-in process is to send a request to the `/authorize` endpoint on for our Azure Active Directory B2C Tenant. Our MSAL4J ConfidentialClientApplication instance is leveraged to construct an authorization request URL, and our app redirects the browser to this URL.
 
     ```Java
+    final ConfidentialClientApplication client = getConfidentialClientInstance(AUTHORITY + policy);
     final AuthorizationRequestUrlParameters parameters = AuthorizationRequestUrlParameters
         .builder(REDIRECT_URI, Collections.singleton(SCOPES)).responseMode(ResponseMode.QUERY)
         .prompt(Prompt.SELECT_ACCOUNT).state(state).nonce(nonce).build();
