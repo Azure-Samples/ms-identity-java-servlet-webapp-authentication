@@ -16,8 +16,9 @@ public class Config implements ServletContextListener {
 
     @Override
     public void contextInitialized(final ServletContextEvent event) {
-        // do something here if necessary
-        logger.setLevel(Level.FINEST);
+        Config.logger.setLevel(Level.INFO);
+        Config.logger.log(Level.INFO, "APPLICATION IS RUNNING ON https://SERVER-IP:PORT{0}/index",
+                event.getServletContext().getContextPath());
     }
 
     @Override
@@ -43,20 +44,19 @@ public class Config implements ServletContextListener {
         String prop = null;
         if (props != null) {
             prop = Config.props.getProperty(key);
-            if (prop != null){
-                Config.logger.log(Level.FINE, "{0} is {1}", new String[]{key, prop});
+            if (prop != null) {
+                Config.logger.log(Level.FINE, "{0} is {1}", new String[] { key, prop });
                 return prop;
             } else {
                 Config.logger.log(Level.SEVERE, "Could not load {0}! EXITING!", key);
                 System.exit(1);
-                return null; 
+                return null;
             }
         } else {
             Config.logger.log(Level.SEVERE, "Could not load property reader! EXITING!");
-                System.exit(1);
-                return null;
+            System.exit(1);
+            return null;
         }
     }
 
 }
-

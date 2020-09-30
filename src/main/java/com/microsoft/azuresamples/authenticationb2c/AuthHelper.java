@@ -31,13 +31,12 @@ public class AuthHelper {
     static final String HOME_PAGE = Config.getProperty("app.homePage");
     static final String FORGOT_PASSWORD_ERROR_CODE = Config.getProperty("aad.forgotPasswordErrCode");
 
-
-    public static ConfidentialClientApplication getConfidentialClientInstance(String authorityWithPolicy)
+    public static ConfidentialClientApplication getConfidentialClientInstance(final String authorityWithPolicy)
             throws Exception {
         ConfidentialClientApplication confClientInstance = null;
         Config.logger.log(Level.INFO, "Getting confidential client instance");
         try {
-            IClientSecret secret = ClientCredentialFactory.createFromSecret(SECRET);
+            final IClientSecret secret = ClientCredentialFactory.createFromSecret(SECRET);
             confClientInstance = ConfidentialClientApplication.builder(CLIENT_ID, secret)
                     .b2cAuthority(authorityWithPolicy).build();
         } catch (final Exception ex) {
@@ -50,7 +49,7 @@ public class AuthHelper {
     public static void redirectToSignoutEndpoint(final HttpServletRequest req, final HttpServletResponse resp)
             throws Exception {
         req.getSession().invalidate();
-        String redirect = String.format("%s%s%s%s%s", AUTHORITY, SIGN_IN_POLICY, SIGN_OUT_ENDPOINT,
+        final String redirect = String.format("%s%s%s%s%s", AUTHORITY, SIGN_IN_POLICY, SIGN_OUT_ENDPOINT,
                 POST_SIGN_OUT_FRAGMENT, URLEncoder.encode(HOME_PAGE, "UTF-8"));
         Config.logger.log(Level.INFO, "Redirecting user to {0}", redirect);
         resp.setStatus(302);
@@ -72,45 +71,46 @@ public class AuthHelper {
         AuthHelper.redirectToAuthorizationEndpoint(req, resp, PW_RESET_POLICY);
     }
 
-    private static void authorize(final HttpServletRequest req, final HttpServletResponse resp, String policy)
+    private static void authorize(final HttpServletRequest req, final HttpServletResponse resp, final String policy)
             throws Exception {
 
         final MsalAuthSession msalAuth = getMsalAuthSession(req.getSession());
         Config.logger.log(Level.INFO, "doing authorize");
-        IAuthenticationResult authResult = msalAuth.getAuthResult();
-        if (authResult != null){
+        final IAuthenticationResult authResult = msalAuth.getAuthResult();
+        if (authResult != null) {
             Config.logger.log(Level.INFO, "try to silently acquire token");
             acquireTokenSilently(req, resp, policy, authResult.account());
         } else {
             Config.logger.log(Level.INFO, "try to interactive acquire token");
             redirectToAuthorizationEndpoint(req, resp, policy);
         }
-        
+
     }
 
-    private static void acquireTokenSilently(final HttpServletRequest req, final HttpServletResponse resp, final String policy, IAccount account) throws Exception {
+    private static void acquireTokenSilently(final HttpServletRequest req, final HttpServletResponse resp,
+            final String policy, final IAccount account) throws Exception {
         final MsalAuthSession msalAuth = getMsalAuthSession(req.getSession());
         final SilentParameters parameters = SilentParameters.builder(Collections.singleton(SCOPES), account).build();
 
         try {
-            ConfidentialClientApplication client = getConfidentialClientInstance(AUTHORITY + policy);
+            final ConfidentialClientApplication client = getConfidentialClientInstance(AUTHORITY + policy);
             client.tokenCache().deserialize(msalAuth.getTokenCache());
             Config.logger.log(Level.INFO, "preparing to acquire silently");
-            CompletableFuture<IAuthenticationResult> future = client.acquireTokenSilently(parameters);
-            IAuthenticationResult result = future.get();
+            final CompletableFuture<IAuthenticationResult> future = client.acquireTokenSilently(parameters);
+            final IAuthenticationResult result = future.get();
             Config.logger.log(Level.INFO, "got future!");
             if (result != null) {
                 Config.logger.log(Level.INFO, "silent auth success");
                 parseJWTClaimsSetFromResultIntoSession(result, msalAuth);
-                processSuccessfulAuthentication(msalAuth, client.tokenCache().serialize(), result);
+                processSuccessfulAuthentication(msalAuth, client, result);
                 resp.setStatus(302);
                 resp.sendRedirect(HOME_PAGE);
             } else {
                 Config.logger.log(Level.INFO, "silent auth future is null! redirecting to authorize with code");
                 redirectToAuthorizationEndpoint(req, resp, policy);
             }
-            
-        } catch (Exception ex) {
+
+        } catch (final Exception ex) {
             Config.logger.log(Level.WARNING, "failed silent auth with exception! redirecting to authorize with code");
             Config.logger.log(Level.WARNING, Arrays.toString(ex.getStackTrace()));
             Config.logger.log(Level.WARNING, ex.getMessage());
@@ -118,19 +118,23 @@ public class AuthHelper {
         }
     }
 
-    private static void redirectToAuthorizationEndpoint(final HttpServletRequest req, final HttpServletResponse resp, final String policy)
-            throws Exception {
+    private static void redirectToAuthorizationEndpoint(final HttpServletRequest req, final HttpServletResponse resp,
+            final String policy) throws Exception {
+        AuthorizationRequestUrlParameters parameters;
         final String state = UUID.randomUUID().toString();
         final String nonce = UUID.randomUUID().toString();
 
-        final MsalAuthSession msalAuthSession = getMsalAuthSession(req.getSession());
-        msalAuthSession.setStateAndNonceAndPolicy(state, nonce, policy);
+        final MsalAuthSession msalAuth = getMsalAuthSession(req.getSession());
+        msalAuth.setStateAndNonceAndPolicy(state, nonce, policy);
 
-        ConfidentialClientApplication client = getConfidentialClientInstance(AUTHORITY + policy);
-
-        final AuthorizationRequestUrlParameters parameters = AuthorizationRequestUrlParameters
-                .builder(REDIRECT_URI, Collections.singleton(SCOPES)).responseMode(ResponseMode.QUERY)
-                .prompt(Prompt.SELECT_ACCOUNT).state(state).nonce(nonce).build();
+        final ConfidentialClientApplication client = getConfidentialClientInstance(AUTHORITY + policy);
+        if (policy.equals(EDIT_PROFILE_POLICY) && msalAuth.getAuthenticated()) {
+            parameters = AuthorizationRequestUrlParameters.builder(REDIRECT_URI, Collections.singleton(SCOPES))
+                    .responseMode(ResponseMode.QUERY).state(state).nonce(nonce).build();
+        } else {
+            parameters = AuthorizationRequestUrlParameters.builder(REDIRECT_URI, Collections.singleton(SCOPES))
+                    .responseMode(ResponseMode.QUERY).prompt(Prompt.SELECT_ACCOUNT).state(state).nonce(nonce).build();
+        }
 
         final String redirectUrl = client.getAuthorizationRequestUrl(parameters).toString();
         Config.logger.log(Level.INFO, "Redirecting user to {0}", redirectUrl);
@@ -138,8 +142,9 @@ public class AuthHelper {
         resp.sendRedirect(redirectUrl);
     }
 
-    public static void processAuthCodeRedirect(final HttpServletRequest req, final HttpServletResponse resp) throws Exception {
-        MsalAuthSession msalAuth = getMsalAuthSession(req.getSession());
+    public static void processAuthCodeRedirect(final HttpServletRequest req, final HttpServletResponse resp)
+            throws Exception {
+        final MsalAuthSession msalAuth = getMsalAuthSession(req.getSession());
 
         final String policy = msalAuth.getPolicy();
         Config.logger.log(Level.INFO, "session policy is {0}", policy);
@@ -155,20 +160,20 @@ public class AuthHelper {
             Config.logger.log(Level.INFO, "Received AuthCode and confirmed that state matches!");
             try {
                 final AuthorizationCodeParameters authParams = AuthorizationCodeParameters
-                        .builder(authCode, new URI(req.getRequestURL().toString()))
-                        .scopes(Collections.singleton(SCOPES)).build();
-                
-                final ConfidentialClientApplication client = AuthHelper.getConfidentialClientInstance(AUTHORITY + policy);
-                Future<IAuthenticationResult> future = client.acquireToken(authParams);
-                IAuthenticationResult result = future.get();
+                        .builder(authCode, new URI(REDIRECT_URI)).scopes(Collections.singleton(SCOPES)).build();
+
+                final ConfidentialClientApplication client = AuthHelper
+                        .getConfidentialClientInstance(AUTHORITY + policy);
+                final Future<IAuthenticationResult> future = client.acquireToken(authParams);
+                final IAuthenticationResult result = future.get();
                 parseJWTClaimsSetFromResultIntoSession(result, msalAuth);
-                
-                if (validateNonce(msalAuth)){
-                    processSuccessfulAuthentication(msalAuth, client.tokenCache().serialize(), result);
+
+                if (validateNonce(msalAuth)) {
+                    processSuccessfulAuthentication(msalAuth, client, result);
                 } else {
                     throw new Exception("Couldn't exchange auth code for token");
                 }
-            } catch (Exception ex) {
+            } catch (final Exception ex) {
                 Config.logger.log(Level.WARNING, "Unable to exchange auth code for token");
                 Config.logger.log(Level.WARNING, ex.getMessage());
                 Config.logger.log(Level.WARNING, Arrays.toString(ex.getStackTrace()));
@@ -182,35 +187,35 @@ public class AuthHelper {
         resp.sendRedirect(HOME_PAGE);
     }
 
-    private static void processSuccessfulAuthentication(MsalAuthSession msalAuth, String serializedTokenCache, IAuthenticationResult result){
-        Config.logger.log(Level.INFO, "processing successful auth into sesssion");
-        msalAuth.setTokenCache(serializedTokenCache);
+    private static void processSuccessfulAuthentication(final MsalAuthSession msalAuth,
+            final ConfidentialClientApplication client, final IAuthenticationResult result) {
+        Config.logger.log(Level.INFO, "processing successful auth into session");
+        msalAuth.setTokenCache(client.tokenCache().serialize());
         msalAuth.setAuthenticated(true);
         msalAuth.setUsername(msalAuth.getIdTokenClaims().get("name"));
         msalAuth.setAuthResult(result);
     }
 
-    private static void parseJWTClaimsSetFromResultIntoSession(IAuthenticationResult result, MsalAuthSession msalAuth) {
+    private static void parseJWTClaimsSetFromResultIntoSession(final IAuthenticationResult result,
+            final MsalAuthSession msalAuth) {
         Config.logger.log(Level.INFO, "placing JWT claims set from auth result into session");
         try {
-            SignedJWT idToken = SignedJWT.parse(result.idToken());
-            JWTClaimsSet jcs = idToken.getJWTClaimsSet();
+            final SignedJWT idToken = SignedJWT.parse(result.idToken());
+            final JWTClaimsSet jcs = idToken.getJWTClaimsSet();
             msalAuth.setIdTokenClaims(jcs.getClaims());
 
-        } catch (Exception ex) {
+        } catch (final Exception ex) {
             Config.logger.log(Level.WARNING, "Failed to put claims into session: result was null or invalid");
         }
     }
 
-    private static boolean validateState(MsalAuthSession msalAuth, final String stateFromRequest) {
+    private static boolean validateState(final MsalAuthSession msalAuth, final String stateFromRequest) {
         final String sessionState = msalAuth.getState();
 
         final Date now = new Date();
-        if (sessionState == null
-                || stateFromRequest == null 
-                || !sessionState.equals(stateFromRequest)
+        if (sessionState == null || stateFromRequest == null || !sessionState.equals(stateFromRequest)
                 || msalAuth.getStateDate().before(new Date(now.getTime() - (STATE_TTL * 1000)))) {
-            
+
             Config.logger.log(Level.WARNING, "State mismatch or null or empty or expired on validateState");
             return false;
         }
@@ -218,9 +223,9 @@ public class AuthHelper {
         return true;
     }
 
-    private static boolean validateNonce(MsalAuthSession msalAuth){
-        String nonceClaim = msalAuth.getIdTokenClaims().get("nonce");
-        String nonce = msalAuth.getNonce();
+    private static boolean validateNonce(final MsalAuthSession msalAuth) {
+        final String nonceClaim = msalAuth.getIdTokenClaims().get("nonce");
+        final String nonce = msalAuth.getNonce();
         if (nonce != null && nonce.equals(nonceClaim)) {
             msalAuth.setNonce(null); // don't allow re-use of nonce
             return true;

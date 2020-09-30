@@ -16,14 +16,14 @@ public class MsalAuthSession implements Serializable {
     private String policy = null;
     private boolean authenticated = false;
     private String username = null;
-    private Map<String,String> idTokenClaims = new HashMap<>();
+    private Map<String, String> idTokenClaims = new HashMap<>();
     private String tokenCache = null;
-    private transient IAuthenticationResult authResult = null;
+    private IAuthenticationResult authResult = null;
     private transient HttpSession session;
 
     public static MsalAuthSession getMsalAuthSession(final HttpSession session) {
-        MsalAuthSession msalAuth =(MsalAuthSession) session.getAttribute(MsalAuthSession.SESSION_KEY);
-        if ( msalAuth == null) {
+        MsalAuthSession msalAuth = (MsalAuthSession) session.getAttribute(MsalAuthSession.SESSION_KEY);
+        if (msalAuth == null) {
             Config.logger.info("msal auth was mcNULL");
             msalAuth = new MsalAuthSession();
         } else {
@@ -38,7 +38,7 @@ public class MsalAuthSession implements Serializable {
         this.session.setAttribute(MsalAuthSession.SESSION_KEY, this);
     }
 
-    public Map<String,String> getIdTokenClaims() {
+    public Map<String, String> getIdTokenClaims() {
         return idTokenClaims;
     }
 
@@ -66,15 +66,15 @@ public class MsalAuthSession implements Serializable {
         return this.policy;
     }
 
-    public Date getStateDate(){
+    public Date getStateDate() {
         return this.stateDate;
     }
 
-    public IAuthenticationResult getAuthResult(){
+    public IAuthenticationResult getAuthResult() {
         return this.authResult;
     }
 
-    public void setIdTokenClaims(final Map<String,Object> idTokenClaims) {
+    public void setIdTokenClaims(final Map<String, Object> idTokenClaims) {
         this.idTokenClaims = new HashMap<>();
         idTokenClaims.forEach((String claim, Object value) -> {
             String val = value.toString();
@@ -108,13 +108,13 @@ public class MsalAuthSession implements Serializable {
         this.saveMsalAuthSession();
     }
 
-    public void setState(final String state){
+    public void setState(final String state) {
         this.state = state;
         this.stateDate = new Date();
         this.saveMsalAuthSession();
     }
 
-    public void setPolicy(final String policy){
+    public void setPolicy(final String policy) {
         this.policy = policy;
         this.saveMsalAuthSession();
     }
@@ -127,7 +127,7 @@ public class MsalAuthSession implements Serializable {
         this.saveMsalAuthSession();
     }
 
-    public void setAuthResult(IAuthenticationResult authResult){
+    public void setAuthResult(IAuthenticationResult authResult) {
         this.authResult = authResult;
         this.saveMsalAuthSession();
     }

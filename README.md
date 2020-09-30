@@ -205,14 +205,15 @@ In this sample, these values are read from the [authentication.properties](src/m
     resp.setStatus(302);
     resp.sendRedirect(redirectUrl);
     ```
+      - **AuthorizationRequestUrlParameters**: Parameters that must be set in order to build an AuthorizationRequestUrl.
       - **REDIRECT_URI**: Where AAD B2C will redirect the browser (along with auth code) after collecting user credentials.
-      - **SCOPES**: [Scopes](https://docs.microsoft.com/en-us/azure/active-directory-b2c/access-tokens#scopes) are permissions requested by the application. 
-        - Normally, the three scopes `openid profile offline_access` would suffice for authentication with an ID Token response. 
-        - However, MSAL4J requires all responses from AAD to have an Access Token as well. 
-        - In order for AAD to dispense an access token as well as an ID Token, we request that our app need access to an external resource scope.
-        - In this case, since we don't really need to access an *external* resource, one of the scopes we also pass along our application's own client ID. 
+      - **SCOPES**: [Scopes](https://docs.microsoft.com/en-us/azure/active-directory-b2c/access-tokens#scopes) are permissions requested by the application.
+        - Normally, the three scopes `openid profile offline_access` would suffice for receiving an ID Token response.
+        - However, MSAL4J requires all responses from AAD B2C to also contain an Access Token.
+        - In order for AAD B2C to dispense an access token as well as an ID Token, the request must include an additional resource scope.
+        - Since this app doesn't actually require an external resource scope, it adds its own client ID as a fourth scope in order to receive an access token.
         - Full list of scopes requested by the app can be found in the [authentication.properties file](./src/main/resources/authentication.properties).
-      - **RsponseMode.QUERY**: AAD can return the response as form params in an HTTP POST request or querystring params in an HTTP GET request.
+      - **ResponseMode.QUERY**: AAD can return the response as form params in an HTTP POST request or as query string params in an HTTP GET request.
       - **Prompt.SELECT_ACCOUNT**: AAD B2C should ask the user to select the account that they intend to authenticate against.
       - **state**: a variable the app sets uniquely to this session on each token request, and destroys after receiving the corresponding AAD redirect callback. Ensures that AAD responses to the [/auth_redirect endpoint](.src/main/java/com/microsoft/azuresamples/authenticationb2c/AADRedirectServlet.java) actually originated from our server to prevent CSRF attacks.
       - **nonce**: a variable the app sets uniquely to this session on each token request, and destroys after receiving the corresponding token. This nonce is transcribed to the resulting tokens AAD, thereby ensuring to our app that there is no token-replay attack occuring.
@@ -220,20 +221,31 @@ In this sample, these values are read from the [authentication.properties](src/m
 1. Our ConfidentialClientApplication instance then exchanges this authorization code for an ID Token and Access Token from Azure Active Directory B2C.
     ```Java
     final AuthorizationCodeParameters authParams = AuthorizationCodeParameters
-        .builder(authCode, new URI(req.getRequestURL().toString()))
-        .scopes(Collections.singleton(SCOPES))
-        .build();
+                        .builder(authCode, new URI(REDIRECT_URI))
+                        .scopes(Collections.singleton(SCOPES)).build();
 
-
-    Future<IAuthenticationResult> future = client.acquireToken(authParams);
-    result = future.get();
+    final ConfidentialClientApplication client = AuthHelper
+            .getConfidentialClientInstance(AUTHORITY + policy);
+    final Future<IAuthenticationResult> future = client.acquireToken(authParams);
+    final IAuthenticationResult result = future.get();
     ```
+    - **AuthorizationCodeParameters**: Parameters that must be set in order to exchange the Authorization Code for an ID and/or access token.
+    - **authCode**: The authorization code that was received at the redirect endpoint.
+    - **REDIRECT_URI**: The redirect URI used in the previous step must be passed again.
+    - **SCOPES**: The scopes used in the previous step must be passed again.
 
-1. The result is then put into a server-side session, leveraging these methods in the class [MsalAuthSession.java](src/main/java/com/microsoft/azuresamples/webapp/authentication/MsalAuthSession.java):
+1. If acquireToken is successful, the token claims are extracted and the nonce claim is validated against the nonce stored in the session.
+    ```java
+    parseJWTClaimsSetFromResultIntoSession(result, msalAuth);
+    if (validateNonce(msalAuth)) {
+        processSuccessfulAuthentication(msalAuth, client, result);
+    ```
+1. If the nonce is successfully validated, authentication status is put into a server-side session, leveraging methods exposed by the class [MsalAuthSession.java](src/main/java/com/microsoft/azuresamples/webapp/authentication/MsalAuthSession.java):
     ```Java
     msalAuth.setTokenCache(client.tokenCache().serialize());
     msalAuth.setAuthenticated(true);
-    msalAuth.setUsername(result.account().username());
+    msalAuth.setUsername(msalAuth.getIdTokenClaims().get("name"));
+    msalAuth.setAuthResult(result);
     ```
 
 ## More information
