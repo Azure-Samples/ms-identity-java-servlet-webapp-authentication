@@ -6,7 +6,7 @@ products:
   - azure-active-directory  
   - azure-active-directory-b2c
   - azure-active-directory-domain
-name: Java Servlet WebApp utilizing MSAL4J 1.7.0 to authenticate users into Azure Active Directory B2C (Azure AD B2C)
+name: Java Servlet Web App utilizing MSAL4J to authenticate users into Azure Active Directory B2C (Azure AD B2C)
 urlFragment: ms-identity-b2c-java-servlet-webapp-authentication
 description: "This sample demonstrates a Java Servlet WebApp application that authenticates users against Azure AD B2C"
 ---
@@ -140,6 +140,7 @@ Open the project in your IDE (like **Visual Studio Code**) to configure the code
 1. Find the app key `aad.signInPolicy` and replace it with the name of the sign-up/sign-in userflow policy you created in the AAD B2C tenant in which you created the `ms-identity-b2c-java-servlet-webapp-authentication` application in the Azure portal.
 1. Find the app key `aad.passwordResetPolicy` and replace it with the name of the password reset userflow policy you created in the AAD B2C tenant in which you created the `ms-identity-b2c-java-servlet-webapp-authentication` application in the Azure portal.
 1. Find the app key `aad.editProfilePolicy` and replace it with the name of the edit profile userflow policy you created in the AAD B2C tenant in which you created the `ms-identity-b2c-java-servlet-webapp-authentication` application in the Azure portal.
+
 </details>
 
 ## Running the sample
@@ -147,12 +148,14 @@ Open the project in your IDE (like **Visual Studio Code**) to configure the code
 1. Make certain that your Tomcat server is running and you have privileges to deploy a webapp to it.
 1. Make certain that it serves the web app on `http://localhost:8080` (or change the base addresses listed in the [authentication.properties](src/main/resources/authentication.properties) file and in the AAD app registration).
 1. Compile and package the project using **Maven**:
+
     ```Shell
     cd project-directory
     mvn package -f pom.xml
     ```
+
 1. Find the resulting `.war` file in `./target/ms-identity-b2c-java-servlet-webapp-authentication.war` and upload it to your server.
-1. Ensure that the context path that the app is served on is `http://localhost:8080/ms-identity-b2c-java-servlet-webapp-authentication` (or change the addresses listed in the [authentication.properties](src/main/resources/authentication.properties) file and in the AAD app registration)
+1. Ensure that the context path that the app is served on is `http://localhost:8080/ms-identity-b2c-java-servlet-webapp-authentication` (or change the addresses listed in the [authentication.properties](src/main/resources/authentication.properties) file and in the AAD app registration).
 1. Open your browser and navigate to `http://localhost:8080/ms-identity-b2c-java-servlet-webapp-authentication/index`
 
 ![Experience](./ReadmeFiles/app.png)
@@ -160,7 +163,7 @@ Open the project in your IDE (like **Visual Studio Code**) to configure the code
 ## Explore the sample
 
 - Note the signed-in or signed-out status displayed at the center of the screen.
-- Click the context-sensitive button at the top right (it will read `Sign In` on first run)
+- Click the context-sensitive button at the top right (it will read `Sign In` on first run).
 - Follow the instructions on the next page to sign in with an account of your chosen identity provider.
 - Note the context-sensitive button now says `Sign out` and displays your username to its left.
 - The middle of the screen now has an option to click for ID Token Details: click it to see some of the ID token's decoded claims.
@@ -195,6 +198,7 @@ In this sample, these values are read from the [authentication.properties](src/m
 ### Step-by-step walkthrough
 
 1. The first step of the sign-in process is to send a request to the `/authorize` endpoint on for our Azure Active Directory B2C Tenant. Our MSAL4J ConfidentialClientApplication instance is leveraged to construct an authorization request URL, and our app redirects the browser to this URL.
+
     ```Java
     final AuthorizationRequestUrlParameters parameters = AuthorizationRequestUrlParameters
         .builder(REDIRECT_URI, Collections.singleton(SCOPES)).responseMode(ResponseMode.QUERY)
@@ -205,6 +209,7 @@ In this sample, these values are read from the [authentication.properties](src/m
     resp.setStatus(302);
     resp.sendRedirect(redirectUrl);
     ```
+
       - **AuthorizationRequestUrlParameters**: Parameters that must be set in order to build an AuthorizationRequestUrl.
       - **REDIRECT_URI**: Where AAD B2C will redirect the browser (along with auth code) after collecting user credentials.
       - **SCOPES**: [Scopes](https://docs.microsoft.com/en-us/azure/active-directory-b2c/access-tokens#scopes) are permissions requested by the application.
@@ -219,6 +224,7 @@ In this sample, these values are read from the [authentication.properties](src/m
       - **nonce**: a variable the app sets uniquely to this session on each token request, and destroys after receiving the corresponding token. This nonce is transcribed to the resulting tokens AAD, thereby ensuring to our app that there is no token-replay attack occuring.
 1. The user is presented with a sign-in prompt by Azure Active Directory B2C. If the sign-in attempt is successful, the user's browser is redirected to our app's redirect endpoint. A valid request to this endpoint will contain an [**authorization code**](https://docs.microsoft.com/en-us/azure/active-directory-b2c/authorization-code-flow).
 1. Our ConfidentialClientApplication instance then exchanges this authorization code for an ID Token and Access Token from Azure Active Directory B2C.
+
     ```Java
     final AuthorizationCodeParameters authParams = AuthorizationCodeParameters
                         .builder(authCode, new URI(REDIRECT_URI))
@@ -229,18 +235,22 @@ In this sample, these values are read from the [authentication.properties](src/m
     final Future<IAuthenticationResult> future = client.acquireToken(authParams);
     final IAuthenticationResult result = future.get();
     ```
+
     - **AuthorizationCodeParameters**: Parameters that must be set in order to exchange the Authorization Code for an ID and/or access token.
     - **authCode**: The authorization code that was received at the redirect endpoint.
     - **REDIRECT_URI**: The redirect URI used in the previous step must be passed again.
     - **SCOPES**: The scopes used in the previous step must be passed again.
 
 1. If acquireToken is successful, the token claims are extracted and the nonce claim is validated against the nonce stored in the session.
+
     ```java
     parseJWTClaimsSetFromResultIntoSession(result, msalAuth);
     if (validateNonce(msalAuth)) {
         processSuccessfulAuthentication(msalAuth, client, result);
     ```
+
 1. If the nonce is successfully validated, authentication status is put into a server-side session, leveraging methods exposed by the class [MsalAuthSession.java](src/main/java/com/microsoft/azuresamples/webapp/authentication/MsalAuthSession.java):
+
     ```Java
     msalAuth.setTokenCache(client.tokenCache().serialize());
     msalAuth.setAuthenticated(true);
