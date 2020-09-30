@@ -8,7 +8,7 @@ products:
   - azure-active-directory-domain
 name: Java Servlet Web App utilizing MSAL4J to authenticate users into Azure Active Directory B2C (Azure AD B2C)
 urlFragment: ms-identity-b2c-java-servlet-webapp-authentication
-description: "This sample demonstrates a Java Servlet web application that authenticates users against Azure AD B2C"
+description: "This sample demonstrates a Java Servlet webapp that signs in users with Azure AD B2C"
 ---
 # Java Servlet Web App using MSAL4J to authenticate users into Azure Active Directory B2C
 
