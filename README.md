@@ -17,7 +17,7 @@ description: "This sample demonstrates a Java Servlet web application that authe
  1. [Contents](#contents)
  1. [Prerequisites](#prerequisites)
  1. [Setup](#setup)
- 1. [Registration](#registration)
+ 1. [Registration](#register-the-sample-application-with-your-azure-ad-b2c-tenant)
  1. [Running the sample](#running-the-sample)
  1. [Explore the sample](#explore-the-sample)
  1. [About the code](#about-the-code)
@@ -285,3 +285,7 @@ To provide a recommendation, visit the following [User Voice page](https://feedb
 If you'd like to contribute to this sample, see [CONTRIBUTING.MD](/CONTRIBUTING.md).
 
 This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/). For more information, see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
+
+## Code of Conduct
+
+This project has adopted the Microsoft Open Source Code of Conduct. For more information see the Code of Conduct FAQ or contact opencode@microsoft.com with any additional questions or comments.
