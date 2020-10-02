@@ -49,7 +49,7 @@ This sample demonstrates a Java Servlet web application that authenticates users
 | `authentication.properties`| Azure AD and program configuration. |
 | `AuthenticationFilter.java`| Redirects unauthenticated requests to protected resources to a 401 page. |
 | `MsalAuthSession` | Instantiated with an HttpSession, stores all MSAL related session attributes in session attribute. |
-| `____Servlet.java`    | All of the endpoints available are named in the style ____Servlet.java |
+| `____Servlet.java`    | All of the endpoints available are defined in .java classes ending in ____Servlet.java |
 | `CHANGELOG.md`    | List of changes to the sample.             |
 | `CONTRIBUTING.md` | Guidelines for contributing to the sample. |
 | `LICENSE`         | The license for the sample.                |

@@ -22,12 +22,9 @@ public class MsalAuthSession implements Serializable {
     private transient HttpSession session;
 
     public static MsalAuthSession getMsalAuthSession(final HttpSession session) {
-        MsalAuthSession msalAuth = (MsalAuthSession) session.getAttribute(MsalAuthSession.SESSION_KEY);
-        if (msalAuth == null) {
-            Config.logger.info("msal auth was mcNULL");
+        MsalAuthSession msalAuth =(MsalAuthSession) session.getAttribute(MsalAuthSession.SESSION_KEY);
+        if ( msalAuth == null) {
             msalAuth = new MsalAuthSession();
-        } else {
-            Config.logger.info("msal auth was not mcNULL");
         }
         msalAuth.session = session;
         msalAuth.saveMsalAuthSession();
