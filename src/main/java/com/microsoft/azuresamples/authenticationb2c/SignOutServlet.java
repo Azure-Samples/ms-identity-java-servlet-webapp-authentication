@@ -15,11 +15,11 @@ public class SignOutServlet extends HttpServlet {
     @Override
     protected void doGet(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
         try {
-            AuthHelper.redirectToSignoutEndpoint(req, resp);
+            AuthHelper.signOut(req, resp);
         } catch (Exception ex){
             Config.logger.log(Level.WARNING, "Unable to sign out");
             Config.logger.log(Level.WARNING, ex.getMessage());
-            Config.logger.log(Level.WARNING, Arrays.toString(ex.getStackTrace()));
+            Config.logger.log(Level.FINEST, Arrays.toString(ex.getStackTrace()));
         }
     }
 }

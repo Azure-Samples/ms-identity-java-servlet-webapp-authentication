@@ -183,7 +183,7 @@ A **ConfidentialClientApplication** instance is created in the [AuthHelper.java]
 IClientSecret secret = ClientCredentialFactory.createFromSecret(SECRET);
 confClientInstance = ConfidentialClientApplication
                     .builder(CLIENT_ID, secret)
-                    .b2cAuthority(authorityWithPolicy)
+                    .b2cAuthority(AUTHORITY + policy)
                     .build();
 ```
 
@@ -200,7 +200,7 @@ In this sample, these values are read from the [authentication.properties](src/m
 1. The first step of the sign-in process is to send a request to the `/authorize` endpoint on for our Azure Active Directory B2C Tenant. Our MSAL4J ConfidentialClientApplication instance is leveraged to construct an authorization request URL, and our app redirects the browser to this URL.
 
     ```Java
-    final ConfidentialClientApplication client = getConfidentialClientInstance(AUTHORITY + policy);
+    final ConfidentialClientApplication client = getConfidentialClientInstance(policy);
     final AuthorizationRequestUrlParameters parameters = AuthorizationRequestUrlParameters
         .builder(REDIRECT_URI, Collections.singleton(SCOPES)).responseMode(ResponseMode.QUERY)
         .prompt(Prompt.SELECT_ACCOUNT).state(state).nonce(nonce).build();
@@ -233,7 +233,7 @@ In this sample, these values are read from the [authentication.properties](src/m
                         .scopes(Collections.singleton(SCOPES)).build();
 
     final ConfidentialClientApplication client = AuthHelper
-            .getConfidentialClientInstance(AUTHORITY + policy);
+            .getConfidentialClientInstance(policy);
     final Future<IAuthenticationResult> future = client.acquireToken(authParams);
     final IAuthenticationResult result = future.get();
     ```
@@ -245,19 +245,17 @@ In this sample, these values are read from the [authentication.properties](src/m
 
 1. If acquireToken is successful, the token claims are extracted and the nonce claim is validated against the nonce stored in the session.
 
-    ```java
-    parseJWTClaimsSetFromResultIntoSession(result, msalAuth);
-    if (validateNonce(msalAuth)) {
-        processSuccessfulAuthentication(msalAuth, client, result);
+    ```Java
+    parseJWTClaimsSetAndStoreResultInSession(msalAuth, result, serializedTokenCache);
+    validateNonce(msalAuth)
+    processSuccessfulAuthentication(msalAuth);
     ```
 
 1. If the nonce is successfully validated, authentication status is put into a server-side session, leveraging methods exposed by the class [MsalAuthSession.java](src/main/java/com/microsoft/azuresamples/webapp/authentication/MsalAuthSession.java):
 
     ```Java
-    msalAuth.setTokenCache(client.tokenCache().serialize());
     msalAuth.setAuthenticated(true);
     msalAuth.setUsername(msalAuth.getIdTokenClaims().get("name"));
-    msalAuth.setAuthResult(result);
     ```
 
 ## More information

@@ -16,7 +16,7 @@ public class Config implements ServletContextListener {
 
     @Override
     public void contextInitialized(final ServletContextEvent event) {
-        Config.logger.setLevel(Level.INFO);
+        Config.logger.setLevel(Level.FINEST);
         Config.logger.log(Level.INFO, "APPLICATION IS RUNNING ON http://SERVER-IP:PORT{0}/index",
                 event.getServletContext().getContextPath());
     }
