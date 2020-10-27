@@ -6,7 +6,6 @@
  1. [Setup](#setup)
  1. [Registration](#registration)
  1. [Deployment](#deployment)
- 1. [Explore the sample](#explore-the-sample)
  1. [More information](#more-information)
  1. [Community Help and Support](#community-help-and-support)
  1. [Contributing](#contributing)
@@ -14,13 +13,13 @@
 
 ## Overview
 
-This sample demonstrates how to deploy a Python Flask web application to **Azure Cloud** using [Azure App Service](https://docs.microsoft.com/azure/app-service/). To do so, we will use the [code sample from flask webapp my tenant authentication](https://github.com/azure-samples/ms-identity-python-flask-webapp-authentication).
+This sample demonstrates how to deploy a Python Flask web application to **Azure Cloud** using [Azure App Service](https://docs.microsoft.com/azure/app-service/). To do so, we will use the [code sample from flask webapp my tenant authentication](https://github.com/azure-samples/ms-identity-python-flask-webapp-authentication). You may choose to follow these steps with a different sample or your own project.
 
 ## Scenario
 
-- This web application uses [Microsoft Authentication Library \(MSAL\) for Python](https://github.com/AzureAD/microsoft-authentication-library-for-python) (leveraging the OpenID Connect protocol) to sign in a user and obtain a JWT **ID Token** from **Azure AD**.
-- Users can only sign in with work or school accounts that are in this application's Azure AD tenant.
-- The **ID Token** contains claims that are to verify the user's identity and access rights.
+1. A `confidential client` web application hosted on Azure App Service uses **MSAL for Python** to sign in users to their own tenant and obtains an [ID Token](https://docs.microsoft.com/azure/active-directory/develop/id-tokens) from **Azure AD**:
+2. The **ID Token** proves that a user has successfully authenticated with this tenant.
+3. The web application protects one of its routes according to user's authentication status.
 
 ![Overview](./ReadmeFiles/sign-in.png)
 
@@ -35,54 +34,53 @@ This sample demonstrates how to deploy a Python Flask web application to **Azure
 Recommended, though not strictly necessary if not running the sample locally as well:
 
 - [Python 3.8](https://www.python.org/downloads/)
-- A virtual environment to install packages listed in [requirements.txt](requirements.txt)
+- A virtual environment to install packages in
 
 ## Setup
 
-Follow the setup instructions in [flask webapp authentication (my tenant)](https://github.com/azure-samples/ms-identity-python-flask-webapp-authentication) sample.
+Follow the setup instructions in [Flask webapp authentication (my tenant)](https://github.com/azure-samples/ms-identity-python-flask-webapp-authentication) sample or another Flask sample of your choosing from [Microsoft Identity Flask Tutorial)](https://github.com/azure-samples/ms-identity-python-flask-tutorial).
 
 ## Registration
 
 ### Register the web app 
 
-Use the same app registration credentials that you used when completing the [flask webapp my tenant authentication](https://github.com/azure-samples/ms-identity-python-flask-webapp-authentication) sample. If you have not completed that sample yet, use the instructions in that sample to proceed.
+Use Azure AD app registration and matching sample that that you have completed previously.
+If you have not completed a sample yet, we recommend you proceed to complete [flask webapp authentication (my tenant)](https://github.com/azure-samples/ms-identity-python-flask-webapp-authentication) sample and use the app registration from it.
 
 ## Deployment
 
-There just **two** main stages that you will need to complete in order to deploy your project and enable authentication:
+In order to get your deployed app fully functional, you must:
+1. Deploy your project to **Azure App Service** and obtain a published website in the form of `https://example-domain.azurewebsites.net.`
+1. Update your **Azure AD App Registration**'s redirect URIs to include the redirect URI of your deployed Flask application from the **Azure Portal**.
 
-1. Upload your project to **Azure App Service** and obtain a published website like `https://example-domain.azurewebsites.net.`
-1. Add your published app's redirect URIs to **Azure AD** **App Registration** redirect URIs.
+### 1. Deploy the web app
 
-### Deploy the web app (Flask Authentication)
+This guide is for deployment to **Azure App Service** via **VS Code Azure Tools Extension**.
 
-There are various ways to deploy your applications to **Azure App Service**. This sample provides steps for deployment via **VS Code Azure Tools Extension**. For more alternatives, visit: [Static website hosting in Azure Storage](https://docs.microsoft.com/azure/storage/blobs/storage-blob-static-website#uploading-content).
+> You may watch the first 3 minutes of this [video tutorial](https://www.youtube.com/watch?v=dNVvFttc-sA) offered by Microsoft Dev Radio to get a video walk through of app deployment with VS Code.
 
-> You may watch the first 3 minutes of this [video tutorial](https://www.youtube.com/watch?v=dNVvFttc-sA) offered by Microsoft Dev Radio for Pycon 2020 in preparation.
+#### Tutorial: Deploy your app to Azure App Service
 
-#### Step 1: Deploy your app
+- Follow the instructions in steps 1, 2, 3 and 5 in the official [Microsoft docs Python deployment tutorial](https://docs.microsoft.com/en-us/azure/developer/python/tutorial-deploy-app-service-on-linux-01).
 
-Follow the instructions in steps 1 through five in the official [Microsoft docs Python deployment tuorial](https://docs.microsoft.com/en-us/azure/developer/python/tutorial-deploy-app-service-on-linux-01).
+- Work with the [flask webapp authentication (my tenant)](https://github.com/azure-samples/ms-identity-python-flask-webapp-authentication) sample or your own chosen Flask sample instead of the sample listed in the tutorial.
 
-Work with the [flask webapp authentication (my tenant)](https://github.com/azure-samples/ms-identity-python-flask-webapp-authentication) sample rather than the example sample listed in the document.
+- Disable App Service's default authentication:
+    
+    Navigate to the **Azure App Service** Portal and locate your project. Once you do, click on the **Authentication/Authorization** blade. There, make sure that the **App Services Authentication** is switched off (and nothing else is checked), as thie sample is using MSAL for authentication.
 
-#### Step 2: Disable default authentication
-
-Now you need to navigate to the **Azure App Service** Portal, and locate your project there. Once you do, click on the **Authentication/Authorization** blade. There, make sure that the **App Services Authentication** is switched off (and nothing else is checked), as we are using **our own** authentication logic.  
-
-![disable_easy_auth](./ReadmeFiles/disable_easy_auth.png)
-
-#### Step 2: Update the client app's authentication parameters
-
-1. Navigate back to to the [Azure Portal](https://portal.azure.com).
-1. In the left-hand navigation pane, select the **Azure Active Directory** service, and then select **App registrations**.
-1. In the resulting screen, select the name of your application.
-1. From the *Branding* menu, update the **Home page URL**, to the address of your service, for example `https://example.azurewebsites.net/`. Save the configuration.
-1. Append the redirect endpoint to this URI and add it to the list of values of the *Authentication -> Redirect URIs* menu. If you have multiple redirect URIs, make sure that there a new entry using the App service's URI for each redirect URI.
+    ![disable_easy_auth](./ReadmeFiles/disable_easy_auth.png)
 
 
-## Explore the sample
+### Step 2: Update your Azure AD App Registration
 
+- Navigate to the home page of your deployed app; take note of and copy the **redirect_uri** displayed on the home page.
+- Navigate back to to the [Azure Portal](https://portal.azure.com).
+- In the left-hand navigation pane, select the **Azure Active Directory** service, and then select **App registrations**.
+- In the resulting screen, select the name of your application.
+- In the Authentication blade, paste the URI you copied earlier from your deployed app instance. If the app had multiple redirect URIs, make sure to add new corresponding entries using the App service's full domain in lieu of `127.0.0.1` for each redirect URI. Save the configuration.
+- From the *Branding* menu, update the **Home page URL**, to the address of your service, for example `https://example-domain.azurewebsites.net/`. Save the configuration.
+- You're done! Try navigating to the hosted app!
 
 
 ## We'd love your feedback!
