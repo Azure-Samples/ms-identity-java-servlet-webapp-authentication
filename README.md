@@ -53,13 +53,11 @@ In order to get your deployed app fully functional, you must:
 1. Deploy your project to **Azure App Service** and obtain a published website in the form of `https://example-domain.azurewebsites.net.`
 1. Update your **Azure AD App Registration**'s redirect URIs to include the redirect URI of your deployed Flask application from the **Azure Portal**.
 
-### 1. Deploy the web app
+### Step 1: Deploy the web app
 
 This guide is for deployment to **Azure App Service** via **VS Code Azure Tools Extension**.
 
 > You may watch the first 3 minutes of this [video tutorial](https://www.youtube.com/watch?v=dNVvFttc-sA) offered by Microsoft Dev Radio to get a video walk through of app deployment with VS Code.
-
-#### Tutorial: Deploy your app to Azure App Service
 
 - Follow the instructions in steps 1, 2, 3 and 5 in the official [Microsoft docs Python deployment tutorial](https://docs.microsoft.com/en-us/azure/developer/python/tutorial-deploy-app-service-on-linux-01).
 
