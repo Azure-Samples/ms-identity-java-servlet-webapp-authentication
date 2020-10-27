@@ -50,14 +50,21 @@ If you have not completed a sample yet, we recommend you proceed to complete [fl
 ## Deployment
 
 In order to get your deployed app fully functional, you must:
+1. Prepare the web app for deployment.
 1. Deploy your project to **Azure App Service** and obtain a published website in the form of `https://example-domain.azurewebsites.net.`
 1. Update your **Azure AD App Registration**'s redirect URIs to include the redirect URI of your deployed Flask application from the **Azure Portal**.
 
-### Step 1: Deploy the web app
+### Step 1: Prepare the web app for deployment
 
-This guide is for deployment to **Azure App Service** via **VS Code Azure Tools Extension**.
+- If you are using the recommended Flask sample or one of the tutorial samples, please go to the `app.py` file and read the instructions above the `raise NotImplementedError(...)` section. Follow the instructions therein. Once you are sure you want to deploy your application, uncomment this line to make your app deployable.
+
+### Step 2: Deploy the web app
+
+This guide is for deploying to **Azure App Service** via **VS Code Azure Tools Extension**.
 
 > You may watch the first 3 minutes of this [video tutorial](https://www.youtube.com/watch?v=dNVvFttc-sA) offered by Microsoft Dev Radio to get a video walk through of app deployment with VS Code.
+
+- If you are following
 
 - Follow the instructions in steps 1, 2, 3 and 5 in the official [Microsoft docs Python deployment tutorial](https://docs.microsoft.com/en-us/azure/developer/python/tutorial-deploy-app-service-on-linux-01).
 
@@ -70,7 +77,7 @@ This guide is for deployment to **Azure App Service** via **VS Code Azure Tools 
     ![disable_easy_auth](./ReadmeFiles/disable_easy_auth.png)
 
 
-### Step 2: Update your Azure AD App Registration
+### Step 3: Update your Azure AD App Registration
 
 - Navigate to the home page of your deployed app; take note of and copy the **redirect_uri** displayed on the home page.
 - Navigate back to to the [Azure Portal](https://portal.azure.com).
