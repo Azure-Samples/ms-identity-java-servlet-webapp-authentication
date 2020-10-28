@@ -64,8 +64,6 @@ This guide is for deploying to **Azure App Service** via **VS Code Azure Tools E
 
 > You may watch the first 3 minutes of this [video tutorial](https://www.youtube.com/watch?v=dNVvFttc-sA) offered by Microsoft Dev Radio to get a video walk through of app deployment with VS Code.
 
-- If you are following
-
 - Follow the instructions in steps 1, 2, 3 and 5 in the official [Microsoft docs Python deployment tutorial](https://docs.microsoft.com/en-us/azure/developer/python/tutorial-deploy-app-service-on-linux-01).
 
 - Work with the [flask webapp authentication (my tenant)](https://github.com/azure-samples/ms-identity-python-flask-webapp-authentication) sample or your own chosen Flask sample instead of the sample listed in the tutorial.
