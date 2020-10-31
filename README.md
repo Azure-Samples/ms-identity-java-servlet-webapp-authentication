@@ -1,15 +1,21 @@
 # Deploy your Python applications to Azure Cloud and use Azure App Service to manage your operations
 
- 1. [Overview](#overview)
- 1. [Scenario](#scenario)
- 1. [Prerequisites](#prerequisites)
- 1. [Setup](#setup)
- 1. [Registration](#registration)
- 1. [Deployment](#deployment)
- 1. [More information](#more-information)
- 1. [Community Help and Support](#community-help-and-support)
- 1. [Contributing](#contributing)
- 1. [Code of Conduct](#code-of-conduct)
+- [Deploy your Python applications to Azure Cloud and use Azure App Service to manage your operations](#deploy-your-python-applications-to-azure-cloud-and-use-azure-app-service-to-manage-your-operations)
+  - [Overview](#overview)
+  - [Scenario](#scenario)
+  - [Prerequisites](#prerequisites)
+  - [Setup](#setup)
+  - [Registration](#registration)
+    - [Register the web app](#register-the-web-app)
+  - [Deployment](#deployment)
+    - [Step 1: Prepare the web app for deployment](#step-1-prepare-the-web-app-for-deployment)
+    - [Step 2: Deploy the web app](#step-2-deploy-the-web-app)
+    - [Step 3: Update your Azure AD App Registration](#step-3-update-your-azure-ad-app-registration)
+  - [We'd love your feedback!](#wed-love-your-feedback)
+  - [More information](#more-information)
+  - [Community Help and Support](#community-help-and-support)
+  - [Contributing](#contributing)
+  - [Code of Conduct](#code-of-conduct)
 
 ## Overview
 
@@ -26,7 +32,7 @@ This sample demonstrates how to deploy a Python Flask web application to **Azure
 ## Prerequisites
 
 - An Azure Active Directory (Azure AD) tenant. For more information on how to get an Azure AD tenant, see [How to get an Azure AD tenant](https://azure.microsoft.com/documentation/articles/active-directory-howto-tenant/)
-- A [user account](https://docs.microsoft.com/en-us/azure/active-directory/fundamentals/add-users-azure-active-directory) in your **Azure AD** tenant.
+- A [user account](https://docs.microsoft.com/azure/active-directory/fundamentals/add-users-azure-active-directory) in your **Azure AD** tenant.
 - [Visual Studio Code](https://code.visualstudio.com/download) is recommended for running and editing this sample.
 - [VS Code Azure Tools Extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode.vscode-node-azure-pack) extension is recommended for interacting with **Azure** through VS Code interface.
 - An **Azure subscription**. This sample uses the free tier of **Azure App Service**.
@@ -42,7 +48,7 @@ Follow the setup instructions in [Flask webapp authentication (my tenant)](https
 
 ## Registration
 
-### Register the web app 
+### Register the web app
 
 Use Azure AD app registration and matching sample that that you have completed previously.
 If you have not completed a sample yet, we recommend you proceed to complete [flask webapp authentication (my tenant)](https://github.com/azure-samples/ms-identity-python-flask-webapp-authentication) sample and use the app registration from it.
@@ -50,13 +56,14 @@ If you have not completed a sample yet, we recommend you proceed to complete [fl
 ## Deployment
 
 In order to get your deployed app fully functional, you must:
+
 1. Prepare the web app for deployment.
 1. Deploy your project to **Azure App Service** and obtain a published website in the form of `https://example-domain.azurewebsites.net.`
 1. Update your **Azure AD App Registration**'s redirect URIs to include the redirect URI of your deployed Flask application from the **Azure Portal**.
 
 ### Step 1: Prepare the web app for deployment
 
-- If you are using the recommended Flask sample or one of the tutorial samples, please go to the `app.py` file and read the instructions above the `raise NotImplementedError(...)` section. Follow the instructions therein. Once you are sure you want to deploy your application, uncomment this line to make your app deployable.
+- If you are using the recommended Flask sample or one of the tutorial samples, please go to the `app.py` file and read the instructions above the `raise NotImplementedError(...)` section. Follow the instructions therein. Once you are sure you want to deploy your application, remove or comment out this line to make your app deployable.
 
 ### Step 2: Deploy the web app
 
@@ -64,16 +71,15 @@ This guide is for deploying to **Azure App Service** via **VS Code Azure Tools E
 
 > You may watch the first 3 minutes of this [video tutorial](https://www.youtube.com/watch?v=dNVvFttc-sA) offered by Microsoft Dev Radio to get a video walk through of app deployment with VS Code.
 
-- Follow the instructions in steps 1, 2, 3 and 5 in the official [Microsoft docs Python deployment tutorial](https://docs.microsoft.com/en-us/azure/developer/python/tutorial-deploy-app-service-on-linux-01).
+- Follow the instructions in steps 1, 2, 3 and 5 in the official [Microsoft docs Python deployment tutorial](https://docs.microsoft.com/azure/developer/python/tutorial-deploy-app-service-on-linux-01).
 
 - Work with the [flask webapp authentication (my tenant)](https://github.com/azure-samples/ms-identity-python-flask-webapp-authentication) sample or your own chosen Flask sample instead of the sample listed in the tutorial.
 
 - Disable App Service's default authentication:
-    
-    Navigate to the **Azure App Service** Portal and locate your project. Once you do, click on the **Authentication/Authorization** blade. There, make sure that the **App Services Authentication** is switched off (and nothing else is checked), as thie sample is using MSAL for authentication.
+
+    Navigate to the **Azure App Service** Portal and locate your project. Once you do, click on the **Authentication/Authorization** blade. There, make sure that the **App Services Authentication** is switched off (and nothing else is checked), as this sample is using MSAL for authentication.
 
     ![disable_easy_auth](./ReadmeFiles/disable_easy_auth.png)
-
 
 ### Step 3: Update your Azure AD App Registration
 
@@ -85,10 +91,9 @@ This guide is for deploying to **Azure App Service** via **VS Code Azure Tools E
 - From the *Branding* menu, update the **Home page URL**, to the address of your service, for example `https://example-domain.azurewebsites.net/`. Save the configuration.
 - You're done! Try navigating to the hosted app!
 
-
 ## We'd love your feedback!
 
-<!-- Were we successful in addressing your learning objective? Consider taking a moment to [share your experience with us](https://forms.office.com/Pages/ResponsePage.aspx?id=v4j5cvGGr0GRqy180BHbR73pcsbpbxNJuZCMKN0lURpUNDVHTkg2VVhWMTNYUTZEM05YS1hSN01EOSQlQCN0PWcu). -->
+Were we successful in addressing your learning objective? Consider taking a moment to [share your experience with us](https://forms.office.com/Pages/ResponsePage.aspx?id=v4j5cvGGr0GRqy180BHbR73pcsbpbxNJuZCMKN0lURpUM0dYSFlIMzdHT0o3NlRNVFpJSzcwRVMxRyQlQCN0PWcu).
 
 ## More information
 
