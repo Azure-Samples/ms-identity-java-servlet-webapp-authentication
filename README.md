@@ -61,13 +61,13 @@ It is not secure to deploy secrets in a config file to a production application.
    1. **Azure Vault**. Use the [Azure Key Vault Secret client library for Python](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-secrets) and modify the last line in the sample as follows:
 
          ```Python
-         create_app(secure_client_credential=secret_client.get_secret("secret-name"))
+         app=create_app(secure_client_credential=secret_client.get_secret("secret-name"))
          ```
 
    1. **Environment Variables**. Modify the last line in the sample as follows:
 
          ```Python
-         create_app(secure_client_credential=os.environ.get("secret-name"))
+         app=create_app(secure_client_credential=os.environ.get("secret-name"))
          ```
 
 1. If you are sure you want to continue, proceed to [step 2](#step-2-deploy-the-web-app).
