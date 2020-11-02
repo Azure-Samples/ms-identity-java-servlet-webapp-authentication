@@ -2,7 +2,6 @@
 
 - [Deploy your Python applications to Azure Cloud and use Azure App Service to manage your operations](#deploy-your-python-applications-to-azure-cloud-and-use-azure-app-service-to-manage-your-operations)
   - [Overview](#overview)
-  - [Scenario](#scenario)
   - [Prerequisites](#prerequisites)
   - [Setup](#setup)
   - [Registration](#registration)
@@ -19,15 +18,7 @@
 
 ## Overview
 
-This sample demonstrates how to deploy a Python Flask web application to **Azure Cloud** using [Azure App Service](https://docs.microsoft.com/azure/app-service/). To do so, we will use the [code sample from flask webapp my tenant authentication](https://github.com/azure-samples/ms-identity-python-flask-webapp-authentication). You may choose to follow these steps with a different sample or your own project.
-
-## Scenario
-
-1. A `confidential client` web application hosted on Azure App Service uses **MSAL for Python** to sign in users to their own tenant and obtains an [ID Token](https://docs.microsoft.com/azure/active-directory/develop/id-tokens) from **Azure AD**:
-2. The **ID Token** proves that a user has successfully authenticated with this tenant.
-3. The web application protects one of its routes according to user's authentication status.
-
-![Overview](./ReadmeFiles/sign-in.png)
+This readme demonstrates how to deploy a Python Flask web application to **Azure Cloud** using [Azure App Service](https://docs.microsoft.com/azure/app-service/). It is recommended that the code sample from [Enable your Python Flask webapp to sign in users and call Microsoft Graph with the Microsoft identity platform](https://github.com/azure-samples/ms-identity-python-flask-webapp-call-graph) is used for deployment. You may choose to follow these steps with a different sample or your own project.
 
 ## Prerequisites
 
@@ -44,14 +35,14 @@ Recommended, though not strictly necessary if not running the sample locally as 
 
 ## Setup
 
-Follow the setup instructions in [Flask webapp authentication (my tenant)](https://github.com/azure-samples/ms-identity-python-flask-webapp-authentication) sample or another Flask sample of your choosing from [Microsoft Identity Flask Tutorial)](https://github.com/azure-samples/ms-identity-python-flask-tutorial).
+Follow the setup instructions in [Enable your Python Flask webapp to sign in users and call Microsoft Graph with the Microsoft identity platform](https://github.com/azure-samples/ms-identity-python-flask-webapp-call-graph) sample or another Flask sample of your choosing from [Microsoft Identity Flask Tutorial)](https://github.com/azure-samples/ms-identity-python-flask-tutorial).
 
 ## Registration
 
 ### Register the web app
 
-Use Azure AD app registration and matching sample that that you have completed previously.
-If you have not completed a sample yet, we recommend you proceed to complete [flask webapp authentication (my tenant)](https://github.com/azure-samples/ms-identity-python-flask-webapp-authentication) sample and use the app registration from it.
+Use an Azure AD application registration and its matching sample that that you have completed previously.
+If you have not completed a sample yet, we recommend you proceed to complete [Enable your Python Flask webapp to sign in users and call Microsoft Graph with the Microsoft identity platform](https://github.com/azure-samples/ms-identity-python-flask-webapp-call-graph) sample and use the app registration from it.
 
 ## Deployment
 
@@ -59,11 +50,27 @@ In order to get your deployed app fully functional, you must:
 
 1. Prepare the web app for deployment.
 1. Deploy your project to **Azure App Service** and obtain a published website in the form of `https://example-domain.azurewebsites.net.`
-1. Update your **Azure AD App Registration**'s redirect URIs to include the redirect URI of your deployed Flask application from the **Azure Portal**.
+1. Update your **Azure AD App Registration**'s redirect URIs from the **Azure Portal**, in order to include the redirect URI of your deployed Flask application.
 
 ### Step 1: Prepare the web app for deployment
 
-- If you are using the recommended Flask sample or one of the tutorial samples, please go to the `app.py` file and read the instructions above the `raise NotImplementedError(...)` section. Follow the instructions therein. Once you are sure you want to deploy your application, remove or comment out this line to make your app deployable.
+It is not secure to deploy secrets in a config file to a production application. To deploy your app more securely, you must:
+
+1. Supply a config file that omits secrets (i.e., `aad.config.json` that sets `"client_credential": null`)
+1. Add the secrets from a secure location such as:
+   1. **Azure Vault**. Use the [Azure Key Vault Secret client library for Python](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-secrets) and modify the last line in the sample as follows:
+
+         ```Python
+         create_app(secure_client_credential=secret_client.get_secret("secret-name"))
+         ```
+
+   1. **Environment Variables**. Modify the last line in the sample as follows:
+
+         ```Python
+         create_app(secure_client_credential=os.environ.get("secret-name"))
+         ```
+
+1. If you are sure you want to continue, proceed to [step 2](#step-2-deploy-the-web-app).
 
 ### Step 2: Deploy the web app
 
@@ -73,7 +80,7 @@ This guide is for deploying to **Azure App Service** via **VS Code Azure Tools E
 
 - Follow the instructions in steps 1, 2, 3 and 5 in the official [Microsoft docs Python deployment tutorial](https://docs.microsoft.com/azure/developer/python/tutorial-deploy-app-service-on-linux-01).
 
-- Work with the [flask webapp authentication (my tenant)](https://github.com/azure-samples/ms-identity-python-flask-webapp-authentication) sample or your own chosen Flask sample instead of the sample listed in the tutorial.
+- Work with the [Enable your Python Flask webapp to sign in users and call Microsoft Graph with the Microsoft identity platform](https://github.com/azure-samples/ms-identity-python-flask-webapp-call-graph) sample or your own chosen Flask sample instead of the sample listed in the tutorial.
 
 - Disable App Service's default authentication:
 
