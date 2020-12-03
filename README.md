@@ -58,16 +58,17 @@ It is not secure to deploy secrets in a config file to a production application.
 
 1. Supply a config file that omits secrets (i.e., `aad.config.json` that sets `"client_credential": null`)
 1. Add the secrets from a secure location such as:
-   1. **Azure Vault**. Use the [Azure Key Vault Secret client library for Python](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-secrets) and modify the last line in the sample as follows:
+   1. **Azure Vault**. Use the [Azure Key Vault Secret client library for Python](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-secrets). You must set this up after you've deployed your app in the next sections and then come back to this section. You must then set the client secret value in vault, naming it `CLIENT_SECRET` for example. Then set up the Azure key vault client in your app, and modify the last lines in the sample as follows:
 
          ```Python
-         app = create_app(secure_client_credential=secret_client.get_secret("secret-name"))
+         secret_client = "...set up your Azure Key Vault Secret client library for Python here"
+         app = create_app(secure_client_credential=secret_client.get_secret("CLIENT_SECRET"))
          ```
 
-   1. **Environment Variables**. Modify the last line in the sample as follows:
+   1. **Environment Variables** (*Azure Portal > App Services > `Your App` > Configuration*). You must set the value for `CLIENT_SECRET` after you've deployed your app in the next sections. You must then come back to this step and modify the last line in the sample as follows and then restart your app:
 
          ```Python
-         app = create_app(secure_client_credential=os.environ.get("secret-name"))
+         app = create_app(secure_client_credential=os.environ.get("CLIENT_SECRET"))
          ```
 
 1. If you are sure you want to continue, proceed to [step 2](#step-2-deploy-the-web-app).
