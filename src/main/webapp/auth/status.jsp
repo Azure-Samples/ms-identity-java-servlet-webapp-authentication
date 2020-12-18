@@ -1,4 +1,4 @@
-<jsp:useBean id="msalAuth" scope="session" class="com.microsoft.azuresamples.authenticationb2c.MsalAuthSession" />
+<jsp:useBean id="msalAuth" scope="session" class="com.microsoft.azuresamples.authentication.MsalAuthSession" />
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <div class="card">
