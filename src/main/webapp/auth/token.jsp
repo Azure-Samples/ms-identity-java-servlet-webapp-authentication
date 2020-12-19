@@ -10,7 +10,6 @@
                 <b> ${claim.key} :</b> ${claim.value} <br/>
             </c:forEach>
             Click here to see <a class="btn btn-success" href="<c:url value="./auth_sign_in_status"></c:url>">Sign-in Status</a>
-            or <a class="btn btn-success" href="<c:url value="./auth_edit_profile"></c:url>">Edit Your Profile</a>
         </p>
         <!-- <div class="card-footer"></div> -->
     </div>
