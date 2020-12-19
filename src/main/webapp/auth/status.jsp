@@ -10,7 +10,6 @@
         <p class="card-text">
             <% if (msalAuth.getAuthenticated()) { %>
                 Click here to get your <a class="btn btn-success" href="<c:url value="./auth_token_details"></c:url>">ID Token Details</a>
-                or <a class="btn btn-success" href="<c:url value="./auth_edit_profile"></c:url>">Edit Your Profile</a>
             <% } else { %>
                 Use the button on the top right to sign in.
             <% } %>
