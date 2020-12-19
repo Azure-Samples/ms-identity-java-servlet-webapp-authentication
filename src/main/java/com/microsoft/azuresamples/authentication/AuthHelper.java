@@ -34,7 +34,7 @@ public class AuthHelper {
         try {
             final IClientSecret secret = ClientCredentialFactory.createFromSecret(SECRET);
             confClientInstance = ConfidentialClientApplication.builder(CLIENT_ID, secret)
-                    .b2cAuthority(AUTHORITY).build();
+                    .authority(AUTHORITY).build();
         } catch (final Exception ex) {
             Config.logger.log(Level.SEVERE, "Failed to create Confidential Client Application.");
             throw ex;
@@ -101,14 +101,14 @@ public class AuthHelper {
                 resp.sendRedirect(HOME_PAGE);
             } else {
                 Config.logger.log(Level.INFO, "silent auth returned null result! redirecting to authorize with code");
-                redirectToAuthorizationEndpoint(req, resp, policy);
+                redirectToAuthorizationEndpoint(req, resp);
             }
 
         } catch (final Exception ex) {
             Config.logger.log(Level.WARNING, "failed silent auth with exception! redirecting to authorize with code");
             Config.logger.log(Level.WARNING, Arrays.toString(ex.getStackTrace()));
             Config.logger.log(Level.WARNING, ex.getMessage());
-            redirectToAuthorizationEndpoint(req, resp, policy);
+            redirectToAuthorizationEndpoint(req, resp);
         }
     }
 
@@ -118,7 +118,7 @@ public class AuthHelper {
         final String nonce = UUID.randomUUID().toString();
 
         final MsalAuthSession msalAuth = getMsalAuthSession(req.getSession());
-        msalAuth.setStateAndNonceAndPolicy(state, nonce);
+        msalAuth.setStateAndNonceAndPolicy(state, nonce, null);
 
         final ConfidentialClientApplication client = getConfidentialClientInstance();
         parameters = AuthorizationRequestUrlParameters.builder(REDIRECT_URI, Collections.singleton(SCOPES))
@@ -161,7 +161,7 @@ public class AuthHelper {
 
             // Get a client instance and leverage it to acquire the token:
             final ConfidentialClientApplication client = AuthHelper
-                    .getConfidentialClientInstance(policy);
+                    .getConfidentialClientInstance();
             final Future<IAuthenticationResult> future = client.acquireToken(authParams);
             final IAuthenticationResult result = future.get();
 
