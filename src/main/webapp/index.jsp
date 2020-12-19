@@ -13,7 +13,7 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <!-- <link rel="stylesheet" href="static/style.css"> -->
-    <title>Authentication: Use MSAL Java to sign in B2C users</title>
+    <title>Authentication: Use MSAL Java to sign in users in your Azure Active Directory tenant</title>
 </head>
 <body>
 
