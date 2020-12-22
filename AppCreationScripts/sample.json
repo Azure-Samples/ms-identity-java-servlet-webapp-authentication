@@ -1,0 +1,44 @@
+{
+    "Sample": {
+      "Title": "A Java Servlet Webapp to sign in users in your Azure AD tenant with the Microsoft Identity platform",
+      "Level": 100,
+      "Client": "Java Servlet Webapp",
+      "Service": "N/A",
+      "RepositoryUrl": "ms-identity-java-servlet-webapp-authentication",
+      "Endpoint": "AAD v2.0"
+    },
+    "AADApps": [
+      {
+        "Id": "webApp",
+        "Name": "java-servlet-webapp-auth-my-tenant",
+        "Kind": "WebApp",
+        "Audience": "AzureADMyOrg",
+        "PasswordCredentials": "Auto",
+        "AllowImplicitFlow": false,
+        "HomePage": "http://localhost:8080",
+        "ReplyUrls": "http://localhost:8080/ms-identity-java-servlet-webapp-authentication/auth_redirect",
+        "RequiredResourcesAccess": []
+      }
+    ],
+    "CodeConfiguration": [
+      {
+        "App": "webApp",
+        "SettingKind": "Replace",
+        "SettingFile": "\\..\\src\\main\\resources\\authentication.properties",
+        "Mappings": [
+          {
+            "key": "{enter-your-tenant-id-here}",
+            "value": "$tenantId"
+          },
+          {
+            "key": "{enter-your-client-id-here}",
+            "value": "webApp.AppId"
+          },
+          {
+            "key": "{enter-your-client-secret-here}",
+            "value": ".AppKey"
+          }
+        ]
+      }
+    ]
+  }
