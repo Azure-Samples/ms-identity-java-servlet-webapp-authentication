@@ -227,7 +227,7 @@ Function ConfigureApplications
    Write-Host "Granted permissions."
 
    # Update config file for 'webApp'
-   $configFile = $pwd.Path + "\..\aad.config.json"
+   $configFile = $pwd.Path + "\..\src\main\resources\authentication.properties"
    Write-Host "Updating the sample code ($configFile)"
    $dictionary = @{ "{enter-your-tenant-id-here}" = $tenantId;"{enter-your-client-id-here}" = $webAppAadApplication.AppId;"{enter-your-client-secret-here}" = $webAppAppKey };
    ReplaceInTextFile -configFilePath $configFile -dictionary $dictionary
