@@ -4,6 +4,7 @@ languages:
   - java
 products:
   - azure
+  - msal-java
   - azure-active-directory
   - microsoft-identity-platform
 name: Enable your Java Servlet webapp to sign in users to your Azure Active Directory tenant with the Microsoft identity platform
@@ -42,7 +43,7 @@ This sample demonstrates a Java Servlet web app that signs in users to your Azur
 
 ## Scenario
 
-1. This Web application uses the **MSAL for Java** to sign in users to their own Azure AD tenant and obtains an [ID Token](https://docs.microsoft.com/azure/active-directory/develop/id-tokens) from **Azure AD**.
+1. This web application uses the **MSAL for Java (MSAL4J)** to sign in users to their own Azure AD tenant and obtains an [ID Token](https://docs.microsoft.com/azure/active-directory/develop/id-tokens) from **Azure AD**.
 1. The **ID Token** proves that a user has successfully authenticated with this tenant.
 1. The web application protects one of its routes according to user's authentication status.
 
@@ -136,7 +137,7 @@ As a first step you'll need to:
 1. In the **Register an application page** that appears, enter your application's registration information:
    - In the **Name** section, enter a meaningful application name that will be displayed to users of the app, for example `java-servlet-webapp-auth-my-tenant`.
    - Under **Supported account types**, select **Accounts in this organizational directory only**.
-   - In the **Redirect URI (optional)** section, select **Web** in the combo-box and enter the following redirect URI: `http://localhost:8080/ms-identity-java-servlet-webapp-authentication/auth_redirect`.
+   - In the **Redirect URI** section, select **Web** in the combo-box and enter the following redirect URI: `http://localhost:8080/ms-identity-java-servlet-webapp-authentication/auth_redirect`.
 1. Select **Register** to create the application.
 1. In the app's registration screen, find and note the **Application (client) ID**. You use this value in your app's configuration file(s) later in your code.
 
@@ -197,7 +198,7 @@ Were we successful in addressing your learning objective? Consider taking a mome
 
 ## About the code
 
-This sample shows how to use **MSAL4J** to sign in users into your Azure AD tenant.
+This sample shows how to use **MSAL for Java (MSAL4J)** to sign in users into your Azure AD tenant.
 
 A **ConfidentialClientApplication** instance is created in the [AuthHelper.java](src/main/java/com/microsoft/azuresamples/authentication/AuthHelper.java) class. This object helps craft the AAD authorization URL and also helps exchange the authentication token for an access token.
 
