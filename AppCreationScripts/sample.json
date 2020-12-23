@@ -3,7 +3,6 @@
       "Title": "A Java Servlet Webapp to sign in users in your Azure AD tenant with the Microsoft Identity platform",
       "Level": 100,
       "Client": "Java Servlet Webapp",
-      "Service": "N/A",
       "RepositoryUrl": "ms-identity-java-servlet-webapp-authentication",
       "Endpoint": "AAD v2.0"
     },
@@ -15,7 +14,7 @@
         "Audience": "AzureADMyOrg",
         "PasswordCredentials": "Auto",
         "AllowImplicitFlow": false,
-        "HomePage": "http://localhost:8080",
+        "HomePage": "http://localhost:8080/ms-identity-java-servlet-webapp-authentication/index",
         "ReplyUrls": "http://localhost:8080/ms-identity-java-servlet-webapp-authentication/auth_redirect",
         "RequiredResourcesAccess": []
       }
