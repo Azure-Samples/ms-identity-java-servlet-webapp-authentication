@@ -155,10 +155,10 @@ Open the project in your IDE to configure the code.
 
 > In the steps below, "ClientID" is the same as "Application ID" or "AppId".
 
-1. Open the `aad.config.json` file
-1. Find the string `{enter-your-tenant-id-here}` and replace the existing value with your Azure AD tenant ID.
-1. Find the string `{enter-your-client-id-here}` and replace the existing value with the application ID (clientId) of the `java-servlet-webapp-auth-my-tenant` application copied from the Azure portal.
-1. Find the string `{enter-your-client-secret-here}` and replace the existing value with the key you saved during the creation of the `java-servlet-webapp-auth-my-tenant` app, in the Azure portal.
+1. Open the `./src/resources/authentication.properties` file
+2. Find the string `{enter-your-tenant-id-here}` and replace the existing value with your Azure AD tenant ID.
+3. Find the string `{enter-your-client-id-here}` and replace the existing value with the application ID (clientId) of the `java-servlet-webapp-auth-my-tenant` application copied from the Azure portal.
+4. Find the string `{enter-your-client-secret-here}` and replace the existing value with the key you saved during the creation of the `java-servlet-webapp-auth-my-tenant` app, in the Azure portal.
 
 </details>
 
