@@ -51,10 +51,15 @@ This sample demonstrates a Java Servlet web app that signs in users to your Azur
 | File/folder       | Description                                |
 |-------------------|--------------------------------------------|
 |`AppCreationScripts/`| Scripts to automatically configure Azure AD app registrations.|
-|`app.py`           | The sample app code.                       |
-|`CHANGELOG.md`     | List of changes to the sample.             |
-|`CONTRIBUTING.md`  | Guidelines for contributing to the sample. |
-|`LICENSE`          | The license for the sample.                |
+|`AuthHelper.java` | Helper functions for authentication. |
+|`Config.java` | Runs on startup and configures properties reader and logger. |
+|`authentication.properties`| Azure AD and program configuration. |
+|`AuthenticationFilter.java`| Redirects unauthenticated requests to protected resources to a 401 page. |
+|`MsalAuthSession` | Instantiated with an HttpSession, stores all MSAL related session attributes in session attribute. |
+|`____Servlet.java`    | All of the endpoints available are defined in .java classes ending in ____Servlet.java |
+|`CHANGELOG.md`    | List of changes to the sample.             |
+|`CONTRIBUTING.md` | Guidelines for contributing to the sample. |
+|`LICENSE`         | The license for the sample.                |
 
 ## Prerequisites
 
