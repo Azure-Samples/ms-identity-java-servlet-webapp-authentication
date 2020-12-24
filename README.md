@@ -13,28 +13,27 @@ description: "This sample demonstrates a Java Servlet webapp that signs in users
 ---
 # Enable your Java Servlet webapp to sign in users to your Azure Active Directory tenant with the Microsoft identity platform
 
-- [Enable your Java Servlet webapp to sign in users to your Azure Active Directory tenant with the Microsoft identity platform](#enable-your-java-servlet-webapp-to-sign-in-users-to-your-azure-active-directory-tenant-with-the-microsoft-identity-platform)
-  - [Overview](#overview)
-  - [Scenario](#scenario)
-  - [Contents](#contents)
-  - [Prerequisites](#prerequisites)
-  - [Setup](#setup)
-    - [Step 1: Clone or download this repository](#step-1-clone-or-download-this-repository)
-    - [Step 2: Install project dependencies](#step-2-install-project-dependencies)
-  - [Register the sample application(s) with your Azure Active Directory tenant](#register-the-sample-applications-with-your-azure-active-directory-tenant)
-    - [Choose the Azure AD tenant where you want to create your applications](#choose-the-azure-ad-tenant-where-you-want-to-create-your-applications)
-    - [Register the webapp (java-servlet-webapp-auth-my-tenant)](#register-the-webapp-java-servlet-webapp-auth-my-tenant)
-    - [Configure the webapp (java-servlet-webapp-auth-my-tenant) to use your app registration](#configure-the-webapp-java-servlet-webapp-auth-my-tenant-to-use-your-app-registration)
-  - [Running the sample](#running-the-sample)
-  - [Explore the sample](#explore-the-sample)
-  - [We'd love your feedback!](#wed-love-your-feedback)
-  - [About the code](#about-the-code)
-    - [Step-by-step walkthrough](#step-by-step-walkthrough)
-  - [Next Steps or Deploy to Azure](#next-steps-or-deploy-to-azure)
-  - [Community Help and Support](#community-help-and-support)
-  - [Contributing](#contributing)
-  - [Code of Conduct](#code-of-conduct)
-  - [More information](#more-information)
+- [Overview](#overview)
+- [Scenario](#scenario)
+- [Contents](#contents)
+- [Prerequisites](#prerequisites)
+- [Setup](#setup)
+  - [Step 1: Clone or download this repository](#step-1-clone-or-download-this-repository)
+  - [Step 2: Install project dependencies](#step-2-install-project-dependencies)
+- [Register the sample application(s) with your Azure Active Directory tenant](#register-the-sample-applications-with-your-azure-active-directory-tenant)
+  - [Choose the Azure AD tenant where you want to create your applications](#choose-the-azure-ad-tenant-where-you-want-to-create-your-applications)
+  - [Register the webapp (java-servlet-webapp-auth-my-tenant)](#register-the-webapp-java-servlet-webapp-auth-my-tenant)
+  - [Configure the webapp (java-servlet-webapp-auth-my-tenant) to use your app registration](#configure-the-webapp-java-servlet-webapp-auth-my-tenant-to-use-your-app-registration)
+- [Running the sample](#running-the-sample)
+- [Explore the sample](#explore-the-sample)
+- [We'd love your feedback!](#wed-love-your-feedback)
+- [About the code](#about-the-code)
+  - [Step-by-step walkthrough](#step-by-step-walkthrough)
+- [Next Steps or Deploy to Azure](#next-steps-or-deploy-to-azure)
+- [Community Help and Support](#community-help-and-support)
+- [Contributing](#contributing)
+- [Code of Conduct](#code-of-conduct)
+- [More information](#more-information)
 
 ## Overview
 
@@ -199,12 +198,8 @@ Were we successful in addressing your learning objective? Consider taking a mome
 
 ## About the code
 
-This sample shows how to use **MSAL for Java (MSAL4J)** to sign in users into your Azure AD tenant.
+This sample shows how to use **MSAL for Java (MSAL4J)** to sign in users into your Azure AD tenant. You must add it to the project using Maven.
 
-Steps :
-
-1. TODO: add msalforJ in your web app using <whatever package manager>
-2. TODO: Talk about "The first class we'd use is called 'ConfidentialClientApplication' which will be used to blah blah..
 A **ConfidentialClientApplication** instance is created in the [AuthHelper.java](src/main/java/com/microsoft/azuresamples/authentication/AuthHelper.java) class. This object helps craft the AAD authorization URL and also helps exchange the authentication token for an access token.
 
 ```Java
@@ -226,7 +221,7 @@ In this sample, these values are read from the [authentication.properties](src/m
 
 ### Step-by-step walkthrough
 
-1. The first step of the sign-in process is to send a request to the `/authorize` endpoint on for our Azure Active Directory Tenant. Our MSAL4J `ConfidentialClientApplication` instance is leveraged to construct an authorization request URL, and our app redirects the browser to this URL [TODO: "to let the user signin"].
+1. The first step of the sign-in process is to send a request to the `/authorize` endpoint on for our Azure Active Directory Tenant. Our MSAL4J `ConfidentialClientApplication` instance is leveraged to construct an authorization request URL. Our app redirects the browser to this URL, which is where the user will sign in.
 
     ```Java
     final ConfidentialClientApplication client = getConfidentialClientInstance();
@@ -241,12 +236,12 @@ In this sample, these values are read from the [authentication.properties](src/m
     ```
 
     - **AuthorizationRequestUrlParameters**: Parameters that must be set in order to build an AuthorizationRequestUrl.
-    - **REDIRECT_URI**: Where AAD will redirect the browser (along with auth code) after collecting user credentials. TODO: mention that it has to match the one in app reg.
+    - **REDIRECT_URI**: Where AAD will redirect the browser (along with auth code) after collecting user credentials. It must match the redirect URI in the  Azure AD app registration on https://portal.azure.com
     - **SCOPES**: [Scopes](https://docs.microsoft.com/azure/active-directory/develop/access-tokens#scopes) are permissions requested by the application.
       - Normally, the three scopes `openid profile offline_access` suffice for receiving an ID Token response.
       - Full list of scopes requested by the app can be found in the [authentication.properties file](./src/main/resources/authentication.properties). You can add more scopes like User.Read and so on.
     - **ResponseMode.QUERY**: AAD can return the response as form params in an HTTP POST request or as query string params in an HTTP GET request. You'd normally leave this as-is.
-    - **Prompt.SELECT_ACCOUNT**: AAD should ask the user to select the account that they intend to authenticate against. TODO: mention link to wiki page where the values are listed.
+    - **Prompt.SELECT_ACCOUNT**: AAD should ask the user to select the account that they intend to authenticate against. The [OIDC protocol documentation](https://openid.net/specs/openid-connect-core-1_0.html#AuthRequest) lists other available options and their uses.
     - **state**: a unique variable set by the app into the session on each token request, and destroyed after receiving the corresponding AAD redirect callback. The state variable ensures that AAD requests to the [/auth_redirect endpoint](src/main/java/com/microsoft/azuresamples/authentication/AADRedirectServlet.java) are actually from AAD authorization requests originating from this app and this session, thereby preventing CSRF attacks.You'd normally leave this as-is.
     - **nonce**: a unique variable set by the app into the session on each token request, and destroyed after receiving the corresponding token. This nonce is transcribed to the resulting tokens dispensed AAD, thereby ensuring that there is no token-replay attack occurring. You'd normally leave this as-is.
 
@@ -300,7 +295,7 @@ To provide a recommendation, visit the following [User Voice page](https://feedb
 
 ## Contributing
 
-This project welcomes contributions and suggestions. Most contributions require you to agree to a Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us the rights to use your contribution. For details, visit https://cla.opensource.microsoft.com.
+This project welcomes contributions and suggestions. Most contributions require you to agree to a Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us the rights to use your contribution. For details, visit https://cla.opensource.microsoft.com
 
 ## Code of Conduct
 
@@ -309,7 +304,7 @@ This project has adopted the Microsoft Open Source Code of Conduct. For more inf
 ## More information
 
 - [Microsoft Authentication Library \(MSAL\) for Java](https://github.com/AzureAD/microsoft-authentication-library-for-java)
-- [MSAL Java ReadTheDocs](https://msal-java.readthedocs.io/en/latest/)
+- [MSAL Java Reference Documentation](http://javadoc.io/doc/com.microsoft.azure/msal4j)
 - [Microsoft identity platform (Azure Active Directory for developers)](https://docs.microsoft.com/azure/active-directory/develop/)
 - [Quickstart: Register an application with the Microsoft identity platform (Preview)](https://docs.microsoft.com/azure/active-directory/develop/quickstart-register-app)
 - [Understanding Azure AD application consent experiences](https://docs.microsoft.com/azure/active-directory/develop/application-consent-experience)
