@@ -9,6 +9,10 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * Loads properties file when the servlet starts.
+ * MSAL Java apps using this sample repo's paradigm will require this.
+ */
 @WebListener
 public class Config implements ServletContextListener {
     public static Logger logger = Logger.getLogger("Logger");

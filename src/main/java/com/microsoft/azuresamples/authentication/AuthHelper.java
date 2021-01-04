@@ -16,6 +16,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+/**
+ * This class contains almost all of our authentication logic
+ * MSAL Java apps using this sample repo's paradigm will require this.
+ */
 public class AuthHelper {
     static final String AUTHORITY = Config.getProperty("aad.authority");
     static final String CLIENT_ID = Config.getProperty("aad.clientId");
