@@ -1,8 +1,8 @@
 {
     "Sample": {
-      "Title": "A Java Servlet Webapp to sign in users in your Azure AD tenant with the Microsoft Identity platform",
+      "Title": "Enable your Java Servlet web app to sign in users to your Azure Active Directory tenant with the Microsoft identity platform",
       "Level": 100,
-      "Client": "Java Servlet Webapp",
+      "Client": "Java Servlet web app",
       "RepositoryUrl": "ms-identity-java-servlet-webapp-authentication",
       "Endpoint": "AAD v2.0"
     },
