@@ -7,6 +7,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+/**
+ * This class defines a page for showing the user their sign in status
+ * This is here only for sample demonstration purposes.
+ */
 @WebServlet(name = "HomePageServlet", urlPatterns = "/index")
 public class HomePageServlet extends HttpServlet {
     

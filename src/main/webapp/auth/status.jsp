@@ -12,6 +12,7 @@
                 Click here to get your <a class="btn btn-success" href="<c:url value="./auth_token_details"></c:url>">ID Token Details</a>
             <% } else { %>
                 Use the button on the top right to sign in.
+                Attempts to get your <a href="<c:url value="./auth_token_details"></c:url>">ID Token Details</a> will result in a 401 error.
             <% } %>
         </p>
         <!-- <div class="card-footer"></div> -->

@@ -9,6 +9,10 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.logging.Level;
 
+/**
+ * This class defines the endpoint for processing the redirect from AAD
+ * MSAL Java apps using this sample repo's paradigm will require this.
+ */
 @WebServlet(name = "AADRedirectServlet", urlPatterns = "/auth_redirect")
 public class AADRedirectServlet extends HttpServlet {
     
