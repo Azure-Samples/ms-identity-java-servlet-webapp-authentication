@@ -7,11 +7,11 @@ products:
   - msal-java
   - azure-active-directory
   - microsoft-identity-platform
-name: Enable your Java Servlet webapp to sign in users to your Azure Active Directory tenant with the Microsoft identity platform
+name: Enable your Java Servlet web app to sign in users to your Azure Active Directory tenant with the Microsoft identity platform
 urlFragment: ms-identity-java-servlet-webapp-authentication
-description: "This sample demonstrates a Java Servlet webapp that signs in users to your Azure AD tenant with the Microsoft identity platform"
+description: "This sample demonstrates a Java Servlet web app that signs in users to your Azure AD tenant with the Microsoft identity platform"
 ---
-# Enable your Java Servlet webapp to sign in users to your Azure Active Directory tenant with the Microsoft identity platform
+# Enable your Java Servlet web app to sign in users to your Azure Active Directory tenant with the Microsoft identity platform
 
 - [Overview](#overview)
 - [Scenario](#scenario)
@@ -22,8 +22,8 @@ description: "This sample demonstrates a Java Servlet webapp that signs in users
   - [Step 2: Install project dependencies](#step-2-install-project-dependencies)
 - [Register the sample application(s) with your Azure Active Directory tenant](#register-the-sample-applications-with-your-azure-active-directory-tenant)
   - [Choose the Azure AD tenant where you want to create your applications](#choose-the-azure-ad-tenant-where-you-want-to-create-your-applications)
-  - [Register the webapp (java-servlet-webapp-auth-my-tenant)](#register-the-webapp-java-servlet-webapp-auth-my-tenant)
-  - [Configure the webapp (java-servlet-webapp-auth-my-tenant) to use your app registration](#configure-the-webapp-java-servlet-webapp-auth-my-tenant-to-use-your-app-registration)
+  - [Register the web app (java-servlet-webapp-auth-my-tenant)](#register-the-web-app-java-servlet-webapp-auth-my-tenant)
+  - [Configure the web app (java-servlet-webapp-auth-my-tenant) to use your app registration](#configure-the-web-app-java-servlet-webapp-auth-my-tenant-to-use-your-app-registration)
 - [Running the sample](#running-the-sample)
 - [Explore the sample](#explore-the-sample)
 - [We'd love your feedback!](#wed-love-your-feedback)
@@ -130,7 +130,7 @@ As a first step you'll need to:
 1. Sign in to the [Azure portal](https://portal.azure.com).
 1. If your account is present in more than one Azure AD tenant, select your profile at the top right corner in the menu on top of the page, and then **switch directory** to change your portal session to the desired Azure AD tenant.
 
-### Register the webapp (java-servlet-webapp-auth-my-tenant)
+### Register the web app (java-servlet-webapp-auth-my-tenant)
 
 1. Navigate to the Microsoft identity platform for developers [App registrations](https://go.microsoft.com/fwlink/?linkid=2083908) page.
 1. Select **New registration**.
@@ -150,7 +150,7 @@ As a first step you'll need to:
    - The generated key value will be displayed when you click the **Add** button. Copy the generated value for use in the steps later.
    - You'll need this key later in your code's configuration files. This key value will not be displayed again, and is not retrievable by any other means, so make sure to note it from the Azure portal before navigating to any other screen or blade.
 
-### Configure the webapp (java-servlet-webapp-auth-my-tenant) to use your app registration
+### Configure the web app (java-servlet-webapp-auth-my-tenant) to use your app registration
 
 Open the project in your IDE to configure the code.
 
@@ -165,7 +165,7 @@ Open the project in your IDE to configure the code.
 
 ## Running the sample
 
-1. Make certain that your Tomcat server is running and you have privileges to deploy a webapp to it.
+1. Make certain that your Tomcat server is running and you have privileges to deploy a web app to it.
 1. Make certain that it serves the web app on `http://localhost:8080` (or change the base addresses listed in the [authentication.properties](src/main/resources/authentication.properties) file and in the AAD app registration).
 1. Compile and package the project using **Maven**:
 
