@@ -7,6 +7,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * This class defines all auth-related session properties that are required
+ * MSAL Java apps using this sample repo's paradigm will require this.
+ */
 public class MsalAuthSession implements Serializable {
     private static final long serialVersionUID = 2L;
     public static final String SESSION_KEY = "msalAuth";

@@ -12,6 +12,11 @@ import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+/**
+ * This class implements filters
+ * All incoming requests go through this.
+ * We don't do much here except we redirect unauthorized clients away from protected routes
+ */
 @WebFilter(filterName = "AuthenticationFilter", urlPatterns = "/*")
 public class AuthenticationFilter implements Filter {
 
