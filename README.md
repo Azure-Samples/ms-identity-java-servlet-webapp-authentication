@@ -57,13 +57,24 @@ In order to get your deployed app fully functional, you must:
 
 1. Open the VSCode command palette (ctrl+shift+P on Windows and command+shift+P on Mac).
 1. Choose  `Azure App Service: Create New Web App...`
-1. Enter a globally unique name for your web app (e.g. `example-domain`) and press enter. Make a note of this name.
+1. Enter a globally unique name for your web app (e.g. `example-domain`) and press enter. Make a note of this name. If you chose `example-domain` for your app name, your app's domain name will be `https://example-domain.azurewebsites.net`
 1. Select `Java 11` for your runtime stack.
 1. Select `Tomcat 9.0` for your Java web server stack.
 
 ### Step 2: Prepare the web app for deployment
 
-You **may skip this step** if you are doing a test deployment with a development Azure Active Directory App registration that does not have any sensitive data. **It is not secure to deploy secrets in a config file to a production application**. To deploy your app more securely, you must:
+You must first modify the configuration files in your application.
+- Go to `src/main/resources/authentication.properties` and note the values for `app.redirectUri` and `app.homePage`.
+- The values are prefixed with `http://localhost:8080/ms-identity-java-servlet-webapp-authentication` by default. You must replace this prefix with your app's full domain name. For example, if you chose `example-domain` for your app name in [Step 1: Create a new app on Azure App Service](#step-1-create-a-new-app-on-azure-app-service), you must now substitute the prefixes with  `https://example-domain.azurewebsites.net`. Be sure that you have also changed the protocol from `http` to `https`.
+
+```text
+// the correct format for the values is as follows:
+app.redirectUri=https://example-domain.azurewebsites.net/auth_redirect
+...
+app.homePage=https://example-domain.azurewebsites.net/index
+```
+
+You **may skip the rest of this step** if you are doing a test deployment with a development Azure Active Directory App registration that does not have any sensitive data. **It is not secure to deploy secrets in a config file to a production application**. To deploy your app more securely, you must:
 
 1. Supply a config file that omits secrets (i.e., `authentication.properties` that does not contain `aad.secret` and its value)
 1. After you've deployed your app in the next sections, come back and add the secrets from a secure location such as:
