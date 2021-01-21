@@ -55,10 +55,10 @@ This sample demonstrates a Java Servlet web app that signs in users to your Azur
 |`src/main/java/com/microsoft/azuresamples/callgraph`| This directory contains the classes that define the web app's backend business logic. |
 |`AuthHelper.java` | Helper functions for authentication. |
 |`Config.java` | Runs on startup and configures properties reader and logger. |
-|`authentication.properties`| Azure AD and program configuration. |
 |`AuthenticationFilter.java`| Redirects unauthenticated requests to protected endpoints to a 401 page. |
 |`MsalAuthSession` | Instantiated with an HttpSession, stores all MSAL related session attributes in session attribute. |
 |`____Servlet.java`    | All of the endpoints available are defined in .java classes ending in ____Servlet.java |
+|`src/main/resources/authentication.properties`| Azure AD and program configuration. |
 |`src/main/webapp` | This directory contains the UI (JSP templates |)
 |`CHANGELOG.md`    | List of changes to the sample.             |
 |`CONTRIBUTING.md` | Guidelines for contributing to the sample. |
