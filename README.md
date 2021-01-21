@@ -105,6 +105,7 @@ This guide is for deploying to **Azure App Service** via **VS Code Azure Tools E
     1. Click `Browse...`.
     1. Navigate to the directory in which your copy of the sample in question is located. Now continue to the `target` directory therein. You should see a file with a .WAR extension. Choose this file for deployment.
     1. Select the web app that you created in [Step 1: Create a new app on Azure App Service](#step-1-create-a-new-app-on-azure-app-service) (e.g., `example-domain`)
+    1. Choose the default port (`8080`) if you are asked to choose a port.
     1. Choose `Deploy` if there is a warning that the deployment will overwrite an existing deployment to this web app.
 1. The deployment should be finished in a few minutes. A status message will appear at the bottom right of your VSCode window.You will be notified when the deployment completes.
 
