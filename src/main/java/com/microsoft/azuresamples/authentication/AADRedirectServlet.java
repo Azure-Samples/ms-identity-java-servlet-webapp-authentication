@@ -13,7 +13,7 @@ import java.util.logging.Level;
  * This class defines the endpoint for processing the redirect from AAD
  * MSAL Java apps using this sample repo's paradigm will require this.
  */
-@WebServlet(name = "AADRedirectServlet", urlPatterns = "/auth_redirect")
+@WebServlet(name = "AADRedirectServlet", urlPatterns = "/auth/redirect" )
 public class AADRedirectServlet extends HttpServlet {
     
     @Override
@@ -22,7 +22,7 @@ public class AADRedirectServlet extends HttpServlet {
         try {
             AuthHelper.processAADCallback(req, resp);
         } catch (Exception e) {
-            Config.logger.log(Level.WARNING, "Unable to process getting token by Auth Code: /auth_redirect endpoint");
+            Config.logger.log(Level.WARNING, "Unable to process getting token by Auth Code: /auth/redirect endpoint");
             Config.logger.log(Level.WARNING, e.getMessage());
             Config.logger.log(Level.FINEST, Arrays.toString(e.getStackTrace()));
             

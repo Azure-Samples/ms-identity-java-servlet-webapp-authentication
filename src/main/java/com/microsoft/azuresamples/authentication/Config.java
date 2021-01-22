@@ -18,10 +18,12 @@ public class Config implements ServletContextListener {
     public static Logger logger = Logger.getLogger("Logger");
     private static Properties props = Config.instantiateProperties();
 
+    public static final String REDIRECT = getProperty("app.redirectEndpoint");
+
     @Override
     public void contextInitialized(final ServletContextEvent event) {
         Config.logger.setLevel(Level.FINEST);
-        Config.logger.log(Level.INFO, "APPLICATION IS RUNNING ON http://SERVER-IP:PORT{0}/index",
+        Config.logger.log(Level.INFO, "APPLICATION IS RUNNING ON http://SERVER-IP:PORT{0}/",
                 event.getServletContext().getContextPath());
     }
 
