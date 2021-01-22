@@ -15,7 +15,7 @@ import java.util.List;
  * This class defines a page for showing the user their token details
  * This is here only for sample demonstration purposes.
  */
-@WebServlet(name = "TokenDetailsServlet", urlPatterns = "/auth_token_details")
+@WebServlet(name = "TokenDetailsServlet", urlPatterns = "/token_details")
 public class TokenDetailsServlet extends HttpServlet {
 
     @Override

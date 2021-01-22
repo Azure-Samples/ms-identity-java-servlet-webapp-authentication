@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletResponse;
  * This class defines the endpoint for processing sign in
  * MSAL Java apps using this sample repo's paradigm will require this.
  */
-@WebServlet(name = "SignInServlet", urlPatterns = "/auth_sign_in")
+@WebServlet(name = "SignInServlet", urlPatterns = "/auth/sign_in")
 public class SignInServlet extends HttpServlet {
 
     @Override

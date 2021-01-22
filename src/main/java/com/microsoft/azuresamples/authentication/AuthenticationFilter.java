@@ -32,8 +32,8 @@ public class AuthenticationFilter implements Filter {
 
         MsalAuthSession msalAuth = MsalAuthSession.getMsalAuthSession(request.getSession());
 
-        // send 401 for unauthorized access to auth_token_details endpoint
-        if (request.getRequestURI().contains("auth_token_details") && !msalAuth.getAuthenticated()) {
+        // send 401 for unauthorized access to token_details endpoint
+        if (request.getRequestURI().contains("token_details") && !msalAuth.getAuthenticated()) {
             req.setAttribute("bodyContent", "auth/401.jsp");
             final RequestDispatcher view = request.getRequestDispatcher("index.jsp");
             view.forward(request, response);
