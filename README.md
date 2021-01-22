@@ -51,13 +51,15 @@ This sample demonstrates a Java Servlet web app that signs in users to your Azur
 
 | File/folder       | Description                                |
 |-------------------|--------------------------------------------|
-|`AppCreationScripts/`| Scripts to automatically configure Azure AD app registrations.|
+|`AppCreationScripts/`| Scripts to automatically configure Azure AD app registrations. |
+|`src/main/java/com/microsoft/azuresamples/authentication/`| This directory contains the classes that define the web app's backend business logic. |
 |`AuthHelper.java` | Helper functions for authentication. |
 |`Config.java` | Runs on startup and configures properties reader and logger. |
-|`authentication.properties`| Azure AD and program configuration. |
-|`AuthenticationFilter.java`| Redirects unauthenticated requests to protected resources to a 401 page. |
+|`AuthenticationFilter.java`| Redirects unauthenticated requests to protected endpoints to a 401 page. |
 |`MsalAuthSession` | Instantiated with an HttpSession, stores all MSAL related session attributes in session attribute. |
 |`____Servlet.java`    | All of the endpoints available are defined in .java classes ending in ____Servlet.java |
+|`src/main/resources/authentication.properties`| Azure AD and program configuration. |
+|`src/main/webapp/` | This directory contains the UI (JSP templates) |
 |`CHANGELOG.md`    | List of changes to the sample.             |
 |`CONTRIBUTING.md` | Guidelines for contributing to the sample. |
 |`LICENSE`         | The license for the sample.                |
@@ -137,7 +139,7 @@ As a first step you'll need to:
 1. In the **Register an application page** that appears, enter your application's registration information:
    - In the **Name** section, enter a meaningful application name that will be displayed to users of the app, for example `java-servlet-webapp-auth-my-tenant`.
    - Under **Supported account types**, select **Accounts in this organizational directory only**.
-   - In the **Redirect URI** section, select **Web** in the combo-box and enter the following redirect URI: `http://localhost:8080/ms-identity-java-servlet-webapp-authentication/auth_redirect`.
+   - In the **Redirect URI** section, select **Web** in the combo-box and enter the following redirect URI: `http://localhost:8080/ms-identity-java-servlet-webapp-authentication/auth/redirect`.
 1. Select **Register** to create the application.
 1. In the app's registration screen, find and note the **Application (client) ID**. You use this value in your app's configuration file(s) later in your code.
 
@@ -166,17 +168,18 @@ Open the project in your IDE to configure the code.
 ## Running the sample
 
 1. Make certain that your Tomcat server is running and you have privileges to deploy a web app to it.
-1. Make certain that it serves the web app on `http://localhost:8080` (or change the base addresses listed in the [authentication.properties](src/main/resources/authentication.properties) file and in the AAD app registration).
-1. Compile and package the project using **Maven**:
+2. Make certain that your server host address is `http://localhost:8080` (or change the `app.homePage` value in your [authentication.properties](src/main/resources/authentication.properties) file and in the AAD app registration).
+3. Compile and package the project using **Maven**:
 
     ```Shell
     cd project-directory
+    mvn clean
     mvn package -f pom.xml
     ```
 
-1. Find the resulting `.war` file in `./target/ms-identity-java-servlet-webapp-authentication.war` and upload it to your server.
-1. Ensure that the context path that the app is served on is `http://localhost:8080/ms-identity-java-servlet-webapp-authentication` (or change the addresses listed in the [authentication.properties](src/main/resources/authentication.properties) file and in the AAD app registration).
-1. Open your browser and navigate to `http://localhost:8080/ms-identity-java-servlet-webapp-authentication/index`
+4. Find the resulting `.war` file in `./target/ms-identity-java-servlet-webapp-authentication.war` and deploy it to your server.
+5. Ensure that the context path that the app is served on is `/ms-identity-java-servlet-webapp-authentication` (or change the `app.homePage` value in your [authentication.properties](src/main/resources/authentication.properties) file and in the AAD app registration). If you change the properties file, you'll needs to repeat step 3 above (maven clean and package).
+6. Open your browser and navigate to `http://localhost:8080/ms-identity-java-servlet-webapp-authentication/`
 
 ![Experience](./ReadmeFiles/app.png)
 
@@ -243,7 +246,7 @@ In this sample, these values are read from the [authentication.properties](src/m
       - Full list of scopes requested by the app can be found in the [authentication.properties file](./src/main/resources/authentication.properties). You can add more scopes like User.Read and so on.
     - **ResponseMode.QUERY**: AAD can return the response as form params in an HTTP POST request or as query string params in an HTTP GET request. You'd normally leave this as-is.
     - **Prompt.SELECT_ACCOUNT**: AAD should ask the user to select the account that they intend to authenticate against. The [OIDC protocol documentation](https://openid.net/specs/openid-connect-core-1_0.html#AuthRequest) lists other available options and their uses.
-    - **state**: a unique variable set by the app into the session on each token request, and destroyed after receiving the corresponding AAD redirect callback. The state variable ensures that AAD requests to the [/auth_redirect endpoint](src/main/java/com/microsoft/azuresamples/authentication/AADRedirectServlet.java) are actually from AAD authorization requests originating from this app and this session, thereby preventing CSRF attacks.You'd normally leave this as-is.
+    - **state**: a unique variable set by the app into the session on each token request, and destroyed after receiving the corresponding AAD redirect callback. The state variable ensures that AAD requests to the [/auth/redirect endpoint](src/main/java/com/microsoft/azuresamples/authentication/AADRedirectServlet.java) are actually from AAD authorization requests originating from this app and this session, thereby preventing CSRF attacks.You'd normally leave this as-is.
     - **nonce**: a unique variable set by the app into the session on each token request, and destroyed after receiving the corresponding token. This nonce is transcribed to the resulting tokens dispensed AAD, thereby ensuring that there is no token-replay attack occurring. You'd normally leave this as-is.
 
 2. The user is presented with a sign-in prompt by Azure Active Directory. If the sign-in attempt is successful, the user's browser is redirected to our app's redirect endpoint. A valid request to this endpoint will contain an [**authorization code**](https://docs.microsoft.com/azure/active-directory/develop/v2-oauth2-auth-code-flow).

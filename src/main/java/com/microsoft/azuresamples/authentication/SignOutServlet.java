@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletResponse;
  * This class defines the endpoint for processing sign out
  * MSAL Java apps using this sample repo's paradigm will require this.
  */
-@WebServlet(name = "SignOutServlet", urlPatterns = "/auth_sign_out")
+@WebServlet(name = "SignOutServlet", urlPatterns = "/auth/sign_out")
 public class SignOutServlet extends HttpServlet {
 
     @Override
