@@ -43,9 +43,9 @@ This sample demonstrates a Java Servlet web app that signs in users to your Azur
 
 ## Scenario
 
-1. This web application uses the **MSAL for Java (MSAL4J)** to sign in users to their own Azure AD tenant and obtains an [ID Token](https://docs.microsoft.com/azure/active-directory/develop/id-tokens) from **Azure AD**.
-1. The **ID Token** proves that a user has successfully authenticated with this tenant.
-1. The web application protects one of its routes according to user's authentication status.
+1. This web application uses **MSAL for Java (MSAL4J)** to sign in users to their own Azure AD tenant and obtains an [ID Token](https://docs.microsoft.com/azure/active-directory/develop/id-tokens) from **Azure AD**.
+2. The **ID Token** proves that a user has successfully authenticated with this tenant.
+3. The web application protects one of its routes according to user's authentication status.
 
 ## Contents
 
