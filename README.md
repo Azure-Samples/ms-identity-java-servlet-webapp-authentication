@@ -7,9 +7,9 @@ products:
   - msal-java
   - azure-active-directory
   - microsoft-identity-platform
-name: Enable your Java Servlet web app to sign in users to your Azure Active Directory tenant with the Microsoft identity platform
+name: Enable your Java Servlet web app to sign in users with the Microsoft identity platform
 urlFragment: ms-identity-java-servlet-webapp-authentication
-description: "This sample demonstrates a Java Servlet web app that signs in users to your Azure AD tenant with the Microsoft identity platform"
+description: "This sample demonstrates a Java Servlet web app that signs in users with sthe Microsoft identity platform"
 ---
 # Enable your Java Servlet web app to sign in users to your Azure Active Directory tenant with the Microsoft identity platform
 
@@ -18,12 +18,10 @@ description: "This sample demonstrates a Java Servlet web app that signs in user
 - [Contents](#contents)
 - [Prerequisites](#prerequisites)
 - [Setup](#setup)
-  - [Step 1: Clone or download this repository](#step-1-clone-or-download-this-repository)
-  - [Step 2: Install project dependencies](#step-2-install-project-dependencies)
-- [Register the sample application(s) with your Azure Active Directory tenant](#register-the-sample-applications-with-your-azure-active-directory-tenant)
-  - [Choose the Azure AD tenant where you want to create your applications](#choose-the-azure-ad-tenant-where-you-want-to-create-your-applications)
-  - [Register the web app (java-servlet-webapp-auth-my-tenant)](#register-the-web-app-java-servlet-webapp-auth-my-tenant)
-  - [Configure the web app (java-servlet-webapp-auth-my-tenant) to use your app registration](#configure-the-web-app-java-servlet-webapp-auth-my-tenant-to-use-your-app-registration)
+  - [Clone or download this repository](#clone-or-download-this-repository)
+- [Register the sample application with your Azure Active Directory tenant](#register-the-sample-application-with-your-azure-active-directory-tenant)
+  - [Register the web app (java-servlet-webapp-authentication)](#register-the-web-app-java-servlet-webapp-authentication)
+  - [Configure the web app (java-servlet-webapp-authentication) to use your app registration](#configure-the-web-app-java-servlet-webapp-authentication-to-use-your-app-registration)
 - [Running the sample](#running-the-sample)
 - [Explore the sample](#explore-the-sample)
 - [We'd love your feedback!](#wed-love-your-feedback)
@@ -43,9 +41,9 @@ This sample demonstrates a Java Servlet web app that signs in users to your Azur
 
 ## Scenario
 
-1. This web application uses the **MSAL for Java (MSAL4J)** to sign in users to their own Azure AD tenant and obtains an [ID Token](https://docs.microsoft.com/azure/active-directory/develop/id-tokens) from **Azure AD**.
-1. The **ID Token** proves that a user has successfully authenticated with this tenant.
-1. The web application protects one of its routes according to user's authentication status.
+1. This web application uses **MSAL for Java (MSAL4J)** to sign in users to their own Azure AD tenant and obtains an [ID Token](https://docs.microsoft.com/azure/active-directory/develop/id-tokens) from **Azure AD**.
+2. The **ID Token** proves that a user has successfully authenticated with this tenant.
+3. The web application protects one of its routes according to user's authentication status.
 
 ## Contents
 
@@ -54,6 +52,7 @@ This sample demonstrates a Java Servlet web app that signs in users to your Azur
 |`AppCreationScripts/`| Scripts to automatically configure Azure AD app registrations. |
 |`src/main/java/com/microsoft/azuresamples/callgraph/`| This directory contains the classes that define the web app's backend business logic. |
 |`AuthHelper.java` | Helper functions for authentication. |
+|`AuthException.java` | Exception class to group auth-related errors and handle them differently. |
 |`Config.java` | Runs on startup and configures properties reader and logger. |
 |`AuthenticationFilter.java`| Redirects unauthenticated requests to protected endpoints to a 401 page. |
 |`MsalAuthSession` | Instantiated with an HttpSession, stores all MSAL related session attributes in session attribute. |
@@ -66,15 +65,17 @@ This sample demonstrates a Java Servlet web app that signs in users to your Azur
 
 ## Prerequisites
 
-- [JDK Version 8 or higher](https://jdk.java.net/14/)
+- [JDK Version 15](https://jdk.java.net/15/). This sample has been developed on Java 15 but should be compatible with some lower versions.
 - [Maven 3](https://maven.apache.org/download.cgi)
 - [Tomcat 9](https://tomcat.apache.org/download-90.cgi)
 - An Azure Active Directory (Azure AD) tenant. For more information on how to get an Azure AD tenant, see [How to get an Azure AD tenant](https://azure.microsoft.com/documentation/articles/active-directory-howto-tenant/)
-- A user account in your own Azure AD tenant. This sample will not work with a **personal Microsoft account**. If have not yet [created a user account](https://docs.microsoft.com/azure/active-directory/fundamentals/add-users-azure-active-directory) in your AD tenant yet, you should do so before proceeding.
+- A user account in your own Azure AD tenant if you want to work with **accounts in your organizational directory only** (single-tenant mode). If have not yet [created a user account](https://docs.microsoft.com/azure/active-directory/fundamentals/add-users-azure-active-directory) in your AD tenant yet, you should do so before proceeding.
+- A user account in any organization's Azure AD tenant if you want to work with **accounts in any organizational directory** (multi-tenant mode).  This sample must be modified to work with a **personal Microsoft account**. If have not yet [created a user account](https://docs.microsoft.com/azure/active-directory/fundamentals/add-users-azure-active-directory) in your AD tenant yet, you should do so before proceeding.
+- A personal Microsoft account (e.g., Xbox, Hotmail, Live, etc) if you want to work with **personal Microsoft accounts**
 
 ## Setup
 
-### Step 1: Clone or download this repository
+### Clone or download this repository
 
 From your shell or command line:
 
@@ -86,14 +87,7 @@ or download and extract the repository .zip file.
 
 > :warning: To avoid file path length limitations on Windows, clone the repository into a directory near the root of your hard drive.
 
-### Step 2: Install project dependencies
-
-```Console
-cd project-directory
-mvn install -f pom.xml
-```
-
-## Register the sample application(s) with your Azure Active Directory tenant
+## Register the sample application with your Azure Active Directory tenant
 
 There is one project in this sample. To register the app on the portal, you can:
 
@@ -101,6 +95,7 @@ There is one project in this sample. To register the app on the portal, you can:
 - or use PowerShell scripts that:
   - **automatically** creates the Azure AD applications and related objects (passwords, permissions, dependencies) for you.
   - modify the projects' configuration files.
+  - by default, the automation scripts set up an application that works with **accounts in your organizational directory only**.
 
 <details>
   <summary>Expand this section if you want to use PowerShell automation.</summary>
@@ -125,26 +120,24 @@ There is one project in this sample. To register the app on the portal, you can:
 
 </details>
 
-### Choose the Azure AD tenant where you want to create your applications
+### Register the web app (java-servlet-webapp-authentication)
 
-As a first step you'll need to:
-
-1. Sign in to the [Azure portal](https://portal.azure.com).
-1. If your account is present in more than one Azure AD tenant, select your profile at the top right corner in the menu on top of the page, and then **switch directory** to change your portal session to the desired Azure AD tenant.
-
-### Register the web app (java-servlet-webapp-auth-my-tenant)
+[Register a new web app](https://docs.microsoft.com/azure/active-directory/develop/quickstart-register-app) in the [Azure Portal](https://portal.azure.com).
+Following this guide, you must:
 
 1. Navigate to the Microsoft identity platform for developers [App registrations](https://go.microsoft.com/fwlink/?linkid=2083908) page.
 1. Select **New registration**.
 1. In the **Register an application page** that appears, enter your application's registration information:
-   - In the **Name** section, enter a meaningful application name that will be displayed to users of the app, for example `java-servlet-webapp-auth-my-tenant`.
-   - Under **Supported account types**, select **Accounts in this organizational directory only**.
+   - In the **Name** section, enter a meaningful application name that will be displayed to users of the app, for example `java-servlet-webapp-authentication`.
+   - Under **Supported account types**, select an option.
+     - Select **Accounts in this organizational directory only** if you're building an application for use only by users in your tenant (**single-tenant**).
+     - Select **Accounts in any organizational directory** if you'd like users in any Azure AD tenant to be able to use your application (**multi-tenant**).
+     - Select **Accounts in any organizational directory and personal Microsoft accounts** for the widest set of customers (**multi-tenant** that also supports Microsoft personal accounts).
+   - Select **Personal Microsoft accounts** for use only by users of personal Microsoft accounts (e.g., Hotmail, Live, Skype, Xbox accounts).
    - In the **Redirect URI** section, select **Web** in the combo-box and enter the following redirect URI: `http://localhost:8080/ms-identity-java-servlet-webapp-authentication/auth/redirect`.
 1. Select **Register** to create the application.
 1. In the app's registration screen, find and note the **Application (client) ID**. You use this value in your app's configuration file(s) later in your code.
-
 1. Select **Save** to save your changes.
-
 1. In the app's registration screen, click on the **Certificates & secrets** blade in the left to open the page where we can generate secrets and upload certificates.
 1. In the **Client secrets** section, click on **New client secret**:
    - Type a key description (for instance `app secret`),
@@ -152,16 +145,20 @@ As a first step you'll need to:
    - The generated key value will be displayed when you click the **Add** button. Copy the generated value for use in the steps later.
    - You'll need this key later in your code's configuration files. This key value will not be displayed again, and is not retrievable by any other means, so make sure to note it from the Azure portal before navigating to any other screen or blade.
 
-### Configure the web app (java-servlet-webapp-auth-my-tenant) to use your app registration
+### Configure the web app (java-servlet-webapp-authentication) to use your app registration
 
 Open the project in your IDE to configure the code.
 
 > In the steps below, "ClientID" is the same as "Application ID" or "AppId".
 
 1. Open the `./src/main/resources/authentication.properties` file
-2. Find the string `{enter-your-tenant-id-here}` and replace the existing value with your Azure AD tenant ID.
-3. Find the string `{enter-your-client-id-here}` and replace the existing value with the application ID (clientId) of the `java-servlet-webapp-auth-my-tenant` application copied from the Azure portal.
-4. Find the string `{enter-your-client-secret-here}` and replace the existing value with the key you saved during the creation of the `java-servlet-webapp-auth-my-tenant` app, in the Azure portal.
+2. Find the string `{enter-your-tenant-id-here}`. Replace the existing value with:
+    - **Your Azure AD tenant ID** if you registered your app with the **Accounts in this organizational directory only** option.
+    - The word `organizations` if you registered your app with the **Accounts in any organizational directory** option.
+    - The word `common` if you registered your app with the **Accounts in any organizational directory and personal Microsoft accounts** option.
+    - The word `consumers` if you registered your app with the **Personal Microsoft accounts** option
+3. Find the string `{enter-your-client-id-here}` and replace the existing value with the application ID (clientId) of the `java-servlet-webapp-authentication` application copied from the Azure portal.
+4. Find the string `{enter-your-client-secret-here}` and replace the existing value with the key you saved during the creation of the `java-servlet-webapp-authentication` app, in the Azure portal.
 
 </details>
 
@@ -174,7 +171,7 @@ Open the project in your IDE to configure the code.
     ```Shell
     cd project-directory
     mvn clean
-    mvn package -f pom.xml
+    mvn package
     ```
 
 4. Find the resulting `.war` file in `./target/ms-identity-java-servlet-webapp-authentication.war` and deploy it to your server.

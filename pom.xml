@@ -10,22 +10,7 @@
     <packaging>war</packaging>
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
-        <!-- <maven.tomcat.url>http://localhost:8080/manager/text</maven.tomcat.url> -->
     </properties>
-    
-
-    <!-- <profiles>
-        <profile>
-            <id>java-servlet-webapp-auth</id>
-            <properties>
-                <server-url>http://localhost:8080/manager/text</server-url>
-                <deploy-path>/ms-identity-java-servlet-webapp-authentication</deploy-path>
-                <deploy-un>azure-samples</deploy-un>
-                <deploy-pw>azure-samples</deploy-pw>
-            </properties>
-        </profile>
-    </profiles> -->
 
     <dependencies>
         <dependency>
@@ -64,24 +49,12 @@
     </dependencies>
 
     <build>
-    <!-- <resources>
-        <resource>
-            <directory>src/main</directory>
-        </resource>
-    </resources> -->
         <finalName>ms-identity-java-servlet-webapp-authentication</finalName>
-
         <plugins>
             <plugin>
                 <groupId>org.apache.tomcat.maven</groupId>
                 <artifactId>tomcat7-maven-plugin</artifactId>
                 <version>2.2</version>
-<!--                <configuration>-->
-<!--                    <url>${server-url}</url>-->
-<!--                    <path>${deploy-path}</path>-->
-<!--                    <username>${deploy-un}</username>-->
-<!--                    <password>${deploy-pw}</password>-->
-<!--                </configuration>-->
                 <configuration>
                     <url>http://localhost:8080/manager/text</url>
                     <path>/ms-identity-java-servlet-webapp-authentication</path>
