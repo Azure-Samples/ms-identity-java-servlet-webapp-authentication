@@ -7,9 +7,11 @@
         <!-- <h5 class="card-title"></h5> -->
         <p class="card-text">
             <c:forEach items="${claims}" var="claim">
-                <b> ${claim.key} :</b> ${claim.value} <br/>
+                <strong>${claim.key}:</strong> ${claim.value}
+                <br>
             </c:forEach>
-            Click here to see <a class="btn btn-success" href="<c:url value="./sign_in_status"></c:url>">Sign-in Status</a>
+            <br>
+            Click here to see your <a class="btn btn-success" href="<c:url value="./sign_in_status"></c:url>">Sign-in Status</a>
         </p>
         <!-- <div class="card-footer"></div> -->
     </div>
