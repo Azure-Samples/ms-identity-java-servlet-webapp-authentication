@@ -1,9 +1,11 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 package com.microsoft.azuresamples.authentication;
 
 import java.io.IOException;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
@@ -21,11 +23,6 @@ import javax.servlet.http.HttpServletResponse;
 public class AuthenticationFilter implements Filter {
 
     @Override
-    public void init(FilterConfig config) throws ServletException {
-        //
-    }
-
-    @Override
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws ServletException, IOException {
         HttpServletRequest request = (HttpServletRequest) req;
         HttpServletResponse response = (HttpServletResponse) res;
@@ -40,10 +37,5 @@ public class AuthenticationFilter implements Filter {
         } else {
             chain.doFilter(req, res);
         }
-    }
-
-    @Override
-    public void destroy() {
-        //
     }
 }
