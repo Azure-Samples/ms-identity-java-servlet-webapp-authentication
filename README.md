@@ -174,7 +174,8 @@ Open the project in your IDE to configure the code.
     mvn package
     ```
 
-4. Find the resulting `.war` file in `./target/ms-identity-java-servlet-webapp-authentication.war` and deploy it to your server.
+4. Find the resulting `.war` file in `./target/ms-identity-java-servlet-webapp-authentication.war` and deploy it to Tomcat or any other J2EE container solution.
+     - To deploy to Tomcat, copy this `.war` file to the `/webapps/` directory in your Tomcat installation directory and start the Tomcat server.
 5. Ensure that the context path that the app is served on is `/ms-identity-java-servlet-webapp-authentication` (or change the `app.homePage` value in your [authentication.properties](src/main/resources/authentication.properties) file and in the AAD app registration). If you change the properties file, you'll needs to repeat step 3 above (maven clean and package).
 6. Open your browser and navigate to `http://localhost:8080/ms-identity-java-servlet-webapp-authentication/`
 
