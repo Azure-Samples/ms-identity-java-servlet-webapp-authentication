@@ -59,7 +59,7 @@ This sample demonstrates a Java Servlet web app that signs in users to your Azur
 |`MsalAuthSession` | Instantiated with an HttpSession, stores all MSAL related session attributes in session attribute. |
 |`____Servlet.java`    | All of the endpoints available are defined in .java classes ending in ____Servlet.java |
 |`src/main/resources/authentication.properties`| Azure AD and program configuration. |
-|`src/main/webapp/` | This directory contains the UI (JSP templates |)
+|`src/main/webapp/` | This directory contains the UI (JSP templates) |
 |`CHANGELOG.md`    | List of changes to the sample.             |
 |`CONTRIBUTING.md` | Guidelines for contributing to the sample. |
 |`LICENSE`         | The license for the sample.                |
@@ -168,17 +168,18 @@ Open the project in your IDE to configure the code.
 ## Running the sample
 
 1. Make certain that your Tomcat server is running and you have privileges to deploy a web app to it.
-1. Make certain that it serves the web app on `http://localhost:8080` (or change the base addresses listed in the [authentication.properties](src/main/resources/authentication.properties) file and in the AAD app registration).
-1. Compile and package the project using **Maven**:
+2. Make certain that your server host address is `http://localhost:8080` (or change the `app.homePage` value in your [authentication.properties](src/main/resources/authentication.properties) file and in the AAD app registration).
+3. Compile and package the project using **Maven**:
 
     ```Shell
     cd project-directory
+    mvn clean
     mvn package -f pom.xml
     ```
 
-1. Find the resulting `.war` file in `./target/ms-identity-java-servlet-webapp-authentication.war` and upload it to your server.
-1. Ensure that the context path that the app is served on is `http://localhost:8080/ms-identity-java-servlet-webapp-authentication` (or change the addresses listed in the [authentication.properties](src/main/resources/authentication.properties) file and in the AAD app registration).
-1. Open your browser and navigate to `http://localhost:8080/ms-identity-java-servlet-webapp-authentication/index`
+4. Find the resulting `.war` file in `./target/ms-identity-java-servlet-webapp-authentication.war` and deploy it to your server.
+5. Ensure that the context path that the app is served on is `/ms-identity-java-servlet-webapp-authentication` (or change the `app.homePage` value in your [authentication.properties](src/main/resources/authentication.properties) file and in the AAD app registration). If you change the properties file, you'll needs to repeat step 3 above (maven clean and package).
+6. Open your browser and navigate to `http://localhost:8080/ms-identity-java-servlet-webapp-authentication/`
 
 ![Experience](./ReadmeFiles/app.png)
 
