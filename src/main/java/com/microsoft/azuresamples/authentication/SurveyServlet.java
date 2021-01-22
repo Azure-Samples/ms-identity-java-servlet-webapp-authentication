@@ -3,6 +3,9 @@
 
 package com.microsoft.azuresamples.authentication;
 
+import java.io.IOException;
+import java.util.logging.Level;
+
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -12,16 +15,15 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- * This class defines a page for showing the user their sign in status
- * This is also the home page.
- * This is here only for sample demonstration purposes.
+ * This class defines the endpoint for feedback
+ * It is NOT necessary for your application
  */
-@WebServlet(name = "SignInStatusServlet", urlPatterns = {"", "/index", "/sign_in_status"})
-public class SignInStatusServlet extends HttpServlet {
+@WebServlet(name = "SurveyServlet", urlPatterns = "/survey")
+public class SurveyServlet extends HttpServlet {
 
     @Override
     protected void doGet(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
-        req.setAttribute("bodyContent", "auth/status.jsp");
+        req.setAttribute("bodyContent", "auth/survey.jsp");
         final RequestDispatcher view = req.getRequestDispatcher("index.jsp");
         view.forward(req, resp);
     }

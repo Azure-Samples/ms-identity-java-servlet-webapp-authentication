@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 package com.microsoft.azuresamples.authentication;
 
 import javax.servlet.http.HttpSession;
@@ -115,6 +118,7 @@ public class MsalAuthSession implements Serializable {
         this.saveMsalAuthSession();
     }
 
+    // policy is relevant for AAD B2C apps only.
     public void setPolicy(final String policy) {
         this.policy = policy;
         this.saveMsalAuthSession();
@@ -125,6 +129,13 @@ public class MsalAuthSession implements Serializable {
         this.nonce = nonce;
         this.stateDate = new Date();
         this.policy = policy;
+        this.saveMsalAuthSession();
+    }
+
+    public void setStateAndNonce(String state, String nonce) {
+        this.state = state;
+        this.nonce = nonce;
+        this.stateDate = new Date();
         this.saveMsalAuthSession();
     }
 
