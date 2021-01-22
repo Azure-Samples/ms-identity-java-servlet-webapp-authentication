@@ -35,12 +35,12 @@ public class TokenDetailsServlet extends HttpServlet {
     private HashMap<String,String> filterClaims(HttpServletRequest request) {
         MsalAuthSession msalAuth = MsalAuthSession.getMsalAuthSession(request.getSession());
 
-        final String[] exClaims = {"iat", "exp", "nbf", "uti", "aio"};
-        final List<String> excludeClaims = Arrays.asList(exClaims);
+        final String[] claimKeys = {"sub", "aud", "ver", "iss", "name", "oid", "preferred_username", "nonce", "tid"};
+        final List<String> includeClaims = Arrays.asList(claimKeys);
 
         HashMap<String,String> filteredClaims = new HashMap<>();
         msalAuth.getIdTokenClaims().forEach((k,v) -> {
-            if (!excludeClaims.contains(k))
+            if (includeClaims.contains(k))
                 filteredClaims.put(k, v);
         });
         return filteredClaims;

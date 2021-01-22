@@ -195,7 +195,7 @@ public class AuthHelper {
         // if state is null or doesn't match or TTL expired, throw exception
         if (sessionState == null || stateFromRequest == null || !sessionState.equals(stateFromRequest)
                 || msalAuth.getStateDate().before(new Date(now.getTime() - (STATE_TTL * 1000)))) {
-            throw new AuthException("State mismatch or null or empty or expired on validateState!");
+            throw new AuthException("ValidateState() indicates state param mismatch, null, empty or expired.");
         }
         Config.logger.log(Level.INFO, "confirmed that state is valid and matches!");
         msalAuth.setState(null); // don't allow re-use of state
@@ -208,7 +208,7 @@ public class AuthHelper {
         final String errorDescription = req.getParameter("error_description");
         Config.logger.log(Level.INFO, "error description is {0}", errorDescription);
         if (error != null || errorDescription != null) {
-            throw new AuthException(String.format("%s : %s", error, errorDescription));
+            throw new AuthException(String.format("Received an error from AAD. Error: %s %nErrorDescription: %s", error, errorDescription));
         }
     }
 
@@ -235,7 +235,7 @@ public class AuthHelper {
         Config.logger.log(Level.FINE, "session nonce is: {0} \n nonce claim in token is: {1}",
                 new String[] { sessionNonce, nonceClaim });
         if (sessionNonce == null || !sessionNonce.equals(nonceClaim)) {
-            throw new AuthException("Nonce validation failed!");
+            throw new AuthException("ValidateNonce() indicates that nonce validation failed.");
 
         }
         Config.logger.log(Level.INFO, "confirmed that nonce is valid and matches!");
