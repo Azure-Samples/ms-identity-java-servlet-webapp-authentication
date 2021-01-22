@@ -15,7 +15,7 @@
         "PasswordCredentials": "Auto",
         "AllowImplicitFlow": false,
         "HomePage": "http://localhost:8080/ms-identity-java-servlet-webapp-authentication/index",
-        "ReplyUrls": "http://localhost:8080/ms-identity-java-servlet-webapp-authentication/auth_redirect",
+        "ReplyUrls": "http://localhost:8080/ms-identity-java-servlet-webapp-authentication/auth/redirect",
         "RequiredResourcesAccess": []
       }
     ],

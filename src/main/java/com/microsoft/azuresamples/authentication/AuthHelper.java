@@ -28,8 +28,9 @@ public class AuthHelper {
     static final String SIGN_OUT_ENDPOINT = Config.getProperty("aad.signOutEndpoint");
     static final String POST_SIGN_OUT_FRAGMENT = Config.getProperty("aad.postSignOutFragment");
     static final Long STATE_TTL = Long.parseLong(Config.getProperty("app.stateTTL"));
-    static final String REDIRECT_URI = Config.getProperty("app.redirectUri");
     static final String HOME_PAGE = Config.getProperty("app.homePage");
+    static final String REDIRECT_ENDPOINT = Config.getProperty("app.redirectEndpoint");
+    static final String REDIRECT_URI = String.format("%s%s", HOME_PAGE, REDIRECT_ENDPOINT);
 
     public static ConfidentialClientApplication getConfidentialClientInstance()
             throws Exception {
