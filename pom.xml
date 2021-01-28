@@ -19,13 +19,7 @@
             <version>1.7.0</version>
         </dependency>
 
-        <dependency>
-            <groupId>javax</groupId>
-            <artifactId>javaee-api</artifactId>
-            <version>8.0.1</version>
-            <scope>provided</scope>
-        </dependency>
-
+        <!-- Some distributions of Java SDK do not include javax servlets. -->
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
@@ -33,25 +27,34 @@
             <scope>provided</scope>
         </dependency>
         
+        <!-- For JSTL on frontend pages -->
         <dependency>
             <groupId>jstl</groupId>
             <artifactId>jstl</artifactId>
             <version>1.2</version>
         </dependency>
 
+        <!-- For decrypting JWT -->
         <dependency>
             <groupId>com.nimbusds</groupId>
             <artifactId>nimbus-jose-jwt</artifactId>
             <version>9.0.1</version>
         </dependency>
 
-        
+        <!-- For MS Graph -->
+        <dependency>
+            <groupId>com.microsoft.graph</groupId>
+            <artifactId>microsoft-graph</artifactId>
+            <version>2.5.0</version>
+        </dependency>
+
     </dependencies>
 
     <build>
         <finalName>ms-identity-java-servlet-webapp-authentication</finalName>
         <plugins>
-            <plugin>
+            <!-- This can be useful if you want maven to deploy to your tomcat server -->
+            <!-- <plugin>
                 <groupId>org.apache.tomcat.maven</groupId>
                 <artifactId>tomcat7-maven-plugin</artifactId>
                 <version>2.2</version>
@@ -61,7 +64,8 @@
                     <username>azure-samples</username>
                     <password>azure-samples</password>
                 </configuration>
-            </plugin>
+            </plugin> -->
+            <!-- This is required for compiling -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -71,6 +75,7 @@
                         <target>1.8</target>
                     </configuration>
             </plugin>
+            <!-- This is required for packaging as .war file -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
