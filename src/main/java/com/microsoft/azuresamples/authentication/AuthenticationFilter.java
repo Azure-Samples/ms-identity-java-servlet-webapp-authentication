@@ -4,6 +4,8 @@
 package com.microsoft.azuresamples.authentication;
 
 import java.io.IOException;
+import java.util.Arrays;
+
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.RequestDispatcher;
@@ -17,10 +19,12 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * This class implements filters
  * All incoming requests go through this.
- * We don't do much here except we redirect unauthorized clients away from protected routes
+ * This is to redirect unauthorized clients away from protected routes
  */
 @WebFilter(filterName = "AuthenticationFilter", urlPatterns = "/*")
 public class AuthenticationFilter implements Filter {
+
+    String [] protectedEndpoints = {"token_details", "call_graph"};
 
     @Override
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws ServletException, IOException {
@@ -29,8 +33,8 @@ public class AuthenticationFilter implements Filter {
 
         MsalAuthSession msalAuth = MsalAuthSession.getMsalAuthSession(request.getSession());
 
-        // send 401 for unauthorized access to token_details endpoint
-        if (request.getRequestURI().contains("token_details") && !msalAuth.getAuthenticated()) {
+        // send 401 for unauthorized access to the protected endpoints
+        if (Arrays.stream(protectedEndpoints).anyMatch(request.getRequestURI()::contains) && !msalAuth.getAuthenticated()) {
             req.setAttribute("bodyContent", "auth/401.jsp");
             final RequestDispatcher view = request.getRequestDispatcher("index.jsp");
             view.forward(request, response);
