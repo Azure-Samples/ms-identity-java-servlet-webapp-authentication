@@ -6,15 +6,6 @@ import com.microsoft.graph.httpcore.ICoreAuthenticationProvider;
 import com.microsoft.graph.models.extensions.IGraphServiceClient;
 import com.microsoft.graph.requests.extensions.GraphServiceClient;
 
-import java.io.IOException;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import com.microsoft.azuresamples.authentication.AuthException;
-import com.microsoft.azuresamples.authentication.AuthHelper;
-import com.microsoft.azuresamples.authentication.MsalAuthSession;
-
 import okhttp3.Request;
 
 public class GraphHelper {
@@ -23,13 +14,11 @@ public class GraphHelper {
      * @param servletRequest
      * @param servletResponse
      * @return GraphServiceClient
-     * @throws IOException
-     * @throws AuthException
      */
-    public static IGraphServiceClient getGraphClient(HttpServletRequest servletRequest, HttpServletResponse servletResponse) throws IOException, AuthException{
+    public static IGraphServiceClient getGraphClient(String accessToken) {
         return GraphServiceClient
         .builder()
-        .authenticationProvider(new MsalGraphAuthenticationProvider(servletRequest, servletResponse))
+        .authenticationProvider(new MsalGraphAuthenticationProvider(accessToken))
         .buildClient();
     }
 }
@@ -41,22 +30,17 @@ class MsalGraphAuthenticationProvider implements ICoreAuthenticationProvider, IA
 
     private static final String AUTHORIZATION_HEADER = "Authorization";
     private static final String BEARER = "Bearer";
-    private String authorizationHeaderValue;
+    private String authTokenHeaderValue;
 
     /** Set up the MsalGraphAuthenticationProvider
-     * 1. Re-Authorize (silent preference)
-     * 2. Get Token and put it into authorizationHeaderValue (used by the authenticateRequest methods)
+     * Put `Bearer <token>` into authTokenHeaderValue (used by the authenticateRequest methods)
     */
 
     /**
-     * @param servletRequest
-     * @param servletResponse
-     * @throws IOException
-     * @throws AuthException
+     * @param accessToken
      */
-    public MsalGraphAuthenticationProvider(HttpServletRequest servletRequest, HttpServletResponse servletResponse) throws IOException, AuthException{
-        AuthHelper.authorize(servletRequest, servletResponse);
-		authorizationHeaderValue = String.format("%s %s", BEARER, MsalAuthSession.getMsalAuthSession(servletRequest.getSession()).getAuthResult().accessToken());
+    public MsalGraphAuthenticationProvider(String accessToken) {
+		authTokenHeaderValue = String.format("%s %s", BEARER, accessToken);
     }
 
     /** 
@@ -66,7 +50,7 @@ class MsalGraphAuthenticationProvider implements ICoreAuthenticationProvider, IA
     */
     @Override
 	public Request authenticateRequest(Request request) {
-		return request.newBuilder().addHeader(AUTHORIZATION_HEADER, authorizationHeaderValue).build();
+		return request.newBuilder().addHeader(AUTHORIZATION_HEADER, authTokenHeaderValue).build();
 	}
     
     // This implementation of the IAuthenticationProvider injects the Graph access token
@@ -74,7 +58,7 @@ class MsalGraphAuthenticationProvider implements ICoreAuthenticationProvider, IA
     // This is used in the GraphSDK but with a deprecation warning.
 	@Override
 	public void authenticateRequest(IHttpRequest request) {
-		request.addHeader(AUTHORIZATION_HEADER, authorizationHeaderValue);
+		request.addHeader(AUTHORIZATION_HEADER, authTokenHeaderValue);
 	}
 
 }

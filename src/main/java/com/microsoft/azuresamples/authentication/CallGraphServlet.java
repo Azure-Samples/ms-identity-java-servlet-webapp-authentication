@@ -29,8 +29,10 @@ public class CallGraphServlet extends HttpServlet {
     @Override
     protected void doGet(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
         try {
-            User user = GraphHelper.getGraphClient(req, resp).me().buildRequest().get();
-
+            // re-auth (prefer silently) in case the access token is not valid anymore.
+            AuthHelper.authorize(req, resp);
+            String accessToken = MsalAuthSession.getMsalAuthSession(req.getSession()).getAuthResult().accessToken();
+            User user = GraphHelper.getGraphClient(accessToken).me().buildRequest().get();
             req.setAttribute("user", GraphUserProperties(user));
             req.setAttribute("bodyContent", "auth/graph.jsp");
             final RequestDispatcher view = req.getRequestDispatcher("index.jsp");
@@ -41,11 +43,13 @@ public class CallGraphServlet extends HttpServlet {
             Config.logger.log(Level.WARNING, Arrays.toString(ex.getStackTrace()));
             Config.logger.log(Level.INFO, "redirecting to error page to display auth error to user.");
             resp.sendRedirect(resp.encodeRedirectURL(String.format("../auth_error_details?details=%s", ex.getMessage())));
+
         } catch (ClientException ex) {
             Config.logger.log(Level.WARNING, ex.getMessage());
             Config.logger.log(Level.WARNING, Arrays.toString(ex.getStackTrace()));
             Config.logger.log(Level.INFO, "redirecting to error page to display auth error to user.");
             resp.sendRedirect(resp.encodeRedirectURL(String.format("../auth_error_details?details=%s", ex.getMessage())));
+
         }
     }
 
@@ -61,5 +65,6 @@ public class CallGraphServlet extends HttpServlet {
         userProperties.put("City", user.city);
         userProperties.put("Given Name", user.givenName);
         return userProperties;
+
     }
 }
