@@ -195,8 +195,8 @@ Function ConfigureApplications
    $webAppAppKey = $pw
    # create the application 
    $webAppAadApplication = New-AzureADApplication -DisplayName "java-servlet-webapp-authentication" `
-                                                  -HomePage "http://localhost:8080/ms-identity-java-servlet-webapp-authentication/index" `
-                                                  -ReplyUrls "http://localhost:8080/ms-identity-java-servlet-webapp-authentication/auth/redirect" `
+                                                  -HomePage "http://localhost:8080/ms-identity-java-servlet-webapp-roles/index" `
+                                                  -ReplyUrls "http://localhost:8080/ms-identity-java-servlet-webapp-roles/auth/redirect" `
                                                   -IdentifierUris "https://$tenantName/java-servlet-webapp-authentication" `
                                                   -PasswordCredentials $key `
                                                   -PublicClient $False

@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.microsoft.azuresamples</groupId>
-    <artifactId>ms-identity-java-servlet-webapp-call-graph</artifactId>
+    <artifactId>ms-identity-java-servlet-webapp-roles</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>war</packaging>
     <properties>
@@ -52,7 +52,7 @@
     </dependencies>
 
     <build>
-        <finalName>ms-identity-java-servlet-webapp-call-graph</finalName>
+        <finalName>ms-identity-java-servlet-webapp-roles</finalName>
         <plugins>
             <!-- This can be useful if you want maven to deploy to your tomcat server -->
             <!-- <plugin>
@@ -61,7 +61,7 @@
                 <version>2.2</version>
                 <configuration>
                     <url>http://localhost:8080/manager/text</url>
-                    <path>/ms-identity-java-servlet-webapp-call-graph</path>
+                    <path>/ms-identity-java-servlet-webapp-roles</path>
                     <username>azure-samples</username>
                     <password>azure-samples</password>
                 </configuration>

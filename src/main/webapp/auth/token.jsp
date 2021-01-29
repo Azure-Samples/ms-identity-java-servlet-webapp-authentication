@@ -11,7 +11,6 @@
             </c:forEach>
             <br>
             Click here to see your <a class="btn btn-success" href="<c:url value="./sign_in_status"></c:url>">Sign-in Status</a>
-            or <a class="btn btn-success" href="<c:url value="./call_graph"></c:url>">Call Graph</a>
         </p>
     </div>
 </div>
