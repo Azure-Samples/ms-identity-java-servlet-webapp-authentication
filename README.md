@@ -5,13 +5,14 @@ languages:
 products:
   - azure
   - msal-java
-  - azure-active-directory
+- azure-active-directory
   - microsoft-identity-platform
-name: Enable your Java Servlet web app to sign in users with the Microsoft identity platform
-urlFragment: ms-identity-java-servlet-webapp-authentication
-description: "This sample demonstrates a Java Servlet web app that signs in users with sthe Microsoft identity platform"
+
+name: "Enable your Java Servlet web app to sign in users and call Microsoft Graph with the Microsoft identity platform"
+urlFragment: "ms-identity-java-servlet-webapp-call-graph"
+description: "This sample demonstrates a Java Servlet web app that signs in users and obtains an access token to call MS Graph with the Microsoft identity platform"
 ---
-# Enable your Java Servlet web app to sign in users to your Azure Active Directory tenant with the Microsoft identity platform
+# Enable your Java Servlet web app to sign in users and call Microsoft Graph with the Microsoft identity platform
 
 - [Overview](#overview)
 - [Scenario](#scenario)
@@ -20,30 +21,30 @@ description: "This sample demonstrates a Java Servlet web app that signs in user
 - [Setup](#setup)
   - [Clone or download this repository](#clone-or-download-this-repository)
 - [Register the sample application with your Azure Active Directory tenant](#register-the-sample-application-with-your-azure-active-directory-tenant)
-  - [Register the web app (java-servlet-webapp-authentication)](#register-the-web-app-java-servlet-webapp-authentication)
-  - [Configure the web app (java-servlet-webapp-authentication) to use your app registration](#configure-the-web-app-java-servlet-webapp-authentication-to-use-your-app-registration)
+  - [Choose the Azure AD tenant where you want to create your applications](#choose-the-azure-ad-tenant-where-you-want-to-create-your-applications)
+  - [Register the web app (java-servlet-webapp-call-graph)](#register-the-web-app-java-servlet-webapp-call-graph)
+  - [Configure the web app (java-servlet-webapp-call-graph) to use your app registration](#configure-the-web-app-java-servlet-webapp-call-graph-to-use-your-app-registration)
 - [Running the sample](#running-the-sample)
 - [Explore the sample](#explore-the-sample)
 - [We'd love your feedback!](#wed-love-your-feedback)
 - [About the code](#about-the-code)
   - [Step-by-step walkthrough](#step-by-step-walkthrough)
-- [Next Steps or Deploy to Azure](#next-steps-or-deploy-to-azure)
+  - [Scopes](#scopes)
+- [Deploy to Azure](#deploy-to-azure)
+- [More information](#more-information)
 - [Community Help and Support](#community-help-and-support)
 - [Contributing](#contributing)
-- [Code of Conduct](#code-of-conduct)
-- [More information](#more-information)
 
 ## Overview
 
-This sample demonstrates a Java Servlet web app that signs in users to your Azure Active Directory tenant using the [Microsoft Authentication Library (MSAL) for Java](https://github.com/AzureAD/microsoft-authentication-library-for-java).
+This sample demonstrates a Java Servlet web app that signs in users and obtains an access token for calling [Microsoft Graph](https://docs.microsoft.com/graph/overview). It uses the [Microsoft Authentication Library (MSAL) for Java](https://github.com/AzureAD/microsoft-authentication-library-for-java).
 
 ![Overview](./ReadmeFiles/topology.png)
 
 ## Scenario
 
-1. This web application uses **MSAL for Java (MSAL4J)** to sign in users to their own Azure AD tenant and obtains an [ID Token](https://docs.microsoft.com/azure/active-directory/develop/id-tokens) from **Azure AD**.
-2. The **ID Token** proves that a user has successfully authenticated with this tenant.
-3. The web application protects one of its routes according to user's authentication status.
+1. This web application uses **MSAL for Java (MSAL4J)** to sign in a user and obtain an [Access Token](https://docs.microsoft.com/azure/active-directory/develop/access-tokens) for [Microsoft Graph](https://docs.microsoft.com/graph/overview) from **Azure AD**:
+2. The **Access Token** proves that the user is authorized to access the Microsoft Graph API endpoint as defined in the scope.
 
 ## Contents
 
@@ -120,7 +121,14 @@ There is one project in this sample. To register the app on the portal, you can:
 
 </details>
 
-### Register the web app (java-servlet-webapp-authentication)
+### Choose the Azure AD tenant where you want to create your applications
+
+As a first step you'll need to:
+
+1. Sign in to the [Azure portal](https://portal.azure.com).
+1. If your account is present in more than one Azure AD tenant, select your profile at the top right corner in the menu on top of the page, and then **switch directory** to change your portal session to the desired Azure AD tenant.
+
+### Register the web app (java-servlet-webapp-call-graph)
 
 [Register a new web app](https://docs.microsoft.com/azure/active-directory/develop/quickstart-register-app) in the [Azure Portal](https://portal.azure.com).
 Following this guide, you must:
@@ -128,13 +136,13 @@ Following this guide, you must:
 1. Navigate to the Microsoft identity platform for developers [App registrations](https://go.microsoft.com/fwlink/?linkid=2083908) page.
 1. Select **New registration**.
 1. In the **Register an application page** that appears, enter your application's registration information:
-   - In the **Name** section, enter a meaningful application name that will be displayed to users of the app, for example `java-servlet-webapp-authentication`.
+   - In the **Name** section, enter a meaningful application name that will be displayed to users of the app, for example `java-servlet-webapp-call-graph`.
    - Under **Supported account types**, select an option.
      - Select **Accounts in this organizational directory only** if you're building an application for use only by users in your tenant (**single-tenant**).
      - Select **Accounts in any organizational directory** if you'd like users in any Azure AD tenant to be able to use your application (**multi-tenant**).
      - Select **Accounts in any organizational directory and personal Microsoft accounts** for the widest set of customers (**multi-tenant** that also supports Microsoft personal accounts).
    - Select **Personal Microsoft accounts** for use only by users of personal Microsoft accounts (e.g., Hotmail, Live, Skype, Xbox accounts).
-   - In the **Redirect URI** section, select **Web** in the combo-box and enter the following redirect URI: `http://localhost:8080/ms-identity-java-servlet-webapp-authentication/auth/redirect`.
+   - In the **Redirect URI** section, select **Web** in the combo-box and enter the following redirect URI: `http://localhost:8080/ms-identity-java-servlet-webapp-call-graph/auth/redirect`.
 1. Select **Register** to create the application.
 1. In the app's registration screen, find and note the **Application (client) ID**. You use this value in your app's configuration file(s) later in your code.
 1. Select **Save** to save your changes.
@@ -145,7 +153,14 @@ Following this guide, you must:
    - The generated key value will be displayed when you click the **Add** button. Copy the generated value for use in the steps later.
    - You'll need this key later in your code's configuration files. This key value will not be displayed again, and is not retrievable by any other means, so make sure to note it from the Azure portal before navigating to any other screen or blade.
 
-### Configure the web app (java-servlet-webapp-authentication) to use your app registration
+1. In the app's registration screen, click on the **API permissions** blade in the left to open the page where we add access to the Apis that your application needs.
+   - Click the **Add permissions** button and then,
+   - Ensure that the **Microsoft APIs** tab is selected.
+   - In the *Commonly used Microsoft APIs* section, click on **Microsoft Graph**
+   - In the **Delegated permissions** section, select the **User.Read** in the list. Use the search box if necessary.
+   - Click on the **Add permissions** button in the bottom.
+
+### Configure the web app (java-servlet-webapp-call-graph) to use your app registration
 
 Open the project in your IDE to configure the code.
 
@@ -157,10 +172,8 @@ Open the project in your IDE to configure the code.
     - The word `organizations` if you registered your app with the **Accounts in any organizational directory** option.
     - The word `common` if you registered your app with the **Accounts in any organizational directory and personal Microsoft accounts** option.
     - The word `consumers` if you registered your app with the **Personal Microsoft accounts** option
-3. Find the string `{enter-your-client-id-here}` and replace the existing value with the application ID (clientId) of the `java-servlet-webapp-authentication` application copied from the Azure portal.
-4. Find the string `{enter-your-client-secret-here}` and replace the existing value with the key you saved during the creation of the `java-servlet-webapp-authentication` app, in the Azure portal.
-
-</details>
+3. Find the string `{enter-your-client-id-here}` and replace the existing value with the application ID (clientId) of the `java-servlet-webapp-call-graph` application copied from the Azure portal.
+4. Find the string `{enter-your-client-secret-here}` and replace the existing value with the key you saved during the creation of the `java-servlet-webapp-call-graph` app, in the Azure portal.
 
 ## Running the sample
 
@@ -170,14 +183,13 @@ Open the project in your IDE to configure the code.
 
     ```Shell
     cd project-directory
-    mvn clean
-    mvn package
+    mvn clean package
     ```
 
-4. Find the resulting `.war` file in `./target/ms-identity-java-servlet-webapp-authentication.war` and deploy it to Tomcat or any other J2EE container solution.
+4. Find the resulting `.war` file in `./target/ms-identity-java-servlet-webapp-call-graph.war` and deploy it to Tomcat or any other J2EE container solution.
      - To deploy to Tomcat, copy this `.war` file to the `/webapps/` directory in your Tomcat installation directory and start the Tomcat server.
-5. Ensure that the context path that the app is served on is `/ms-identity-java-servlet-webapp-authentication` (or change the `app.homePage` value in your [authentication.properties](src/main/resources/authentication.properties) file and in the AAD app registration). If you change the properties file, you'll needs to repeat step 3 above (maven clean and package).
-6. Open your browser and navigate to `http://localhost:8080/ms-identity-java-servlet-webapp-authentication/`
+5. Ensure that the context path that the app is served on is `/ms-identity-java-servlet-webapp-call-graph` (or change the `app.homePage` value in your [authentication.properties](src/main/resources/authentication.properties) file and in the AAD app registration). If you change the properties file, you'll needs to repeat step 3 above (maven clean and package).
+6. Open your browser and navigate to `http://localhost:8080/ms-identity-java-servlet-webapp-call-graph/`
 
 ![Experience](./ReadmeFiles/app.png)
 
@@ -189,6 +201,7 @@ Open the project in your IDE to configure the code.
 - On the consent screen, note the scopes that are being requested.
 - Note the context-sensitive button now says `Sign out` and displays your username to its left.
 - The middle of the screen now has an option to click for **ID Token Details**: click it to see some of the ID token's decoded claims.
+- Click the **Call Graph** button to make a call to MS Graph API's [/users](https://docs.microsoft.comgraph/api/user-list) endpoint to see a selection of user details obtained from the `/me` endpoint in Graph.
 - You can also use the button on the top right to sign out.
 - After signing out, click the link to `ID Token Details` to observe that the app displays a `401: unauthorized` error instead of the ID token claims when the user is not authorized.
 
@@ -200,7 +213,7 @@ Were we successful in addressing your learning objective? Consider taking a mome
 
 ## About the code
 
-This sample shows how to use **MSAL for Java (MSAL4J)** to sign in users into your Azure AD tenant. You must add it to the project using Maven. As a developer, you may copy `AuthHelper.java`,`Config.java` and `MsalAuthSession.java` classes to your project to access the functionality demonstrated by this sample.
+This sample uses **MSAL for Java (MSAL4J)** to sign a user in and obtain a token for MS Graph API. It leverages [Microsoft Graph SDK for Java](https://github.com/microsoftgraph/msgraph-sdk-java) to obtain data from Graph. You must add these to your projects using Maven. As a developer, you may copy the `AuthHelper.java`,`Config.java`, `MsalAuthSession.java` and `GraphHelper.java` classes to your project to access the functionality demonstrated by this sample.
 
 A **ConfidentialClientApplication** instance is created in the [AuthHelper.java](src/main/java/com/microsoft/azuresamples/authentication/AuthHelper.java) class. This object helps craft the AAD authorization URL and also helps exchange the authentication token for an access token.
 
@@ -238,7 +251,7 @@ In this sample, these values are read from the [authentication.properties](src/m
     ```
 
     - **AuthorizationRequestUrlParameters**: Parameters that must be set in order to build an AuthorizationRequestUrl.
-    - **REDIRECT_URI**: Where AAD will redirect the browser (along with auth code) after collecting user credentials. It must match the redirect URI in the  Azure AD app registration on https://portal.azure.com
+    - **REDIRECT_URI**: Where AAD will redirect the browser (along with auth code) after collecting user credentials. It must match the redirect URI in the  Azure AD app registration on [Azure Portal](https://portal.azure.com)
     - **SCOPES**: [Scopes](https://docs.microsoft.com/azure/active-directory/develop/access-tokens#scopes) are permissions requested by the application.
       - Normally, the three scopes `openid profile offline_access` suffice for receiving an ID Token response.
       - Full list of scopes requested by the app can be found in the [authentication.properties file](./src/main/resources/authentication.properties). You can add more scopes like User.Read and so on.
@@ -279,17 +292,36 @@ In this sample, these values are read from the [authentication.properties](src/m
     ```Java
     msalAuth.setAuthenticated(true);
     msalAuth.setUsername(msalAuth.getIdTokenClaims().get("name"));
-    ```
+   ```
 
-## Next Steps or Deploy to Azure
+### Scopes
 
-As next steps, we can now either [get an Access Token for the users we signed-in in this tutorial](https://github.com/Azure-Samples/ms-identity-java-servlet-webapp-call-graph), or we can proceed [to deploy this app to the **Azure App Service**](https://github.com/Azure-Samples/ms-identity-java-servlet-deployment).
+- [Scopes](https://docs.microsoft.com/azure/active-directory/develop/v2-permissions-and-consent) tell Azure AD the level of access that the application is requesting.
+- Based on the requested scopes, Azure AD presents a consent dialogue to the user upon signing in.
+- If the user consents to one or more scopes and obtains a token, the scopes-consented-to are encoded into the resulting `access_token`.
+- Note the scope requested by the application by referring to [authentication.properties](./src/main/resources/authentication.properties). By default, the application sets the scopes value to `User.Read`.
+- This particular MS Graph API scope is for accessing the information of the currently-signed-in user. The graph endpoint for accessing this info is `https://graph.microsoft.com/v1.0/me`
+- Any valid requests made to this endpoint must bear an `access_token` that contains the scope `User.Read` in the Authorization header.
+
+## Deploy to Azure
+
+Follow [this guide](https://github.com/Azure-Samples/ms-identity-java-servlet-webapp-deployment) to deploy this app to **Azure App Service**.
+
+## More information
+
+- [Microsoft Authentication Library \(MSAL\) for Java](https://github.com/AzureAD/microsoft-authentication-library-for-java)
+- [Microsoft identity platform (Azure Active Directory for developers)](https://docs.microsoft.com/azure/active-directory/develop/)
+- [Quickstart: Register an application with the Microsoft identity platform (Preview)](https://docs.microsoft.com/azure/active-directory/develop/quickstart-register-app)
+
+- [Understanding Azure AD application consent experiences](https://docs.microsoft.com/azure/active-directory/develop/application-consent-experience)
+- [Understand user and admin consent](https://docs.microsoft.com/azure/active-directory/develop/howto-convert-app-to-be-multi-tenant#understand-user-and-admin-consent)
+- [MSAL code samples](https://docs.microsoft.com/azure/active-directory/develop/sample-v2-code)
 
 ## Community Help and Support
 
 Use [Stack Overflow](https://stackoverflow.com/questions/tagged/msal) to get support from the community.
 Ask your questions on Stack Overflow first and browse existing issues to see if someone has asked your question before.
-Make sure that your questions or comments are tagged with [`azure-active-directory` `ms-identity` `java` `msal`].
+Make sure that your questions or comments are tagged with [`azure-active-directory` `ms-identity` `adal` `msal`].
 
 If you find a bug in the sample, please raise the issue on [GitHub Issues](../../issues).
 
@@ -298,17 +330,3 @@ To provide a recommendation, visit the following [User Voice page](https://feedb
 ## Contributing
 
 This project welcomes contributions and suggestions. Most contributions require you to agree to a Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us the rights to use your contribution. For details, visit https://cla.opensource.microsoft.com
-
-## Code of Conduct
-
-This project has adopted the Microsoft Open Source Code of Conduct. For more information see the Code of Conduct FAQ or contact opencode@microsoft.com with any additional questions or comments.
-
-## More information
-
-- [Microsoft Authentication Library \(MSAL\) for Java](https://github.com/AzureAD/microsoft-authentication-library-for-java)
-- [MSAL Java Reference Documentation](http://javadoc.io/doc/com.microsoft.azure/msal4j)
-- [Microsoft identity platform (Azure Active Directory for developers)](https://docs.microsoft.com/azure/active-directory/develop/)
-- [Quickstart: Register an application with the Microsoft identity platform (Preview)](https://docs.microsoft.com/azure/active-directory/develop/quickstart-register-app)
-- [Understanding Azure AD application consent experiences](https://docs.microsoft.com/azure/active-directory/develop/application-consent-experience)
-- [Understand user and admin consent](https://docs.microsoft.com/azure/active-directory/develop/howto-convert-app-to-be-multi-tenant#understand-user-and-admin-consent)
-- [MSAL code samples](https://docs.microsoft.com/azure/active-directory/develop/sample-v2-code)
