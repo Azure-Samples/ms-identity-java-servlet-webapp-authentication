@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.microsoft.azuresamples</groupId>
-    <artifactId>ms-identity-java-servlet-webapp-authentication</artifactId>
+    <artifactId>ms-identity-java-servlet-webapp-call-graph</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>war</packaging>
     <properties>
@@ -13,6 +13,7 @@
     </properties>
 
     <dependencies>
+        <!-- MSAL4J -->
         <dependency>
             <groupId>com.microsoft.azure</groupId>
             <artifactId>msal4j</artifactId>
@@ -51,7 +52,7 @@
     </dependencies>
 
     <build>
-        <finalName>ms-identity-java-servlet-webapp-authentication</finalName>
+        <finalName>ms-identity-java-servlet-webapp-call-graph</finalName>
         <plugins>
             <!-- This can be useful if you want maven to deploy to your tomcat server -->
             <!-- <plugin>
@@ -60,7 +61,7 @@
                 <version>2.2</version>
                 <configuration>
                     <url>http://localhost:8080/manager/text</url>
-                    <path>/ms-identity-java-servlet-webapp-authentication</path>
+                    <path>/ms-identity-java-servlet-webapp-call-graph</path>
                     <username>azure-samples</username>
                     <password>azure-samples</password>
                 </configuration>
