@@ -51,13 +51,10 @@ This sample demonstrates a Java Servlet web app that signs in users and obtains 
 | File/folder       | Description                                |
 |-------------------|--------------------------------------------|
 |`AppCreationScripts/`| Scripts to automatically configure Azure AD app registrations. |
-|`src/main/java/com/microsoft/azuresamples/callgraph/`| This directory contains the classes that define the web app's backend business logic. |
-|`AuthHelper.java` | Helper functions for authentication. |
-|`AuthException.java` | Exception class to group auth-related errors and handle them differently. |
-|`Config.java` | Runs on startup and configures properties reader and logger. |
-|`AuthenticationFilter.java`| Redirects unauthenticated requests to protected endpoints to a 401 page. |
-|`MsalAuthSession` | Instantiated with an HttpSession, stores all MSAL related session attributes in session attribute. |
+|`src/main/java/com/microsoft/azuresamples/msal4j/callgraphwebapp/`| This directory contains the classes that define the web app's backend business logic. |
 |`____Servlet.java`    | All of the endpoints available are defined in .java classes ending in ____Servlet.java |
+|`src/main/java/com/microsoft/azuresamples/msal4j/helpers/` | Helper classes for authentication. |
+|`AuthenticationFilter.java`| Redirects unauthenticated requests to protected endpoints to a 401 page. |
 |`src/main/resources/authentication.properties`| Azure AD and program configuration. |
 |`src/main/webapp/` | This directory contains the UI (JSP templates) |
 |`CHANGELOG.md`    | List of changes to the sample.             |
@@ -81,7 +78,7 @@ This sample demonstrates a Java Servlet web app that signs in users and obtains 
 From your shell or command line:
 
 ```console
-git clone https://github.com/Azure-Samples/ms-identity-java-servlet-webapp-authentication.git
+git clone https://github.com/Azure-Samples/ms-identity-java-servlet-webapp-call-graph.git
 ```
 
 or download and extract the repository .zip file.
@@ -142,7 +139,7 @@ Following this guide, you must:
      - Select **Accounts in any organizational directory** if you'd like users in any Azure AD tenant to be able to use your application (**multi-tenant**).
      - Select **Accounts in any organizational directory and personal Microsoft accounts** for the widest set of customers (**multi-tenant** that also supports Microsoft personal accounts).
    - Select **Personal Microsoft accounts** for use only by users of personal Microsoft accounts (e.g., Hotmail, Live, Skype, Xbox accounts).
-   - In the **Redirect URI** section, select **Web** in the combo-box and enter the following redirect URI: `http://localhost:8080/ms-identity-java-servlet-webapp-call-graph/auth/redirect`.
+   - In the **Redirect URI** section, select **Web** in the combo-box and enter the following redirect URI: `http://localhost:8080/msal4j-servlet-webapp/auth/redirect`.
 1. Select **Register** to create the application.
 1. In the app's registration screen, find and note the **Application (client) ID**. You use this value in your app's configuration file(s) later in your code.
 1. Select **Save** to save your changes.
@@ -186,10 +183,10 @@ Open the project in your IDE to configure the code.
     mvn clean package
     ```
 
-4. Find the resulting `.war` file in `./target/ms-identity-java-servlet-webapp-call-graph.war` and deploy it to Tomcat or any other J2EE container solution.
+4. Find the resulting `.war` file in `./target/msal4j-servlet-webapp.war` and deploy it to Tomcat or any other J2EE container solution.
      - To deploy to Tomcat, copy this `.war` file to the `/webapps/` directory in your Tomcat installation directory and start the Tomcat server.
-5. Ensure that the context path that the app is served on is `/ms-identity-java-servlet-webapp-call-graph` (or change the `app.homePage` value in your [authentication.properties](src/main/resources/authentication.properties) file and in the AAD app registration). If you change the properties file, you'll needs to repeat step 3 above (maven clean and package).
-6. Open your browser and navigate to `http://localhost:8080/ms-identity-java-servlet-webapp-call-graph/`
+5. Ensure that the context path that the app is served on is `/msal4j-servlet-webapp` (or change the `app.homePage` value in your [authentication.properties](src/main/resources/authentication.properties) file and in the AAD app registration). If you change the properties file, you'll needs to repeat step 3 above (maven clean and package).
+6. Open your browser and navigate to `http://localhost:8080/msal4j-servlet-webapp/`
 
 ![Experience](./ReadmeFiles/app.png)
 

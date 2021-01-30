@@ -1,11 +1,8 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-package com.microsoft.azuresamples.authentication;
+package com.microsoft.azuresamples.msal4j.helpers;
 
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
-import javax.servlet.annotation.WebListener;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Properties;
@@ -16,22 +13,10 @@ import java.util.logging.Logger;
  * Loads properties file when the servlet starts.
  * MSAL Java apps using this sample repo's paradigm will require this.
  */
-@WebListener
-public class Config implements ServletContextListener {
-    public static Logger logger = Logger.getLogger("Logger");
-    private static Properties props = Config.instantiateProperties();
 
-    @Override
-    public void contextInitialized(final ServletContextEvent event) {
-        Config.logger.setLevel(Level.FINEST);
-        Config.logger.log(Level.INFO, "APPLICATION IS RUNNING ON http://SERVER-IP:PORT{0}/index",
-                event.getServletContext().getContextPath());
-    }
-
-    @Override
-    public void contextDestroyed(final ServletContextEvent event) {
-        Config.logger.log(Level.INFO, "EXITING.");
-    }
+public class Config {
+    private static Logger logger = Logger.getLogger(Config.class.getName());
+    private static Properties props = instantiateProperties(); 
 
     private static Properties instantiateProperties() {
         final Properties props = new Properties();
@@ -39,13 +24,25 @@ public class Config implements ServletContextListener {
             props.load(Config.class.getClassLoader().getResourceAsStream("authentication.properties"));
         } catch (final IOException ex) {
             ex.printStackTrace();
-            Config.logger.log(Level.SEVERE, "Could not load properties file. Exiting");
-            Config.logger.log(Level.SEVERE, Arrays.toString(ex.getStackTrace()));
+            logger.log(Level.SEVERE, "Could not load properties file. Exiting");
+            logger.log(Level.SEVERE, Arrays.toString(ex.getStackTrace()));
             System.exit(1);
             return null;
         }
         return props;
     }
+
+    public static final String AUTHORITY = Config.getProperty("aad.authority");
+    public static final String CLIENT_ID = Config.getProperty("aad.clientId");
+    public static final String SECRET = Config.getProperty("aad.secret");
+    public static final String SCOPES = Config.getProperty("aad.scopes");
+    public static final String SIGN_OUT_ENDPOINT = Config.getProperty("aad.signOutEndpoint");
+    public static final String POST_SIGN_OUT_FRAGMENT = Config.getProperty("aad.postSignOutFragment");
+    public static final Long STATE_TTL = Long.parseLong(Config.getProperty("app.stateTTL"));
+    public static final String HOME_PAGE = Config.getProperty("app.homePage");
+    public static final String REDIRECT_ENDPOINT = Config.getProperty("app.redirectEndpoint");
+    public static final String REDIRECT_URI = String.format("%s%s", HOME_PAGE, REDIRECT_ENDPOINT);
+    public static final String SESSION_PARAM = Config.getProperty("app.sessionParam");
 
     public static String getProperty(final String key) {
         String prop = null;
