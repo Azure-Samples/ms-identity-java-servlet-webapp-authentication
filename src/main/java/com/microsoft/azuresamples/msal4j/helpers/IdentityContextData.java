@@ -12,8 +12,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.servlet.http.HttpSession;
-
 /**
  * This class defines all auth-related session properties that are required MSAL
  * Java apps using this sample repo's paradigm will require this.

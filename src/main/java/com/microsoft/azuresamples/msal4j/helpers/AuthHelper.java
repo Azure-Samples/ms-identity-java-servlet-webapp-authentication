@@ -35,24 +35,24 @@ public class AuthHelper {
         return confClientInstance;
     }
 
-    public static void signIn(IContextAdapter contextAdapter) throws AuthException, IOException {
+    public static void signIn(IdentityContextAdapter contextAdapter) throws AuthException, IOException {
         logger.log(Level.INFO, "sign in init");
         authorize(contextAdapter); // authorize tries to do non-interactive auth first
     }
 
-    public static void signOut(IContextAdapter contextAdapter) throws IOException {
+    public static void signOut(IdentityContextAdapter contextAdapter) throws IOException {
         logger.log(Level.INFO, "sign out init");
         redirectToSignOutEndpoint(contextAdapter);
     }
 
-    public static void redirectToSignOutEndpoint(IContextAdapter contextAdapter) throws IOException {
+    public static void redirectToSignOutEndpoint(IdentityContextAdapter contextAdapter) throws IOException {
         contextAdapter.getContext().clear();
         final String redirect = String.format("%s%s%s%s", Config.AUTHORITY, Config.SIGN_OUT_ENDPOINT, Config.POST_SIGN_OUT_FRAGMENT,
                 URLEncoder.encode(Config.HOME_PAGE, "UTF-8"));
         contextAdapter.redirectUser(redirect);
     }
 
-    public static void authorize(IContextAdapter contextAdapter) throws IOException, AuthException {
+    public static void authorize(IdentityContextAdapter contextAdapter) throws IOException, AuthException {
 
         final IdentityContextData context = contextAdapter.getContext();
         logger.log(Level.INFO, "preparing to authorize");
@@ -67,7 +67,7 @@ public class AuthHelper {
         }
     }
 
-    public static void acquireTokenSilently(IContextAdapter contextAdapter, final IAccount account) throws AuthException {
+    public static void acquireTokenSilently(IdentityContextAdapter contextAdapter, final IAccount account) throws AuthException {
         final IdentityContextData context = contextAdapter.getContext();
         final SilentParameters parameters = SilentParameters.builder(Collections.singleton(Config.SCOPES), account).build();
 
@@ -93,7 +93,7 @@ public class AuthHelper {
         }
     }
 
-    private static void redirectToAuthorizationEndpoint(IContextAdapter contextAdapter) throws IOException {
+    private static void redirectToAuthorizationEndpoint(IdentityContextAdapter contextAdapter) throws IOException {
         final IdentityContextData context = contextAdapter.getContext();
 
         final String state = UUID.randomUUID().toString();
@@ -109,7 +109,7 @@ public class AuthHelper {
         contextAdapter.redirectUser(redirectUrl);
     }
 
-    public static void processAADCallback(IContextAdapter contextAdapter)
+    public static void processAADCallback(IdentityContextAdapter contextAdapter)
             throws AuthException {
         logger.log(Level.INFO, "processing redirect request...");
         final IdentityContextData context = contextAdapter.getContext();
@@ -160,7 +160,7 @@ public class AuthHelper {
         }
     }
 
-    private static void validateState(IContextAdapter contextAdapter) throws AuthException {
+    private static void validateState(IdentityContextAdapter contextAdapter) throws AuthException {
         logger.log(Level.INFO, "validating state...");
 
         final String requestState = contextAdapter.getParameter("state");
@@ -181,7 +181,7 @@ public class AuthHelper {
         context.setState(null); // don't allow re-use of state
     }
 
-    private static void processErrorCodes(IContextAdapter contextAdapter) throws AuthException {
+    private static void processErrorCodes(IdentityContextAdapter contextAdapter) throws AuthException {
         final String error = contextAdapter.getParameter("error");
         logger.log(Level.INFO, "error is {0}", error);
         final String errorDescription = contextAdapter.getParameter("error_description");

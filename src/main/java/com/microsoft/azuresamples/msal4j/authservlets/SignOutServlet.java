@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-package com.microsoft.azuresamples.msal4j.helpers.servlets.authendpoints;
+package com.microsoft.azuresamples.msal4j.authservlets;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -15,11 +15,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.microsoft.azuresamples.msal4j.helpers.AuthHelper;
-import com.microsoft.azuresamples.msal4j.helpers.ServletContextAdapter;
+import com.microsoft.azuresamples.msal4j.helpers.IdentityContextAdapterServlet;
 
 /**
  * This class defines the endpoint for processing sign out
- * MSAL Java apps using this sample repo's paradigm will require this.
+ * MSAL Java apps using this sample's paradigm will require this.
  */
 @WebServlet(name = "SignOutServlet", urlPatterns = "/auth/sign_out")
 public class SignOutServlet extends HttpServlet {
@@ -28,7 +28,7 @@ public class SignOutServlet extends HttpServlet {
     @Override
     protected void doGet(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
         try {
-            AuthHelper.signOut(new ServletContextAdapter(req, resp));
+            AuthHelper.signOut(new IdentityContextAdapterServlet(req, resp));
         } catch (Exception ex){
             logger.log(Level.WARNING, "Unable to sign out");
             logger.log(Level.WARNING, ex.getMessage());

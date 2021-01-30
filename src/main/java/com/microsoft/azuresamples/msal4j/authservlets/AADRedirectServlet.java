@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-package com.microsoft.azuresamples.msal4j.helpers.servlets.authendpoints;
+package com.microsoft.azuresamples.msal4j.authservlets;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.microsoft.azuresamples.msal4j.helpers.AuthException;
 import com.microsoft.azuresamples.msal4j.helpers.AuthHelper;
 import com.microsoft.azuresamples.msal4j.helpers.Config;
-import com.microsoft.azuresamples.msal4j.helpers.ServletContextAdapter;
+import com.microsoft.azuresamples.msal4j.helpers.IdentityContextAdapterServlet;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -21,7 +21,7 @@ import java.util.logging.Logger;
 
 /**
  * This class defines the endpoint for processing the redirect from AAD MSAL
- * Java apps using this sample repository's paradigm will require this.
+ * Java apps using this sample's paradigm will require this.
  */
 @WebServlet(name = "AADRedirectServlet", urlPatterns = "/auth/redirect")
 public class AADRedirectServlet extends HttpServlet {
@@ -32,7 +32,7 @@ public class AADRedirectServlet extends HttpServlet {
             throws ServletException, IOException {
         logger.log(Level.FINE, "Request has come with params {0}", req.getQueryString());
         try {
-            AuthHelper.processAADCallback(new ServletContextAdapter(req, resp));
+            AuthHelper.processAADCallback(new IdentityContextAdapterServlet(req, resp));
             logger.log(Level.INFO, "redirecting to home page.");
             resp.sendRedirect(Config.HOME_PAGE);
         } catch (AuthException ex) {

@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 package com.microsoft.azuresamples.msal4j.helpers;
 
 import javax.servlet.http.HttpSession;
@@ -12,18 +15,18 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Implementation of IContextAdapter for AuthHelper for use with Java HttpServletRequests/Responses
+ * Implementation of IdentityContextAdapter for AuthHelper for use with Java HttpServletRequests/Responses
  * MUST BE INSTANTIATED ONCE PER REQUEST IN WEB APPS / WEB APIs before passing to AuthHelper
  */
 
-public class ServletContextAdapter implements IContextAdapter, HttpSessionActivationListener {
-    private static Logger logger = Logger.getLogger(ServletContextAdapter.class.getName());
+public class IdentityContextAdapterServlet implements IdentityContextAdapter, HttpSessionActivationListener {
+    private static Logger logger = Logger.getLogger(IdentityContextAdapterServlet.class.getName());
     private HttpSession session = null;
     private IdentityContextData context = null;
     private HttpServletRequest request = null;
     private HttpServletResponse response = null;
 
-    public ServletContextAdapter(HttpServletRequest request, HttpServletResponse response) {
+    public IdentityContextAdapterServlet(HttpServletRequest request, HttpServletResponse response) {
         this.request = request;
         this.session = request.getSession();
         this.response = response;
