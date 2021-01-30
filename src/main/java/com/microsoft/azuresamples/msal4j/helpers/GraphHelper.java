@@ -1,4 +1,4 @@
-package com.microsoft.azuresamples.authentication.graph;
+package com.microsoft.azuresamples.msal4j.helpers;
 
 import com.microsoft.graph.authentication.IAuthenticationProvider;
 import com.microsoft.graph.http.IHttpRequest;

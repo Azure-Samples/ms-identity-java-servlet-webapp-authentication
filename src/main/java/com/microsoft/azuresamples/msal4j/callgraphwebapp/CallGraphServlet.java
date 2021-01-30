@@ -1,12 +1,13 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-package com.microsoft.azuresamples.authentication;
+package com.microsoft.azuresamples.msal4j.callgraphwebapp;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -15,7 +16,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.microsoft.azuresamples.authentication.graph.GraphHelper;
+import com.microsoft.azuresamples.msal4j.helpers.AuthException;
+import com.microsoft.azuresamples.msal4j.helpers.AuthHelper;
+import com.microsoft.azuresamples.msal4j.helpers.GraphHelper;
+import com.microsoft.azuresamples.msal4j.helpers.IdentityContextData;
+import com.microsoft.azuresamples.msal4j.helpers.ServletContextAdapter;
 import com.microsoft.graph.core.ClientException;
 import com.microsoft.graph.models.extensions.User;
 
@@ -25,31 +30,30 @@ import com.microsoft.graph.models.extensions.User;
  */
 @WebServlet(name = "CallGraphServlet", urlPatterns = "/call_graph")
 public class CallGraphServlet extends HttpServlet {
+    private static Logger logger = Logger.getLogger(CallGraphServlet.class.getName());
 
     @Override
     protected void doGet(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
         try {
             // re-auth (prefer silently) in case the access token is not valid anymore.
-            AuthHelper.authorize(req, resp);
-            String accessToken = MsalAuthSession.getMsalAuthSession(req.getSession()).getAuthResult().accessToken();
+            ServletContextAdapter contextAdapter = new ServletContextAdapter(req, resp);
+            AuthHelper.authorize(contextAdapter);
+
+            // get the access token and give it to the graphclient
+            IdentityContextData context = contextAdapter.getContext();
+            String accessToken = context.getAccessToken();
             User user = GraphHelper.getGraphClient(accessToken).me().buildRequest().get();
-            req.setAttribute("user", GraphUserProperties(user));
-            req.setAttribute("bodyContent", "auth/graph.jsp");
+
+            req.setAttribute("user", graphUserProperties(user));
+            req.setAttribute("bodyContent", "content/graph.jsp");
             final RequestDispatcher view = req.getRequestDispatcher("index.jsp");
             view.forward(req, resp);
 
-        } catch (AuthException ex) {
-            Config.logger.log(Level.WARNING, ex.getMessage());
-            Config.logger.log(Level.WARNING, Arrays.toString(ex.getStackTrace()));
-            Config.logger.log(Level.INFO, "redirecting to error page to display auth error to user.");
+        } catch (AuthException|ClientException ex) {
+            logger.log(Level.WARNING, ex.getMessage());
+            logger.log(Level.WARNING, Arrays.toString(ex.getStackTrace()));
+            logger.log(Level.INFO, "redirecting to error page to display auth error to user.");
             resp.sendRedirect(resp.encodeRedirectURL(String.format("../auth_error_details?details=%s", ex.getMessage())));
-
-        } catch (ClientException ex) {
-            Config.logger.log(Level.WARNING, ex.getMessage());
-            Config.logger.log(Level.WARNING, Arrays.toString(ex.getStackTrace()));
-            Config.logger.log(Level.INFO, "redirecting to error page to display auth error to user.");
-            resp.sendRedirect(resp.encodeRedirectURL(String.format("../auth_error_details?details=%s", ex.getMessage())));
-
         }
     }
 
@@ -58,7 +62,7 @@ public class CallGraphServlet extends HttpServlet {
      * @param user User object (Graph SDK com.microsoft.graph.models.extensions.User)
      * @return HashMap<String,String> select Key-Values from User object
      */
-    private HashMap<String,String> GraphUserProperties(User user) {
+    private HashMap<String,String> graphUserProperties(User user) {
         HashMap<String,String> userProperties = new HashMap<>();
         userProperties.put("Display Name", user.displayName);
         userProperties.put("Phone Number", user.mobilePhone);

@@ -1,16 +1,21 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-package com.microsoft.azuresamples.authentication;
+package com.microsoft.azuresamples.msal4j.helpers.servlets.authendpoints;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import com.microsoft.azuresamples.msal4j.helpers.AuthHelper;
+import com.microsoft.azuresamples.msal4j.helpers.ServletContextAdapter;
 
 /**
  * This class defines the endpoint for processing sign out
@@ -18,15 +23,16 @@ import javax.servlet.http.HttpServletResponse;
  */
 @WebServlet(name = "SignOutServlet", urlPatterns = "/auth/sign_out")
 public class SignOutServlet extends HttpServlet {
+    private static Logger logger = Logger.getLogger(SignOutServlet.class.getName());
 
     @Override
     protected void doGet(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
         try {
-            AuthHelper.signOut(req, resp);
+            AuthHelper.signOut(new ServletContextAdapter(req, resp));
         } catch (Exception ex){
-            Config.logger.log(Level.WARNING, "Unable to sign out");
-            Config.logger.log(Level.WARNING, ex.getMessage());
-            Config.logger.log(Level.FINEST, Arrays.toString(ex.getStackTrace()));
+            logger.log(Level.WARNING, "Unable to sign out");
+            logger.log(Level.WARNING, ex.getMessage());
+            logger.log(Level.FINEST, Arrays.toString(ex.getStackTrace()));
         }
     }
 }

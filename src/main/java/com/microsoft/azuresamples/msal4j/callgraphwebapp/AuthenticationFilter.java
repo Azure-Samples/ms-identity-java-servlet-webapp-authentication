@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-package com.microsoft.azuresamples.authentication;
+package com.microsoft.azuresamples.msal4j.callgraphwebapp;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -15,6 +15,9 @@ import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import com.microsoft.azuresamples.msal4j.helpers.IdentityContextData;
+import com.microsoft.azuresamples.msal4j.helpers.ServletContextAdapter;
 
 /**
  * This class implements filters
@@ -31,11 +34,11 @@ public class AuthenticationFilter implements Filter {
         HttpServletRequest request = (HttpServletRequest) req;
         HttpServletResponse response = (HttpServletResponse) res;
 
-        MsalAuthSession msalAuth = MsalAuthSession.getMsalAuthSession(request.getSession());
+        IdentityContextData context = new ServletContextAdapter(request, response).getContext();
 
         // send 401 for unauthorized access to the protected endpoints
-        if (Arrays.stream(protectedEndpoints).anyMatch(request.getRequestURI()::contains) && !msalAuth.getAuthenticated()) {
-            req.setAttribute("bodyContent", "auth/401.jsp");
+        if (Arrays.stream(protectedEndpoints).anyMatch(request.getRequestURI()::contains) && !context.getAuthenticated()) {
+            req.setAttribute("bodyContent", "content/401.jsp");
             final RequestDispatcher view = request.getRequestDispatcher("index.jsp");
             view.forward(request, response);
         } else {
