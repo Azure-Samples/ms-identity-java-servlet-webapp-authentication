@@ -20,13 +20,13 @@ import com.microsoft.azuresamples.msal4j.helpers.AuthException;
 import com.microsoft.azuresamples.msal4j.helpers.AuthHelper;
 import com.microsoft.azuresamples.msal4j.helpers.GraphHelper;
 import com.microsoft.azuresamples.msal4j.helpers.IdentityContextData;
-import com.microsoft.azuresamples.msal4j.helpers.ServletContextAdapter;
+import com.microsoft.azuresamples.msal4j.helpers.IdentityContextAdapterServlet;
 import com.microsoft.graph.core.ClientException;
 import com.microsoft.graph.models.extensions.User;
 
 /**
  * This class defines the endpoint for showing the graph /me endpoint
- * This is here simply to demonstrate output of the graph call.
+ * This is here simply to demonstrate the graph call.
  */
 @WebServlet(name = "CallGraphServlet", urlPatterns = "/call_graph")
 public class CallGraphServlet extends HttpServlet {
@@ -36,7 +36,7 @@ public class CallGraphServlet extends HttpServlet {
     protected void doGet(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
         try {
             // re-auth (prefer silently) in case the access token is not valid anymore.
-            ServletContextAdapter contextAdapter = new ServletContextAdapter(req, resp);
+            IdentityContextAdapterServlet contextAdapter = new IdentityContextAdapterServlet(req, resp);
             AuthHelper.authorize(contextAdapter);
 
             // get the access token and give it to the graphclient

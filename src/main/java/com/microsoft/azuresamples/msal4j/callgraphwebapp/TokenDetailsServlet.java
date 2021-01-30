@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.microsoft.azuresamples.msal4j.helpers.IdentityContextData;
-import com.microsoft.azuresamples.msal4j.helpers.ServletContextAdapter;
+import com.microsoft.azuresamples.msal4j.helpers.IdentityContextAdapterServlet;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -28,7 +28,7 @@ public class TokenDetailsServlet extends HttpServlet {
     @Override
     protected void doGet(final HttpServletRequest req, final HttpServletResponse resp)
             throws ServletException, IOException {        
-        IdentityContextData context = new ServletContextAdapter(req, resp).getContext();
+        IdentityContextData context = new IdentityContextAdapterServlet(req, resp).getContext();
         final HashMap<String,String> filteredClaims = filterClaims(context);
 
         req.setAttribute("claims", filteredClaims);

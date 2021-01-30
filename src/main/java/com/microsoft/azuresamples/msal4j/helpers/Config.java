@@ -43,6 +43,7 @@ public class Config {
     public static final String REDIRECT_ENDPOINT = Config.getProperty("app.redirectEndpoint");
     public static final String REDIRECT_URI = String.format("%s%s", HOME_PAGE, REDIRECT_ENDPOINT);
     public static final String SESSION_PARAM = Config.getProperty("app.sessionParam");
+    public static final String PROTECTED_ENDPOINTS = Config.getProperty("app.protectedEndpoints");
 
     public static String getProperty(final String key) {
         String prop = null;
