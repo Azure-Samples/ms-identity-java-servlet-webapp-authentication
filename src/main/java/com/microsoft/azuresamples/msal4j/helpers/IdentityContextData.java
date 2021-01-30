@@ -33,11 +33,6 @@ public class IdentityContextData implements Serializable {
     private String tokenCache = null;
     private IAuthenticationResult authResult = null;
     private boolean hasChanged = false;
-    // private transient IContextAdapter contextAdapter = null;
-
-    // public IdentityContextData() {
-    //     // needs default no-arg public constructor for use as bean by JSP
-    // }
 
     public void clear() {
         nonce = null;
