@@ -22,7 +22,7 @@
 <table>
     <tr>
         <td></td>
-        <td><a href="./demo_survey">Fill in a survey (you need to be a member of the 'SurveyTaker' role)</a></td>
+        <td><a href="./take_survey">Fill in a survey (you need to be a member of the 'SurveyTaker' role)</a></td>
     </tr>
     <tr>
         <td></td>

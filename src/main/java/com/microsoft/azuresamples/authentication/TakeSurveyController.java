@@ -14,11 +14,9 @@ import javax.servlet.http.HttpServletResponse;
 
 
 /**
- * This class defines a page for showing the user their sign in status
- * This is also the home page.
- * This is here only for sample demonstration purposes.
+ *
  */
-@WebServlet(name = "UserController", urlPatterns = {"/demo_survey"})
+@WebServlet(name = "UserController", urlPatterns = {"/take_survey"})
 public class TakeSurveyController extends HttpServlet {
 	/**
 	 * 

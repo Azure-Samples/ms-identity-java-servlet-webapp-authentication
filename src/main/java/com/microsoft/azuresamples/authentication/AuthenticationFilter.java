@@ -29,8 +29,7 @@ public class AuthenticationFilter implements Filter {
 	static final String SURVEY_TAKER = "SurveyTaker";
 	static final String UNAUTHORIZED_SURVEY_CREATOR_MESSAGE = "UNAUTHORIZED user! role " + SURVEY_CREATOR
 			+ " is missing";
-	static final String UNAUTHORIZED_SURVEY_TAKER_MESSAGE = "UNAUTHORIZED user! role " + SURVEY_TAKER
-			+ " is missing";
+	static final String UNAUTHORIZED_SURVEY_TAKER_MESSAGE = "UNAUTHORIZED user! role " + SURVEY_TAKER + " is missing";
 
 	String[] protectedEndpoints = { "token_details" };
 
@@ -43,25 +42,28 @@ public class AuthenticationFilter implements Filter {
 		MsalAuthSession msalAuth = MsalAuthSession.getMsalAuthSession(request.getSession());
 
 		// send 401 for unauthorized access to the protected endpoints
+		
 		if (Arrays.stream(protectedEndpoints).anyMatch(request.getRequestURI()::contains)
 				&& !msalAuth.getAuthenticated()) {
 			req.setAttribute("bodyContent", "auth/401.jsp");
 			final RequestDispatcher view = request.getRequestDispatcher("index.jsp");
 			view.forward(request, response);
+			return;
 		}
-		else if (request.getRequestURI().contains("demo_survey")) {
+
+		if (request.getRequestURI().contains("take_survey")) {
 			Map<String, String> idTokenClaims = msalAuth.getIdTokenClaims();
 			String roles = idTokenClaims.get(ROLES);
 			if (roles == null || !roles.contains(SURVEY_TAKER)) {
 				Config.logger.log(Level.INFO, "redirecting to error page to display auth error to user.");
 				response.sendRedirect(response.encodeRedirectURL(
 						String.format("auth_error_details?details=%s", UNAUTHORIZED_SURVEY_TAKER_MESSAGE)));
-			} else
-				chain.doFilter(req, res);
+				return;
+			}
 
 		}
 
-		else if (request.getRequestURI().contains("create_survey")) {
+		if (request.getRequestURI().contains("create_survey")) {
 
 			Map<String, String> idTokenClaims = msalAuth.getIdTokenClaims();
 			String roles = idTokenClaims.get(ROLES);
@@ -69,12 +71,11 @@ public class AuthenticationFilter implements Filter {
 				Config.logger.log(Level.INFO, "redirecting to error page to display auth error to user.");
 				response.sendRedirect(response.encodeRedirectURL(
 						String.format("auth_error_details?details=%s", UNAUTHORIZED_SURVEY_CREATOR_MESSAGE)));
-			} else
-				chain.doFilter(req, res);
+				return;
+			}
 		}
 
-		else {
-			chain.doFilter(req, res);
-		}
+		chain.doFilter(req, res);
+
 	}
 }

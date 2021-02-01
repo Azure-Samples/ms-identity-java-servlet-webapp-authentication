@@ -14,9 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 
 
 /**
- * This class defines a page for showing the user their sign in status
- * This is also the home page.
- * This is here only for sample demonstration purposes.
+ * 
  */
 @WebServlet(name = "SurveyCreatorController", urlPatterns = {"/create_survey"})
 public class SurveyCreatorController extends HttpServlet {
