@@ -196,7 +196,7 @@ Function ConfigureApplications
    # create the application 
    $webAppAadApplication = New-AzureADApplication -DisplayName "java-servlet-webapp-call-graph" `
                                                   -HomePage "http://localhost:8080/msal4j-servlet-webapp/index" `
-                                                  -ReplyUrls "http://localhost:8080/ms-identity-msal4j-servlet-webapp/auth/redirect" `
+                                                  -ReplyUrls "http://localhost:8080/msal4j-servlet-webapp/auth/redirect" `
                                                   -IdentifierUris "https://$tenantName/java-servlet-webapp-call-graph" `
                                                   -PasswordCredentials $key `
                                                   -PublicClient $False
