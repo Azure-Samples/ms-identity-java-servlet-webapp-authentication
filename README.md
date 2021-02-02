@@ -7,12 +7,11 @@ products:
   - msal-java
 - azure-active-directory
   - microsoft-identity-platform
-
-name: "Enable your Java Servlet web app to sign in users and call Microsoft Graph with the Microsoft identity platform"
-urlFragment: "ms-identity-java-servlet-webapp-call-graph"
-description: "This sample demonstrates a Java Servlet web app that signs in users and obtains an access token to call MS Graph with the Microsoft identity platform"
+name: Enable your Java Servlet web app to sign in users and restrict access to pages based on group membership with the Microsoft identity platform
+urlFragment: ms-identity-java-servlet-webapp-groups
+description: "This sample demonstrates how to create a Java Servlet web app that signs in users and restricts access to pages based on group membership with the Microsoft identity platform"
 ---
-# Enable your Java Servlet web app to sign in users and call Microsoft Graph with the Microsoft identity platform
+# Enable your Java Servlet web app to sign in users and restrict access to pages based on group membership with the Microsoft identity platform
 
 - [Overview](#overview)
 - [Scenario](#scenario)
@@ -22,8 +21,9 @@ description: "This sample demonstrates a Java Servlet web app that signs in user
   - [Clone or download this repository](#clone-or-download-this-repository)
 - [Register the sample application with your Azure Active Directory tenant](#register-the-sample-application-with-your-azure-active-directory-tenant)
   - [Choose the Azure AD tenant where you want to create your applications](#choose-the-azure-ad-tenant-where-you-want-to-create-your-applications)
-  - [Register the web app (java-servlet-webapp-call-graph)](#register-the-web-app-java-servlet-webapp-call-graph)
-  - [Configure the web app (java-servlet-webapp-call-graph) to use your app registration](#configure-the-web-app-java-servlet-webapp-call-graph-to-use-your-app-registration)
+  - [Register the web app (java-servlet-webapp-groups)](#register-the-web-app-java-servlet-webapp-groups)
+  - [Configure Security Groups](#configure-security-groups)
+  - [Configure the web app (java-servlet-webapp-groups) to recognize Group IDs](#configure-the-web-app-java-servlet-webapp-groups-to-recognize-group-ids)
 - [Running the sample](#running-the-sample)
 - [Explore the sample](#explore-the-sample)
 - [We'd love your feedback!](#wed-love-your-feedback)
@@ -37,21 +37,22 @@ description: "This sample demonstrates a Java Servlet web app that signs in user
 
 ## Overview
 
-This sample demonstrates a Java Servlet web app that signs in users and obtains an access token for calling [Microsoft Graph](https://docs.microsoft.com/graph/overview). It uses the [Microsoft Authentication Library (MSAL) for Java](https://github.com/AzureAD/microsoft-authentication-library-for-java).
+This sample demonstrates how to create a Java Servlet web app that signs in users with [Microsoft Authentication Library (MSAL) for Java](https://github.com/AzureAD/microsoft-authentication-library-for-java) and restricts access to pages based on Azure Active Directory group membership.
 
 ![Overview](./ReadmeFiles/topology.png)
 
 ## Scenario
 
-1. This web application uses **MSAL for Java (MSAL4J)** to sign in a user and obtain an [Access Token](https://docs.microsoft.com/azure/active-directory/develop/access-tokens) for [Microsoft Graph](https://docs.microsoft.com/graph/overview) from **Azure AD**:
-2. The **Access Token** proves that the user is authorized to access the Microsoft Graph API endpoint as defined in the scope.
+1. This web application uses **MSAL for Java (MSAL4J)** to sign in users an Azure AD tenant and obtains an [ID Token](https://docs.microsoft.com/azure/active-directory/develop/id-tokens) from **Azure AD**.
+2. The **ID Token** proves that a user has successfully authenticated with this tenant.
+3. The web application protects its routes according to user's authentication status and group membership.
 
 ## Contents
 
 | File/folder       | Description                                |
 |-------------------|--------------------------------------------|
 |`AppCreationScripts/`| Scripts to automatically configure Azure AD app registrations. |
-|`src/main/java/com/microsoft/azuresamples/msal4j/callgraphwebapp/`| This directory contains the classes that define the web app's backend business logic. |
+|`src/main/java/com/microsoft/azuresamples/msal4j/groups/`| This directory contains the classes that define the web app's backend business logic. |
 |`____Servlet.java`    | All of the endpoints available are defined in .java classes ending in ____Servlet.java |
 |`src/main/java/com/microsoft/azuresamples/msal4j/helpers/` | Helper classes for authentication. |
 |`AuthenticationFilter.java`| Redirects unauthenticated requests to protected endpoints to a 401 page. |
@@ -69,7 +70,7 @@ This sample demonstrates a Java Servlet web app that signs in users and obtains 
 - An Azure Active Directory (Azure AD) tenant. For more information on how to get an Azure AD tenant, see [How to get an Azure AD tenant](https://azure.microsoft.com/documentation/articles/active-directory-howto-tenant/)
 - A user account in your own Azure AD tenant if you want to work with **accounts in your organizational directory only** (single-tenant mode). If have not yet [created a user account](https://docs.microsoft.com/azure/active-directory/fundamentals/add-users-azure-active-directory) in your AD tenant yet, you should do so before proceeding.
 - A user account in any organization's Azure AD tenant if you want to work with **accounts in any organizational directory** (multi-tenant mode).  This sample must be modified to work with a **personal Microsoft account**. If have not yet [created a user account](https://docs.microsoft.com/azure/active-directory/fundamentals/add-users-azure-active-directory) in your AD tenant yet, you should do so before proceeding.
-- A personal Microsoft account (e.g., Xbox, Hotmail, Live, etc) if you want to work with **personal Microsoft accounts**
+- Two security groups, **PrivilegedAdmin** and **RegularUser**, containing users you want to test with.
 
 ## Setup
 
@@ -78,7 +79,7 @@ This sample demonstrates a Java Servlet web app that signs in users and obtains 
 From your shell or command line:
 
 ```console
-git clone https://github.com/Azure-Samples/ms-identity-java-servlet-webapp-call-graph.git
+git clone https://github.com/Azure-Samples/ms-identity-java-servlet-webapp-groups.git
 ```
 
 or download and extract the repository .zip file.
@@ -125,7 +126,7 @@ As a first step you'll need to:
 1. Sign in to the [Azure portal](https://portal.azure.com).
 1. If your account is present in more than one Azure AD tenant, select your profile at the top right corner in the menu on top of the page, and then **switch directory** to change your portal session to the desired Azure AD tenant.
 
-### Register the web app (java-servlet-webapp-call-graph)
+### Register the web app (java-servlet-webapp-groups)
 
 [Register a new web app](https://docs.microsoft.com/azure/active-directory/develop/quickstart-register-app) in the [Azure Portal](https://portal.azure.com).
 Following this guide, you must:
@@ -133,12 +134,10 @@ Following this guide, you must:
 1. Navigate to the Microsoft identity platform for developers [App registrations](https://go.microsoft.com/fwlink/?linkid=2083908) page.
 1. Select **New registration**.
 1. In the **Register an application page** that appears, enter your application's registration information:
-   - In the **Name** section, enter a meaningful application name that will be displayed to users of the app, for example `java-servlet-webapp-call-graph`.
+   - In the **Name** section, enter a meaningful application name that will be displayed to users of the app, for example `java-servlet-webapp-groups`.
    - Under **Supported account types**, select an option.
      - Select **Accounts in this organizational directory only** if you're building an application for use only by users in your tenant (**single-tenant**).
      - Select **Accounts in any organizational directory** if you'd like users in any Azure AD tenant to be able to use your application (**multi-tenant**).
-     - Select **Accounts in any organizational directory and personal Microsoft accounts** for the widest set of customers (**multi-tenant** that also supports Microsoft personal accounts).
-   - Select **Personal Microsoft accounts** for use only by users of personal Microsoft accounts (e.g., Hotmail, Live, Skype, Xbox accounts).
    - In the **Redirect URI** section, select **Web** in the combo-box and enter the following redirect URI: `http://localhost:8080/msal4j-servlet-webapp/auth/redirect`.
 1. Select **Register** to create the application.
 1. In the app's registration screen, find and note the **Application (client) ID**. You use this value in your app's configuration file(s) later in your code.
@@ -149,15 +148,15 @@ Following this guide, you must:
    - Select one of the available key durations (**In 1 year**, **In 2 years**, or **Never Expires**) as per your security concerns.
    - The generated key value will be displayed when you click the **Add** button. Copy the generated value for use in the steps later.
    - You'll need this key later in your code's configuration files. This key value will not be displayed again, and is not retrievable by any other means, so make sure to note it from the Azure portal before navigating to any other screen or blade.
-
-1. In the app's registration screen, click on the **API permissions** blade in the left to open the page where we add access to the Apis that your application needs.
-   - Click the **Add permissions** button and then,
+1. In the app's registration screen, select the **API permissions** blade in the left to open the page where we add access to the APIs that your application needs.
+   - Select the **Add a permission** button and then:
    - Ensure that the **Microsoft APIs** tab is selected.
-   - In the *Commonly used Microsoft APIs* section, click on **Microsoft Graph**
-   - In the **Delegated permissions** section, select the **User.Read** in the list. Use the search box if necessary.
-   - Click on the **Add permissions** button in the bottom.
+       - In the *Commonly used Microsoft APIs* section, select **Microsoft Graph**
+       - In the **Delegated permissions** section, select **User.Read** and **GroupMember.Read.All** in the list. Use the search box if necessary.
+       - Select the **Add permissions** button at the bottom.
+   - **GroupMember.Read.All** requires admin consent. Select the **Grant/revoke admin consent for {tenant}** button, and then select **Yes** when you are asked if you want to grant consent for the requested permissions for all accounts in the tenant. You need to be an Azure AD tenant admin to do this.
 
-### Configure the web app (java-servlet-webapp-call-graph) to use your app registration
+#### Configure the web app (java-servlet-webapp-groups) to use your app registration
 
 Open the project in your IDE to configure the code.
 
@@ -167,10 +166,63 @@ Open the project in your IDE to configure the code.
 2. Find the string `{enter-your-tenant-id-here}`. Replace the existing value with:
     - **Your Azure AD tenant ID** if you registered your app with the **Accounts in this organizational directory only** option.
     - The word `organizations` if you registered your app with the **Accounts in any organizational directory** option.
-    - The word `common` if you registered your app with the **Accounts in any organizational directory and personal Microsoft accounts** option.
-    - The word `consumers` if you registered your app with the **Personal Microsoft accounts** option
-3. Find the string `{enter-your-client-id-here}` and replace the existing value with the application ID (clientId) of the `java-servlet-webapp-call-graph` application copied from the Azure portal.
-4. Find the string `{enter-your-client-secret-here}` and replace the existing value with the key you saved during the creation of the `java-servlet-webapp-call-graph` app, in the Azure portal.
+3. Find the string `{enter-your-client-id-here}` and replace the existing value with the application ID (clientId) of the `java-servlet-webapp-groups` application copied from the Azure portal.
+4. Find the string `{enter-your-client-secret-here}` and replace the existing value with the key you saved during the creation of the `java-servlet-webapp-groups` app, in the Azure portal.
+
+### Configure Security Groups
+
+You have two different options available to you on how you can further configure your application(s) to receive the `groups` claim.
+
+1. [Receive **all the groups** that the signed-in user is assigned to in an Azure AD tenant, included nested groups](#configure-your-application-to-receive-all-the-groups-the-signed-in-user-is-assigned-to-including-nested-groups).
+2. [Receive the **groups** claim values from a **filtered set of groups** that your application is programmed to work with](#configure-your-application-to-receive-the-groups-claim-values-from-a-filtered-set-of-groups-a-user-may-be-assigned-to) (Not available in the [Azure AD Free edition](https://azure.microsoft.com/pricing/details/active-directory/)).
+
+> To get the on-premise group's `samAccountName` or `On Premises Group Security Identifier` instead of Group ID, please refer to the document [Configure group claims for applications with Azure Active Directory](https://docs.microsoft.com/azure/active-directory/hybrid/how-to-connect-fed-group-claims#prerequisites-for-using-group-attributes-synchronized-from-active-directory).
+
+#### Configure your application to receive **all the groups** the signed-in user is assigned to, including nested groups
+
+1. In the app's registration screen, select the **Token Configuration** blade in the left to open the page where you can configure the claims provided tokens issued to your application.
+1. Select the **Add groups claim** button on top to open the **Edit Groups Claim** screen.
+1. Select `Security groups` **or** the `All groups (includes distribution lists but not groups assigned to the application)` option. Choosing both negates the effect of `Security Groups` option.
+1. Under the **ID** section, select `Group ID`. This will result in Azure AD sending the [Object ID](https://docs.microsoft.com/graph/api/resources/group?view=graph-rest-1.0) of the groups the user is assigned to in the **groups** claim of the [ID Token](https://docs.microsoft.com/azure/active-directory/develop/id-tokens) that your app receives after signing-in a user.
+
+#### Configure your application to receive the `groups` claim values from a **filtered set of groups** a user may be assigned to
+
+##### Prerequisites, benefits and limitations of using this option
+
+1. This option is useful when your application is interested in a selected set of groups that a signing-in user may be assigned to and not every security group this user is assigned to in the tenant. This option also saves your application from running into the [overage](#the-groups-overage-claim) issue.
+1. This feature is not available in the [Azure AD Free edition](https://azure.microsoft.com/pricing/details/active-directory/).
+1. **Nested group assignments** are not available when this option is utilized.
+
+##### Steps to enable this option in your app
+
+1. In the app's registration screen, select the **Token Configuration** blade in the left to open the page where you can configure the claims provided tokens issued to your application.
+1. Select the **Add groups claim** button on top to open the **Edit Groups Claim** screen.
+1. Select `Groups assigned to the application`.
+    1. Choosing additional options like `Security Groups` or `All groups (includes distribution lists but not groups assigned to the application)` will negate the benefits your app derives from choosing to use this option.
+1. Under the **ID** section, select `Group ID`. This will result in Azure AD sending the [Object ID](https://docs.microsoft.com/graph/api/resources/group?view=graph-rest-1.0) of the groups the user is assigned to in the `groups` claim of the [ID Token](https://docs.microsoft.com/azure/active-directory/develop/id-tokens).
+1. If you are exposing a web API using the **Expose an API** option, then you can also choose the `Group ID` option under the **Access** section. This will result in Azure AD sending the [Object ID](https://docs.microsoft.com/graph/api/resources/group?view=graph-rest-1.0) of the groups the user is assigned to in the `groups` claim of the [Access Token](https://docs.microsoft.com/azure/active-directory/develop/access-tokens).
+1. In the app's registration screen, select on the **Overview** blade in the left to open the Application overview screen. Select the hyperlink with the name of your application in **Managed application in local directory** (note this field title can be truncated for instance `Managed application in ...`). When you select this link you will navigate to the **Enterprise Application Overview** page associated with the service principal for your application in the tenant where you created it. You can navigate back to the app registration page by using the *back* button of your browser.
+1. Select the **Users and groups** blade in the left to open the page where you can assign users and groups to your application.
+    1. Select the **Add user** button on the top row.
+    1. Select **User and Groups** from the resultant screen.
+    1. Choose the groups that you want to assign to this application.
+    1. Click **Select** in the bottom to finish selecting the groups.
+    1. Select **Assign** to finish the group assignment process.  
+    1. Your application will now receive these selected groups in the `groups` claim when a user signing in to your app is a member of  one or more these **assigned** groups.
+1. Select the **Properties** blade in the left to open the page that lists the basic properties of your application.Set the **User assignment required?** flag to **Yes**.
+
+> :bulb: **Important security tip**
+>
+> When you set **User assignment required?** to **Yes**, Azure AD will check that only users assigned to your application in the **Users and groups** blade are able to sign-in to your app. You can assign users directly or by assigning security groups they belong to.
+
+### Configure the web app (java-servlet-webapp-groups) to recognize Group IDs
+
+> :warning:
+> During **Token Configuration**, if you have chosen any other option except **groupID** (e.g. like **DNSDomain\sAMAccountName**) you should enter the **group name** (for example `contoso.com\Test Group`) instead of the **object ID** below:
+
+1. Open the `./src/main/resources/authentication.properties` file.
+2. Find the string `{enter-your-admins-group-id-here}` and replace the existing value with the **object ID** of the **PrivilegedAdmin** group copied from the Azure portal.
+3. Find the string `{enter-your-users-group-id-here}` and replace the existing value with the **object ID** of the **RegularUser** group copied from the Azure portal.
 
 ## Running the sample
 
@@ -198,7 +250,10 @@ Open the project in your IDE to configure the code.
 - On the consent screen, note the scopes that are being requested.
 - Note the context-sensitive button now says `Sign out` and displays your username to its left.
 - The middle of the screen now has an option to click for **ID Token Details**: click it to see some of the ID token's decoded claims.
-- Click the **Call Graph** button to make a call to MS Graph API's [/users](https://docs.microsoft.comgraph/api/user-list) endpoint to see a selection of user details obtained from the `/me` endpoint in Graph.
+- Click the **Admin Only** or **Regular User**button to access the groups claim protected endpoints.
+  - If your signed in user is in the PrivilegedAdmin group, the user will be able to enter both pages.
+  - If your signed in user is in the RegularUser group, the user will be able to enter the Regular User page only.
+  - If your signed in user is in neither group, the user will be able to access to none of the two pages.
 - You can also use the button on the top right to sign out.
 - After signing out, click the link to `ID Token Details` to observe that the app displays a `401: unauthorized` error instead of the ID token claims when the user is not authorized.
 

@@ -5,11 +5,15 @@ package com.microsoft.azuresamples.msal4j.helpers;
 
 import com.microsoft.aad.msal4j.IAccount;
 import com.microsoft.aad.msal4j.IAuthenticationResult;
+import com.nimbusds.jose.shaded.json.JSONArray;
 import com.nimbusds.jwt.SignedJWT;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -26,8 +30,9 @@ public class IdentityContextData implements Serializable {
     private String username = null;
     private String accessToken = null;
     private String idToken = null;
+    private List<String> idTokenGroups = new ArrayList<>();
     private IAccount account = null;
-    private Map<String, String> idTokenClaims = new HashMap<>();
+    private Map<String, Object> idTokenClaims = new HashMap<>();
     private String tokenCache = null;
     private IAuthenticationResult authResult = null;
     private boolean hasChanged = false;
@@ -39,9 +44,10 @@ public class IdentityContextData implements Serializable {
         policy = null;
         authenticated = false;
         username = null;
-        setAccessToken(null);
+        accessToken = null;
         idToken = null;
-        setAccount(null);
+        idTokenGroups = new ArrayList<>();
+        account = null;
         idTokenClaims = new HashMap<>();
         tokenCache = null;
         authResult = null;
@@ -63,8 +69,12 @@ public class IdentityContextData implements Serializable {
         return accessToken;
     }
 
-    public Map<String, String> getIdTokenClaims() {
+    public Map<String, Object> getIdTokenClaims() {
         return idTokenClaims;
+    }
+
+    public List<String> getIdTokenGroups() {
+        return this.idTokenGroups;
     }
 
     public String getTokenCache() {
@@ -101,11 +111,17 @@ public class IdentityContextData implements Serializable {
 
     public void setIdTokenClaims(String rawIdToken) throws java.text.ParseException {
         final Map<String, Object> tokenClaims = SignedJWT.parse(rawIdToken).getJWTClaimsSet().getClaims();
-        this.idTokenClaims = new HashMap<>();
-        tokenClaims.forEach((String claim, Object value) -> {
-            String val = value.toString();
-            this.idTokenClaims.put(claim, val);
-        });
+        // this.idTokenClaims = new HashMap<>();
+        // tokenClaims.forEach((String claim, Object value) -> {
+            // String val = value.toString();
+            // this.idTokenClaims.put(claim, val);
+        // });
+        this.idTokenClaims = tokenClaims;
+
+        JSONArray groups = (JSONArray)this.idTokenClaims.get("groups");
+        if (groups != null) {
+            groups.forEach(elem -> this.idTokenGroups.add((String)elem));
+        }
         this.setHasChanged(true);
     }
 
@@ -169,7 +185,7 @@ public class IdentityContextData implements Serializable {
         this.setAccessToken(authResult.accessToken());
         this.tokenCache = serializedTokenCache;
         setIdTokenClaims(this.idToken);
-        this.username = this.idTokenClaims.get("name");
+        this.username = (String)this.idTokenClaims.get("name");
         this.authenticated = true;
 
         this.setHasChanged(true);

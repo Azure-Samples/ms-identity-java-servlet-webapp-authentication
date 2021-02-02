@@ -19,10 +19,10 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * This class defines a page for showing the user their token details
+ * This class defines a page for showing the user their token detailss
  * This is here only for sample demonstration purposes.
  */
-@WebServlet(name = "TokenDetailsServlet", urlPatterns = "/token_details")
+@WebServlet(name = "TokenDetailsServlet", urlPatterns = {"/token_details"})
 public class TokenDetailsServlet extends HttpServlet {
 
     @Override
@@ -38,13 +38,13 @@ public class TokenDetailsServlet extends HttpServlet {
     }
 
     private HashMap<String,String> filterClaims(IdentityContextData context) {
-        final String[] claimKeys = {"sub", "aud", "ver", "iss", "name", "oid", "preferred_username", "nonce", "tid"};
+        final String[] claimKeys = {"sub", "aud", "ver", "iss", "name", "oid", "preferred_username", "nonce", "tid", "roles", "groups"};
         final List<String> includeClaims = Arrays.asList(claimKeys);
 
         HashMap<String,String> filteredClaims = new HashMap<>();
         context.getIdTokenClaims().forEach((k,v) -> {
             if (includeClaims.contains(k))
-                filteredClaims.put(k, v);
+                filteredClaims.put(k, v.toString());
         });
         return filteredClaims;
     }

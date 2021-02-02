@@ -152,7 +152,8 @@ public class AuthHelper {
             // set user to authenticated:
             context.setAuthResult(result, client.tokenCache().serialize());
         } catch (final Exception ex) {
-            context.clear(); // clear the session since there was a problem
+            context.clear(); // clear the session data since there was a problem
+            contextAdapter.setContext(context); // save the clear
             String message = String.format("Unable to exchange auth code for token:%n %s", ex.getMessage());
             logger.log(Level.WARNING, message);
             logger.log(Level.FINEST, Arrays.toString(ex.getStackTrace()));
@@ -194,7 +195,7 @@ public class AuthHelper {
     private static void validateNonce(IdentityContextData context) throws AuthException {
         logger.log(Level.INFO, "validating nonce...");
 
-        final String nonceClaim = context.getIdTokenClaims().get("nonce");
+        final String nonceClaim = (String)context.getIdTokenClaims().get("nonce");
         final String sessionNonce = context.getNonce();
 
         logger.log(Level.FINE, "session nonce is: {0} \n nonce claim in token is: {1}",

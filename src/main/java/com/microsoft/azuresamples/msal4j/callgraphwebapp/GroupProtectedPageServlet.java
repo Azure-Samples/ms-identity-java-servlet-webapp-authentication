@@ -28,9 +28,9 @@ import com.microsoft.graph.models.extensions.User;
  * This class defines the endpoint for showing the graph /me endpoint
  * This is here simply to demonstrate the graph call.
  */
-@WebServlet(name = "CallGraphServlet", urlPatterns = "/call_graph")
-public class CallGraphServlet extends HttpServlet {
-    private static Logger logger = Logger.getLogger(CallGraphServlet.class.getName());
+@WebServlet(name = "GroupProtectedPageServlet", urlPatterns = {"/admin_only", "/regular_user"})
+public class GroupProtectedPageServlet extends HttpServlet {
+    private static Logger logger = Logger.getLogger(GroupProtectedPageServlet.class.getName());
 
     @Override
     protected void doGet(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {

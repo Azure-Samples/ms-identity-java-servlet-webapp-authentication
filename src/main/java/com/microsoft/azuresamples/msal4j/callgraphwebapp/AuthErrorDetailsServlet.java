@@ -20,7 +20,7 @@ public class AuthErrorDetailsServlet extends HttpServlet {
 
     @Override
     protected void doGet(final HttpServletRequest req, final HttpServletResponse resp)
-            throws ServletException, IOException {        
+            throws ServletException, IOException {
         final String details = req.getParameter("details");
 
         req.setAttribute("details", details);
