@@ -25,11 +25,11 @@ import javax.servlet.http.HttpServletResponse;
 @WebFilter(filterName = "AuthenticationFilter", urlPatterns = "/*")
 public class AuthenticationFilter implements Filter {
 	static final String ROLES = "roles";
-	static final String SURVEY_CREATOR = "SurveyCreator";
-	static final String SURVEY_TAKER = "SurveyTaker";
-	static final String UNAUTHORIZED_SURVEY_CREATOR_MESSAGE = "UNAUTHORIZED user! role " + SURVEY_CREATOR
+	static final String PRIVILEGED_ADMIN = "PrivilegedAdmin";
+	static final String REGULAR_USER = "RegularUser";
+	static final String UNAUTHORIZED_PRIVILEGED_ADMIN_MESSAGE = "UNAUTHORIZED user! role " + PRIVILEGED_ADMIN
 			+ " is missing";
-	static final String UNAUTHORIZED_SURVEY_TAKER_MESSAGE = "UNAUTHORIZED user! role " + SURVEY_TAKER + " is missing";
+	static final String UNAUTHORIZED_REGULAR_USER_MESSAGE = "UNAUTHORIZED user! role " + REGULAR_USER + " is missing";
 
 	String[] protectedEndpoints = { "token_details" };
 
@@ -51,26 +51,26 @@ public class AuthenticationFilter implements Filter {
 			return;
 		}
 
-		if (request.getRequestURI().contains("take_survey")) {
+		if (request.getRequestURI().contains("regular_user")) {
 			Map<String, String> idTokenClaims = msalAuth.getIdTokenClaims();
 			String roles = idTokenClaims.get(ROLES);
-			if (roles == null || !roles.contains(SURVEY_TAKER)) {
+			if (roles == null || !roles.contains(REGULAR_USER)) {
 				Config.logger.log(Level.INFO, "redirecting to error page to display auth error to user.");
 				response.sendRedirect(response.encodeRedirectURL(
-						String.format("auth_error_details?details=%s", UNAUTHORIZED_SURVEY_TAKER_MESSAGE)));
+						String.format("auth_error_details?details=%s", UNAUTHORIZED_REGULAR_USER_MESSAGE)));
 				return;
 			}
 
 		}
 
-		if (request.getRequestURI().contains("create_survey")) {
+		if (request.getRequestURI().contains("privileged_admin")) {
 
 			Map<String, String> idTokenClaims = msalAuth.getIdTokenClaims();
 			String roles = idTokenClaims.get(ROLES);
-			if (roles == null || !roles.contains(SURVEY_CREATOR)) {
+			if (roles == null || !roles.contains(PRIVILEGED_ADMIN)) {
 				Config.logger.log(Level.INFO, "redirecting to error page to display auth error to user.");
 				response.sendRedirect(response.encodeRedirectURL(
-						String.format("auth_error_details?details=%s", UNAUTHORIZED_SURVEY_CREATOR_MESSAGE)));
+						String.format("auth_error_details?details=%s", UNAUTHORIZED_PRIVILEGED_ADMIN_MESSAGE)));
 				return;
 			}
 		}

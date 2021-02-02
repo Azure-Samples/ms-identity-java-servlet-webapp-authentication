@@ -16,8 +16,8 @@ import javax.servlet.http.HttpServletResponse;
 /**
  *
  */
-@WebServlet(name = "UserController", urlPatterns = {"/take_survey"})
-public class TakeSurveyController extends HttpServlet {
+@WebServlet(name = "UserController", urlPatterns = {"/regular_user"})
+public class UserController extends HttpServlet {
 	/**
 	 * 
 	 */
@@ -27,7 +27,7 @@ public class TakeSurveyController extends HttpServlet {
 	    protected void doGet(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
 
 
-	            req.setAttribute("bodyContent", "auth/demoSurvey.jsp");
+	            req.setAttribute("bodyContent", "auth/regularUser.jsp");
 	            final RequestDispatcher view = req.getRequestDispatcher("index.jsp");
 	            view.forward(req, resp);
 	                

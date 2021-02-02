@@ -16,8 +16,8 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * 
  */
-@WebServlet(name = "SurveyCreatorController", urlPatterns = {"/create_survey"})
-public class SurveyCreatorController extends HttpServlet {
+@WebServlet(name = "AdminController", urlPatterns = {"/privileged_admin"})
+public class AdminController extends HttpServlet {
 	/**
 	 * 
 	 */
@@ -27,7 +27,7 @@ public class SurveyCreatorController extends HttpServlet {
 	   @Override
 	    protected void doGet(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
 	        
-	            req.setAttribute("bodyContent", "auth/createSurvey.jsp");
+	            req.setAttribute("bodyContent", "auth/privilegedAdmin.jsp");
 	            final RequestDispatcher view = req.getRequestDispatcher("index.jsp");
 	            view.forward(req, resp);	        
 	   }

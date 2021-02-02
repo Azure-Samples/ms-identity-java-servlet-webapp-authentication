@@ -5,7 +5,7 @@
     </h5>
     <div class="card-body">
         <p class="card-text">
-          Welcome to the create survey page! You are authorized to view this page because you have the SurveyCreator app role
+          Welcome to the Privileged Admin page! You are authorized to view this page because you have the PrivilegedAdmin app role
                       
         </p>
     </div>

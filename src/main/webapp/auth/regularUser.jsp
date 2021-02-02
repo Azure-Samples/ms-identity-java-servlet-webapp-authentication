@@ -5,7 +5,7 @@
     </h5>
     <div class="card-body">
         <p class="card-text">
-          Welcome to the survey page! You are authorized to view this page because you have the SurveyTaker app role
+          Welcome to the Regular User page! You are authorized to view this page because you have the RegularUser app role
                       
         </p>
     </div>
