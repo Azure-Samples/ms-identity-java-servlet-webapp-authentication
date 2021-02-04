@@ -59,9 +59,9 @@ Function Cleanup
     # Removes the applications
     Write-Host "Cleaning-up applications from tenant '$tenantName'"
 
-    Write-Host "Removing 'webApp' (java-servlet-webapp-authentication) if needed"
-    Get-AzureADApplication -Filter "DisplayName eq 'java-servlet-webapp-authentication'"  | ForEach-Object {Remove-AzureADApplication -ObjectId $_.ObjectId }
-    $apps = Get-AzureADApplication -Filter "DisplayName eq 'java-servlet-webapp-authentication'"
+    Write-Host "Removing 'webApp' (java-servlet-webapp-roles) if needed"
+    Get-AzureADApplication -Filter "DisplayName eq 'java-servlet-webapp-roles'"  | ForEach-Object {Remove-AzureADApplication -ObjectId $_.ObjectId }
+    $apps = Get-AzureADApplication -Filter "DisplayName eq 'java-servlet-webapp-roles'"
     if ($apps)
     {
         Remove-AzureADApplication -ObjectId $apps.ObjectId
@@ -70,10 +70,10 @@ Function Cleanup
     foreach ($app in $apps) 
     {
         Remove-AzureADApplication -ObjectId $app.ObjectId
-        Write-Host "Removed java-servlet-webapp-authentication.."
+        Write-Host "Removed java-servlet-webapp-roles.."
     }
     # also remove service principals of this app
-    Get-AzureADServicePrincipal -filter "DisplayName eq 'java-servlet-webapp-authentication'" | ForEach-Object {Remove-AzureADServicePrincipal -ObjectId $_.Id -Confirm:$false}
+    Get-AzureADServicePrincipal -filter "DisplayName eq 'java-servlet-webapp-roles'" | ForEach-Object {Remove-AzureADServicePrincipal -ObjectId $_.Id -Confirm:$false}
     
 }
 

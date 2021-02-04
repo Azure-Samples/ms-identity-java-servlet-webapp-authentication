@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-package com.microsoft.azuresamples.authentication;
+package com.microsoft.azuresamples.roles;
 
 import java.io.IOException;
 
@@ -14,22 +14,22 @@ import javax.servlet.http.HttpServletResponse;
 
 
 /**
- *
+ * 
  */
-@WebServlet(name = "UserController", urlPatterns = {"/regular_user"})
-public class UserController extends HttpServlet {
+@WebServlet(name = "AdminController", urlPatterns = {"/privileged_admin"})
+public class AdminController extends HttpServlet {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 
+	
 	   @Override
 	    protected void doGet(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
-
-
-	            req.setAttribute("bodyContent", "auth/regularUser.jsp");
+	        
+	            req.setAttribute("bodyContent", "auth/privilegedAdmin.jsp");
 	            final RequestDispatcher view = req.getRequestDispatcher("index.jsp");
-	            view.forward(req, resp);
-	                
+	            view.forward(req, resp);	        
 	   }
+	   
 }

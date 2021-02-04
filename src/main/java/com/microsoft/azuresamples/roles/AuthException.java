@@ -2,7 +2,7 @@
 // Licensed under the MIT License.
 
 
-package com.microsoft.azuresamples.authentication;
+package com.microsoft.azuresamples.roles;
 
 /*
 Required exception class for using AuthHelper.java

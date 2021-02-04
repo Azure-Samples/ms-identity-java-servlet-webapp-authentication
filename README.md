@@ -8,9 +8,9 @@ products:
 - azure-active-directory
   - microsoft-identity-platform
 
-name: "Enable your Java Servlet web app to sign in users and call Microsoft Graph with the Microsoft identity platform"
-urlFragment: "ms-identity-java-servlet-webapp-call-graph"
-description: "This sample demonstrates a Java Servlet web app that signs in users and obtains an access token to call MS Graph with the Microsoft identity platform"
+name: "Add authorization using app roles & roles claims to a Java servlet web app that signs-in users with the Microsoft identity platform"
+urlFragment: "ms-identity-java-servlet-webapp-call-roles"
+description: "This sample demonstrates how to add authorization using app roles & roles claims to a Java servlet web app that signs-in users with the Microsoft identity platform"
 ---
 # Enable your Java Servlet web app to sign in users and call Microsoft Graph with the Microsoft identity platform
 
@@ -37,21 +37,43 @@ description: "This sample demonstrates a Java Servlet web app that signs in user
 
 ## Overview
 
-This sample demonstrates a Java Servlet web app that signs in users and obtains an access token for calling [Microsoft Graph](https://docs.microsoft.com/graph/overview). It uses the [Microsoft Authentication Library (MSAL) for Java](https://github.com/AzureAD/microsoft-authentication-library-for-java).
+This sample shows how a Java servlet web app that uses [OpenID Connect](https://docs.microsoft.com/azure/active-directory/develop/v1-protocols-openid-connect-code) to sign in users and use Azure AD Application Roles (app roles) for authorization. App roles, along with Security groups are popular means to implement authorization.
 
-![Overview](./ReadmeFiles/topology.png)
+This application implements RBAC using Azure AD's Application Roles & Role Claims feature. Another approach is to use Azure AD Groups and Group Claims. Azure AD Groups and Application Roles are by no means mutually exclusive; they can be used in tandem to provide even finer grained access control.
+
+Using RBAC with Application Roles and Role Claims, developers can securely enforce authorization policies with minimal effort on their part.
+
+- A Microsoft Identity Platform Office Hours session covered Azure AD App roles and security groups, featuring this scenario and this sample. A recording of the session is is provided in this video [Using Security Groups and Application Roles in your apps](https://www.youtube.com/watch?v=LRoc-na27l0)
+
+For more information about how the protocols work in this scenario and other scenarios, see [Authentication Scenarios for Azure AD](http://go.microsoft.com/fwlink/?LinkId=394414).
 
 ## Scenario
 
-1. This web application uses **MSAL for Java (MSAL4J)** to sign in a user and obtain an [Access Token](https://docs.microsoft.com/azure/active-directory/develop/access-tokens) for [Microsoft Graph](https://docs.microsoft.com/graph/overview) from **Azure AD**:
-2. The **Access Token** proves that the user is authorized to access the Microsoft Graph API endpoint as defined in the scope.
+1. This web application uses **MSAL for Java (MSAL4J)** to sign in a user and obtain an [ID Token](https://docs.microsoft.com/azure/active-directory/develop/id-tokens) from **Azure AD**:
+
+
+This sample first leverages the  **MSAL for Java (MSAL4J)** to sign in the user. On the home page it displays an option for the user to view the claims in their ID Tokens. This web application also allows the users to view a privileged admin page or a regular user page depending on the app role they have been assigned to. The idea is to provide an example of how, within an application, access to certain functionality/page is restricted to subsets of users depending on which role they belong to.
+
+This kind of authorization is implemented using role-based access control (RBAC). When using RBAC, an administrator grants permissions to roles, not to individual users or groups. The administrator can then assign roles to different users and groups to control who has then access to certain content and functionality.  
+
+This sample application defines the following two *Application Roles*:
+
+- `PrivilegedAdmin`: Authorized to access the PrivilegedAdmin page.
+- `RegularUser`: Authorized to access the RegularUser page 
+
+These application roles are defined in the [Azure portal](https://portal.azure.com) in the application's registration manifest.  When a user signs into the application, Azure AD emits a `roles` claim for each role that the user has been granted individually to the user in the from of role membership.  Assignment of users and groups to roles can be done through the portal's UI, or programmatically using the [Microsoft Graph](https://graph.microsoft.com) and [Azure AD PowerShell](https://docs.microsoft.com/powershell/module/azuread/?view=azureadps-2.0).  In this sample, application role management is done through the Azure portal or using PowerShell.
+
+NOTE: Role claims will not be present for guest users in a tenant if the `https://login.microsoftonline.com/common/` endpoint is used as the authority to sign in users.
+
+![Sign in with the Microsoft identity platform](ReadmeFiles/sign-in.png)
+
 
 ## Contents
 
 | File/folder       | Description                                |
 |-------------------|--------------------------------------------|
 |`AppCreationScripts/`| Scripts to automatically configure Azure AD app registrations. |
-|`src/main/java/com/microsoft/azuresamples/callgraph/`| This directory contains the classes that define the web app's backend business logic. |
+|`src/main/java/com/microsoft/azuresamples/roles/`| This directory contains the classes that define the web app's backend business logic. |
 |`AuthHelper.java` | Helper functions for authentication. |
 |`AuthException.java` | Exception class to group auth-related errors and handle them differently. |
 |`Config.java` | Runs on startup and configures properties reader and logger. |
@@ -81,7 +103,7 @@ This sample demonstrates a Java Servlet web app that signs in users and obtains 
 From your shell or command line:
 
 ```console
-git clone https://github.com/Azure-Samples/ms-identity-java-servlet-webapp-authentication.git
+git clone https://github.com/Azure-Samples/ms-identity-java-servlet-webapp-roles.git
 ```
 
 or download and extract the repository .zip file.
@@ -128,7 +150,7 @@ As a first step you'll need to:
 1. Sign in to the [Azure portal](https://portal.azure.com).
 1. If your account is present in more than one Azure AD tenant, select your profile at the top right corner in the menu on top of the page, and then **switch directory** to change your portal session to the desired Azure AD tenant.
 
-### Register the web app (java-servlet-webapp-call-graph)
+### Register the web app (java-servlet-webapp-roles)
 
 [Register a new web app](https://docs.microsoft.com/azure/active-directory/develop/quickstart-register-app) in the [Azure Portal](https://portal.azure.com).
 Following this guide, you must:
@@ -136,13 +158,13 @@ Following this guide, you must:
 1. Navigate to the Microsoft identity platform for developers [App registrations](https://go.microsoft.com/fwlink/?linkid=2083908) page.
 1. Select **New registration**.
 1. In the **Register an application page** that appears, enter your application's registration information:
-   - In the **Name** section, enter a meaningful application name that will be displayed to users of the app, for example `java-servlet-webapp-call-graph`.
+   - In the **Name** section, enter a meaningful application name that will be displayed to users of the app, for example `java-servlet-webapp-roles`.
    - Under **Supported account types**, select an option.
      - Select **Accounts in this organizational directory only** if you're building an application for use only by users in your tenant (**single-tenant**).
      - Select **Accounts in any organizational directory** if you'd like users in any Azure AD tenant to be able to use your application (**multi-tenant**).
      - Select **Accounts in any organizational directory and personal Microsoft accounts** for the widest set of customers (**multi-tenant** that also supports Microsoft personal accounts).
    - Select **Personal Microsoft accounts** for use only by users of personal Microsoft accounts (e.g., Hotmail, Live, Skype, Xbox accounts).
-   - In the **Redirect URI** section, select **Web** in the combo-box and enter the following redirect URI: `http://localhost:8080/ms-identity-java-servlet-webapp-call-graph/auth/redirect`.
+   - In the **Redirect URI** section, select **Web** in the combo-box and enter the following redirect URI: `http://localhost:8080/ms-identity-java-servlet-webapp-roles/auth/redirect`.
 1. Select **Register** to create the application.
 1. In the app's registration screen, find and note the **Application (client) ID**. You use this value in your app's configuration file(s) later in your code.
 1. Select **Save** to save your changes.
@@ -153,14 +175,51 @@ Following this guide, you must:
    - The generated key value will be displayed when you click the **Add** button. Copy the generated value for use in the steps later.
    - You'll need this key later in your code's configuration files. This key value will not be displayed again, and is not retrievable by any other means, so make sure to note it from the Azure portal before navigating to any other screen or blade.
 
-1. In the app's registration screen, click on the **API permissions** blade in the left to open the page where we add access to the Apis that your application needs.
-   - Click the **Add permissions** button and then,
-   - Ensure that the **Microsoft APIs** tab is selected.
-   - In the *Commonly used Microsoft APIs* section, click on **Microsoft Graph**
-   - In the **Delegated permissions** section, select the **User.Read** in the list. Use the search box if necessary.
-   - Click on the **Add permissions** button in the bottom.
+##### Define your Application Roles
 
-### Configure the web app (java-servlet-webapp-call-graph) to use your app registration
+1. In the blade for your  application in Azure Portal, click **Manifest**.
+1. Edit the manifest by locating the `appRoles` setting and adding the two Application Roles.  The role definitions are provided in the JSON code block below.  Leave the `allowedMemberTypes` to **User** only.  Each role definition in this manifest must have a different valid **Guid** for the "id" property. Note that the `"value"` property of each role is set to the exact strings **DirectoryViewers** and **UserReaders** (as these strings are used in the code in the application).
+1. Save the manifest.
+
+The content of `appRoles` should be the following (the `id` should be a unique Guid)
+
+```JSon
+{
+  ...
+    "appRoles": [
+        {
+            "allowedMemberTypes": [
+                "User"
+            ],
+            "description": "Authorized to access the PrivilegedAdmin page.",
+            "displayName": "PrivilegedAdmin",
+            "id": "a816142a-2e8e-46c4-9997-f984faccb625",
+            "isEnabled": true,
+            "lang": null,
+            "origin": "Application",
+            "value": "UserReaders"
+        },
+        {
+            "allowedMemberTypes": [
+                "User"
+            ],
+            "description": "Authorized to access the RegularUser page.",
+            "displayName": "RegularUser",
+            "id": "72ff9f52-8011-49e0-a4f4-cc1bb26206fa",
+            "isEnabled": true,
+            "lang": null,
+            "origin": "Application",
+            "value": "DirectoryViewers"
+        }
+    ],
+ ...
+}
+```
+
+> Note:  To receive the `roles` claim with the name of the app roles this user is assigned to, make sure that the user accounts you plan to sign-in to this app is assigned to the app roles of this app. The guide, [Assign a user or group to an enterprise app in Azure Active Directory](https://docs.microsoft.com/azure/active-directory/manage-apps/assign-user-or-group-access-portal#assign-a-user-to-an-app---portal) provides step by step instructions.
+
+
+### Configure the web app (java-servlet-webapp-roles) to use your app registration
 
 Open the project in your IDE to configure the code.
 
@@ -173,7 +232,7 @@ Open the project in your IDE to configure the code.
     - The word `common` if you registered your app with the **Accounts in any organizational directory and personal Microsoft accounts** option.
     - The word `consumers` if you registered your app with the **Personal Microsoft accounts** option
 3. Find the string `{enter-your-client-id-here}` and replace the existing value with the application ID (clientId) of the `java-servlet-webapp-call-graph` application copied from the Azure portal.
-4. Find the string `{enter-your-client-secret-here}` and replace the existing value with the key you saved during the creation of the `java-servlet-webapp-call-graph` app, in the Azure portal.
+4. Find the string `{enter-your-client-secret-here}` and replace the existing value with the key you saved during the creation of the `java-servlet-webapp-roles` app, in the Azure portal.
 
 ## Running the sample
 
@@ -186,10 +245,10 @@ Open the project in your IDE to configure the code.
     mvn clean package
     ```
 
-4. Find the resulting `.war` file in `./target/ms-identity-java-servlet-webapp-call-graph.war` and deploy it to Tomcat or any other J2EE container solution.
+4. Find the resulting `.war` file in `./target/ms-identity-java-servlet-webapp-roles.war` and deploy it to Tomcat or any other J2EE container solution.
      - To deploy to Tomcat, copy this `.war` file to the `/webapps/` directory in your Tomcat installation directory and start the Tomcat server.
-5. Ensure that the context path that the app is served on is `/ms-identity-java-servlet-webapp-call-graph` (or change the `app.homePage` value in your [authentication.properties](src/main/resources/authentication.properties) file and in the AAD app registration). If you change the properties file, you'll needs to repeat step 3 above (maven clean and package).
-6. Open your browser and navigate to `http://localhost:8080/ms-identity-java-servlet-webapp-call-graph/`
+5. Ensure that the context path that the app is served on is `/ms-identity-java-servlet-webapp-roles` (or change the `app.homePage` value in your [authentication.properties](src/main/resources/authentication.properties) file and in the AAD app registration). If you change the properties file, you'll needs to repeat step 3 above (maven clean and package).
+6. Open your browser and navigate to `http://localhost:8080/ms-identity-java-servlet-webapp-roles/`
 
 ![Experience](./ReadmeFiles/app.png)
 
@@ -201,7 +260,8 @@ Open the project in your IDE to configure the code.
 - On the consent screen, note the scopes that are being requested.
 - Note the context-sensitive button now says `Sign out` and displays your username to its left.
 - The middle of the screen now has an option to click for **ID Token Details**: click it to see some of the ID token's decoded claims.
-- Click the **Call Graph** button to make a call to MS Graph API's [/users](https://docs.microsoft.comgraph/api/user-list) endpoint to see a selection of user details obtained from the `/me` endpoint in Graph.
+- Click the **Admin Page** button to view the Admin page. Only users with app role **PrivilegedAdmin** will be able to view this page. Otherwise an authorization failure message will be displayed. 
+- Click the **User Page** button to view the Admin page. Only users with app role **RegularUser** will be able to view this page. Otherwise an authorization failure message will be displayed. 
 - You can also use the button on the top right to sign out.
 - After signing out, click the link to `ID Token Details` to observe that the app displays a `401: unauthorized` error instead of the ID token claims when the user is not authorized.
 
@@ -213,7 +273,7 @@ Were we successful in addressing your learning objective? Consider taking a mome
 
 ## About the code
 
-This sample uses **MSAL for Java (MSAL4J)** to sign a user in and obtain a token for MS Graph API. It leverages [Microsoft Graph SDK for Java](https://github.com/microsoftgraph/msgraph-sdk-java) to obtain data from Graph. You must add these to your projects using Maven. As a developer, you may copy the `AuthHelper.java`,`Config.java`, `MsalAuthSession.java` and `GraphHelper.java` classes to your project to access the functionality demonstrated by this sample.
+This sample uses **MSAL for Java (MSAL4J)** to sign a user in and obtain an ID token that may contain the roles claim. Based on the roles claim present, the signed in user will be able to access two protected pages, Admin Page and User Page. As a developer, you may copy the `AuthHelper.java`,`Config.java`, `MsalAuthSession.java` classes to your project to access the functionality demonstrated by this sample.
 
 A **ConfidentialClientApplication** instance is created in the [AuthHelper.java](src/main/java/com/microsoft/azuresamples/authentication/AuthHelper.java) class. This object helps craft the AAD authorization URL and also helps exchange the authentication token for an access token.
 
@@ -293,15 +353,42 @@ In this sample, these values are read from the [authentication.properties](src/m
     msalAuth.setAuthenticated(true);
     msalAuth.setUsername(msalAuth.getIdTokenClaims().get("name"));
    ```
+6. Once the user clicks on the Admin Page, the program control flows to the AuthorizationFilter class which has the logic to verify if the user has the **PrivilegedAdmin** role associated with them. Auth error page is displayed if the logged in user doesn't have the role. 
+   
+  ```Java
+	if (request.getRequestURI().contains("privileged_admin")) {
+
+			Map<String, String> idTokenClaims = msalAuth.getIdTokenClaims();
+			String roles = idTokenClaims.get(ROLES);
+			if (roles == null || !roles.contains(PRIVILEGED_ADMIN)) {
+				Config.logger.log(Level.INFO, "redirecting to error page to display auth error to user.");
+				response.sendRedirect(response.encodeRedirectURL(
+						String.format("auth_error_details?details=%s", UNAUTHORIZED_PRIVILEGED_ADMIN_MESSAGE)));
+				return;
+			}
+    }
+   ```
+6. Once the user clicks on the User Page, the program control flows to the AuthorizationFilter class which has the logic to verify if the user has the **RegularUser** role associated with them. Auth error page is displayed if the logged in user doesn't have the role. 
+  
+  ```Java
+  	if (request.getRequestURI().contains("regular_user")) {
+			Map<String, String> idTokenClaims = msalAuth.getIdTokenClaims();
+			String roles = idTokenClaims.get(ROLES);
+			if (roles == null || !roles.contains(REGULAR_USER)) {
+				Config.logger.log(Level.INFO, "redirecting to error page to display auth error to user.");
+				response.sendRedirect(response.encodeRedirectURL(
+						String.format("auth_error_details?details=%s", UNAUTHORIZED_REGULAR_USER_MESSAGE)));
+				return;
+			}
+    }
+    ```
+
 
 ### Scopes
 
 - [Scopes](https://docs.microsoft.com/azure/active-directory/develop/v2-permissions-and-consent) tell Azure AD the level of access that the application is requesting.
 - Based on the requested scopes, Azure AD presents a consent dialogue to the user upon signing in.
-- If the user consents to one or more scopes and obtains a token, the scopes-consented-to are encoded into the resulting `access_token`.
-- Note the scope requested by the application by referring to [authentication.properties](./src/main/resources/authentication.properties). By default, the application sets the scopes value to `User.Read`.
-- This particular MS Graph API scope is for accessing the information of the currently-signed-in user. The graph endpoint for accessing this info is `https://graph.microsoft.com/v1.0/me`
-- Any valid requests made to this endpoint must bear an `access_token` that contains the scope `User.Read` in the Authorization header.
+
 
 ## Deploy to Azure
 

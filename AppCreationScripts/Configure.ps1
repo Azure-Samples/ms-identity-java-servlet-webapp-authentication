@@ -187,17 +187,17 @@ Function ConfigureApplications
     $user = Get-AzureADUser -ObjectId $creds.Account.Id
 
    # Create the webApp AAD application
-   Write-Host "Creating the AAD application (java-servlet-webapp-authentication)"
+   Write-Host "Creating the AAD application (java-servlet-webapp-roles)"
    # Get a 2 years application key for the webApp Application
    $pw = ComputePassword
    $fromDate = [DateTime]::Now;
    $key = CreateAppKey -fromDate $fromDate -durationInYears 2 -pw $pw
    $webAppAppKey = $pw
    # create the application 
-   $webAppAadApplication = New-AzureADApplication -DisplayName "java-servlet-webapp-authentication" `
+   $webAppAadApplication = New-AzureADApplication -DisplayName "java-servlet-webapp-roles" `
                                                   -HomePage "http://localhost:8080/ms-identity-java-servlet-webapp-roles/index" `
                                                   -ReplyUrls "http://localhost:8080/ms-identity-java-servlet-webapp-roles/auth/redirect" `
-                                                  -IdentifierUris "https://$tenantName/java-servlet-webapp-authentication" `
+                                                  -IdentifierUris "https://$tenantName/java-servlet-webapp-roles" `
                                                   -PasswordCredentials $key `
                                                   -PublicClient $False
 
@@ -214,12 +214,12 @@ Function ConfigureApplications
    }
 
 
-   Write-Host "Done creating the webApp application (java-servlet-webapp-authentication)"
+   Write-Host "Done creating the webApp application (java-servlet-webapp-roles)"
 
    # URL of the AAD application in the Azure portal
    # Future? $webAppPortalUrl = "https://portal.azure.com/#@"+$tenantName+"/blade/Microsoft_AAD_RegisteredApps/ApplicationMenuBlade/Overview/appId/"+$webAppAadApplication.AppId+"/objectId/"+$webAppAadApplication.ObjectId+"/isMSAApp/"
    $webAppPortalUrl = "https://portal.azure.com/#blade/Microsoft_AAD_RegisteredApps/ApplicationMenuBlade/CallAnAPI/appId/"+$webAppAadApplication.AppId+"/objectId/"+$webAppAadApplication.ObjectId+"/isMSAApp/"
-   Add-Content -Value "<tr><td>webApp</td><td>$currentAppId</td><td><a href='$webAppPortalUrl'>java-servlet-webapp-authentication</a></td></tr>" -Path createdApps.html
+   Add-Content -Value "<tr><td>webApp</td><td>$currentAppId</td><td><a href='$webAppPortalUrl'>java-servlet-webapp-roles</a></td></tr>" -Path createdApps.html
 
    $requiredResourcesAccess = New-Object System.Collections.Generic.List[Microsoft.Open.AzureAD.Model.RequiredResourceAccess]
 

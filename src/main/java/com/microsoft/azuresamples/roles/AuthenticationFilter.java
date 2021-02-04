@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-package com.microsoft.azuresamples.authentication;
+package com.microsoft.azuresamples.roles;
 
 import java.io.IOException;
 import java.util.Arrays;

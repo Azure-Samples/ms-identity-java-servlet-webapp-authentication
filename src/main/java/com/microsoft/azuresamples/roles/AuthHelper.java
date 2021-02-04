@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-package com.microsoft.azuresamples.authentication;
+package com.microsoft.azuresamples.roles;
 
 import com.microsoft.aad.msal4j.*;
 import com.nimbusds.jwt.JWTClaimsSet;
@@ -126,7 +126,7 @@ public class AuthHelper {
 
         final ConfidentialClientApplication client = getConfidentialClientInstance();
         AuthorizationRequestUrlParameters parameters = AuthorizationRequestUrlParameters.builder(REDIRECT_URI, Collections.singleton(SCOPES))
-                .responseMode(ResponseMode.QUERY).prompt(Prompt.SELECT_ACCOUNT).state(state).nonce(nonce).build();
+                .responseMode(ResponseMode.QUERY).prompt(Prompt.CONSENT).state(state).nonce(nonce).build();
 
         final String redirectUrl = client.getAuthorizationRequestUrl(parameters).toString();
         Config.logger.log(Level.INFO, "Redirecting user to {0}", redirectUrl);
