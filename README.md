@@ -368,7 +368,7 @@ In this sample, these values are read from the [authentication.properties](src/m
 			}
     }
    ```
-6. Once the user clicks on the User Page, the program control flows to the AuthorizationFilter class which has the logic to verify if the user has the **RegularUser** role associated with them. Auth error page is displayed if the logged in user doesn't have the role. 
+7. Once the user clicks on the User Page, the program control flows to the AuthorizationFilter class which has the logic to verify if the user has the **RegularUser** role associated with them. Auth error page is displayed if the logged in user doesn't have the role. 
   
   ```Java
   	if (request.getRequestURI().contains("regular_user")) {
@@ -384,7 +384,7 @@ In this sample, these values are read from the [authentication.properties](src/m
     ```
 
 
-### Scopes
+## Scopes
 
 - [Scopes](https://docs.microsoft.com/azure/active-directory/develop/v2-permissions-and-consent) tell Azure AD the level of access that the application is requesting.
 - Based on the requested scopes, Azure AD presents a consent dialogue to the user upon signing in.
