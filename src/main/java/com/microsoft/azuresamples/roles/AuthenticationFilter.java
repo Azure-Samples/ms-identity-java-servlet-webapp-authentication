@@ -42,7 +42,7 @@ public class AuthenticationFilter implements Filter {
 		MsalAuthSession msalAuth = MsalAuthSession.getMsalAuthSession(request.getSession());
 
 		// send 401 for unauthorized access to the protected endpoints
-		
+
 		if (Arrays.stream(protectedEndpoints).anyMatch(request.getRequestURI()::contains)
 				&& !msalAuth.getAuthenticated()) {
 			req.setAttribute("bodyContent", "auth/401.jsp");
@@ -56,11 +56,12 @@ public class AuthenticationFilter implements Filter {
 			String roles = idTokenClaims.get(ROLES);
 			if (roles == null || !roles.contains(REGULAR_USER)) {
 				Config.logger.log(Level.INFO, "redirecting to error page to display auth error to user.");
-				response.sendRedirect(response.encodeRedirectURL(
-						String.format("auth_error_details?details=%s", UNAUTHORIZED_REGULAR_USER_MESSAGE)));
+				req.setAttribute("bodyContent", "auth/403.jsp");
+				req.setAttribute("details", UNAUTHORIZED_REGULAR_USER_MESSAGE);
+				final RequestDispatcher view = request.getRequestDispatcher("index.jsp");
+				view.forward(request, response);
 				return;
 			}
-
 		}
 
 		if (request.getRequestURI().contains("privileged_admin")) {
@@ -69,9 +70,10 @@ public class AuthenticationFilter implements Filter {
 			String roles = idTokenClaims.get(ROLES);
 			if (roles == null || !roles.contains(PRIVILEGED_ADMIN)) {
 				Config.logger.log(Level.INFO, "redirecting to error page to display auth error to user.");
-				response.sendRedirect(response.encodeRedirectURL(
-						String.format("auth_error_details?details=%s", UNAUTHORIZED_PRIVILEGED_ADMIN_MESSAGE)));
-				return;
+				req.setAttribute("bodyContent", "auth/403.jsp");
+				req.setAttribute("details", UNAUTHORIZED_PRIVILEGED_ADMIN_MESSAGE);
+				final RequestDispatcher view = request.getRequestDispatcher("index.jsp");
+				view.forward(request, response);
 			}
 		}
 

@@ -356,17 +356,18 @@ In this sample, these values are read from the [authentication.properties](src/m
 6. Once the user clicks on the Admin Page, the program control flows to the AuthorizationFilter class which has the logic to verify if the user has the **PrivilegedAdmin** role associated with them. Auth error page is displayed if the logged in user doesn't have the role. 
    
   ```Java
-	if (request.getRequestURI().contains("privileged_admin")) {
+		if (request.getRequestURI().contains("privileged_admin")) {
 
 			Map<String, String> idTokenClaims = msalAuth.getIdTokenClaims();
 			String roles = idTokenClaims.get(ROLES);
 			if (roles == null || !roles.contains(PRIVILEGED_ADMIN)) {
 				Config.logger.log(Level.INFO, "redirecting to error page to display auth error to user.");
-				response.sendRedirect(response.encodeRedirectURL(
-						String.format("auth_error_details?details=%s", UNAUTHORIZED_PRIVILEGED_ADMIN_MESSAGE)));
-				return;
+				req.setAttribute("bodyContent", "auth/403.jsp");
+				req.setAttribute("details", UNAUTHORIZED_PRIVILEGED_ADMIN_MESSAGE);
+				final RequestDispatcher view = request.getRequestDispatcher("index.jsp");
+				view.forward(request, response);
 			}
-    }
+		}
    ```
 7. Once the user clicks on the User Page, the program control flows to the AuthorizationFilter class which has the logic to verify if the user has the **RegularUser** role associated with them. Auth error page is displayed if the logged in user doesn't have the role. 
   
@@ -376,12 +377,14 @@ In this sample, these values are read from the [authentication.properties](src/m
 			String roles = idTokenClaims.get(ROLES);
 			if (roles == null || !roles.contains(REGULAR_USER)) {
 				Config.logger.log(Level.INFO, "redirecting to error page to display auth error to user.");
-				response.sendRedirect(response.encodeRedirectURL(
-						String.format("auth_error_details?details=%s", UNAUTHORIZED_REGULAR_USER_MESSAGE)));
+				req.setAttribute("bodyContent", "auth/403.jsp");
+				req.setAttribute("details", UNAUTHORIZED_REGULAR_USER_MESSAGE);
+				final RequestDispatcher view = request.getRequestDispatcher("index.jsp");
+				view.forward(request, response);
 				return;
 			}
-    }
-    ```
+		}
+  ```
 
 
 ## Scopes
