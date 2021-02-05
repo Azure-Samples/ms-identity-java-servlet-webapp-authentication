@@ -126,7 +126,7 @@ public class AuthHelper {
 
         final ConfidentialClientApplication client = getConfidentialClientInstance();
         AuthorizationRequestUrlParameters parameters = AuthorizationRequestUrlParameters.builder(REDIRECT_URI, Collections.singleton(SCOPES))
-                .responseMode(ResponseMode.QUERY).prompt(Prompt.CONSENT).state(state).nonce(nonce).build();
+                .responseMode(ResponseMode.QUERY).prompt(Prompt.SELECT_ACCOUNT).state(state).nonce(nonce).build();
 
         final String redirectUrl = client.getAuthorizationRequestUrl(parameters).toString();
         Config.logger.log(Level.INFO, "Redirecting user to {0}", redirectUrl);

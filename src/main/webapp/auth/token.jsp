@@ -10,7 +10,23 @@
                 <br>
             </c:forEach>
             <br>
-            Click here to see your <a class="btn btn-success" href="<c:url value="./sign_in_status"></c:url>">Sign-in Status</a>
+            
+            <table>
+			<tr height=20px></tr>
+			<tr>
+				<td>Click here to see your <a class="btn btn-success" href="<c:url value="./sign_in_status"></c:url>">Sign-in Status</a></td>
+			</tr>
+			<tr>
+				<td>Click here to visit the <a class="btn btn-primary"
+					href="<c:url value="./privileged_admin"></c:url>">Admin Page</a></td>
+			</tr>
+			<tr>
+				<td>Click here to visit the <a class="btn btn-primary"
+					href="<c:url value="./regular_user"></c:url>">User Page</a></td>
+			</tr>
+
+		</table>
+            
         </p>
     </div>
 </div>
