@@ -14,7 +14,8 @@ import javax.servlet.http.HttpServletResponse;
 
 
 /**
- *
+ * This class defines a page for showing the regular user page to demonstrate role based access
+ * This is here only for sample demonstration purposes.
  */
 @WebServlet(name = "UserController", urlPatterns = {"/regular_user"})
 public class UserController extends HttpServlet {

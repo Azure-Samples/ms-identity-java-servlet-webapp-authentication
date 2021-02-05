@@ -14,7 +14,8 @@ import javax.servlet.http.HttpServletResponse;
 
 
 /**
- * 
+ * This class defines a page for showing the Privileged Admin user page to demonstrate role based access
+ * This is here only for sample demonstration purposes.
  */
 @WebServlet(name = "AdminController", urlPatterns = {"/privileged_admin"})
 public class AdminController extends HttpServlet {
