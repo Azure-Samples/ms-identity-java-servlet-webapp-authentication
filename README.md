@@ -65,6 +65,7 @@ These application roles are defined in the [Azure portal](https://portal.azure.c
 
 NOTE: Role claims will not be present for guest users in a tenant if the `https://login.microsoftonline.com/common/` endpoint is used as the authority to sign in users.
 
+
 ## Contents
 
 | File/folder       | Description                                |
@@ -353,31 +354,21 @@ In this sample, these values are read from the [authentication.properties](src/m
 6. Once the user clicks on the Admin Page, the program control flows to the AuthorizationFilter class which has the logic to verify if the user has the **PrivilegedAdmin** role associated with them. Auth error page is displayed if the logged in user doesn't have the role. 
    
   ```Java
-		if (request.getRequestURI().contains("privileged_admin")) {
-
-			Map<String, String> idTokenClaims = msalAuth.getIdTokenClaims();
-			String roles = idTokenClaims.get(ROLES);
-			if (roles == null || !roles.contains(PRIVILEGED_ADMIN)) {
-				Config.logger.log(Level.INFO, "redirecting to error page to display auth error to user.");
-				req.setAttribute("bodyContent", "auth/403.jsp");
-				req.setAttribute("details", UNAUTHORIZED_PRIVILEGED_ADMIN_MESSAGE);
-				final RequestDispatcher view = request.getRequestDispatcher("index.jsp");
-				view.forward(request, response);
+		if (request.getRequestURI().contains("regular_user")) {
+			Set<String> roles = getRoles(msalAuth);
+			if (roles.isEmpty() || !roles.contains(REGULAR_USER)) {
+				redirectUnauthenticatedUser(request, response, UNAUTHORIZED_REGULAR_USER_MESSAGE);
+				return;
 			}
 		}
    ```
 7. Once the user clicks on the User Page, the program control flows to the AuthorizationFilter class which has the logic to verify if the user has the **RegularUser** role associated with them. Auth error page is displayed if the logged in user doesn't have the role. 
   
   ```Java
-  	if (request.getRequestURI().contains("regular_user")) {
-			Map<String, String> idTokenClaims = msalAuth.getIdTokenClaims();
-			String roles = idTokenClaims.get(ROLES);
-			if (roles == null || !roles.contains(REGULAR_USER)) {
-				Config.logger.log(Level.INFO, "redirecting to error page to display auth error to user.");
-				req.setAttribute("bodyContent", "auth/403.jsp");
-				req.setAttribute("details", UNAUTHORIZED_REGULAR_USER_MESSAGE);
-				final RequestDispatcher view = request.getRequestDispatcher("index.jsp");
-				view.forward(request, response);
+  	if (request.getRequestURI().contains("privileged_admin")) {
+			Set<String> roles = getRoles(msalAuth);
+			if (roles.isEmpty() || !roles.contains(REGULAR_USER)) {
+				redirectUnauthenticatedUser(request, response, UNAUTHORIZED_REGULAR_USER_MESSAGE);
 				return;
 			}
 		}

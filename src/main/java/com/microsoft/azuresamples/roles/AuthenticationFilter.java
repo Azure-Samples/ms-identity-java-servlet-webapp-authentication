@@ -5,7 +5,10 @@ package com.microsoft.azuresamples.roles;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 
 import javax.servlet.Filter;
@@ -17,6 +20,8 @@ import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * This class implements filters All incoming requests go through this. This is
@@ -51,33 +56,48 @@ public class AuthenticationFilter implements Filter {
 			return;
 		}
 
+		// send 403 forbidden error when relevant app roles are missing
+
+		
 		if (request.getRequestURI().contains("regular_user")) {
-			Map<String, String> idTokenClaims = msalAuth.getIdTokenClaims();
-			String roles = idTokenClaims.get(ROLES);
-			if (roles == null || !roles.contains(REGULAR_USER)) {
-				Config.logger.log(Level.INFO, "redirecting to error page to display auth error to user.");
-				req.setAttribute("bodyContent", "auth/403.jsp");
-				req.setAttribute("details", UNAUTHORIZED_REGULAR_USER_MESSAGE);
-				final RequestDispatcher view = request.getRequestDispatcher("index.jsp");
-				view.forward(request, response);
+			Set<String> roles = getRoles(msalAuth);
+			if (roles.isEmpty() || !roles.contains(REGULAR_USER)) {
+				redirectUnauthenticatedUser(request, response, UNAUTHORIZED_REGULAR_USER_MESSAGE);
 				return;
 			}
 		}
 
 		if (request.getRequestURI().contains("privileged_admin")) {
-
-			Map<String, String> idTokenClaims = msalAuth.getIdTokenClaims();
-			String roles = idTokenClaims.get(ROLES);
-			if (roles == null || !roles.contains(PRIVILEGED_ADMIN)) {
-				Config.logger.log(Level.INFO, "redirecting to error page to display auth error to user.");
-				req.setAttribute("bodyContent", "auth/403.jsp");
-				req.setAttribute("details", UNAUTHORIZED_PRIVILEGED_ADMIN_MESSAGE);
-				final RequestDispatcher view = request.getRequestDispatcher("index.jsp");
-				view.forward(request, response);
+			Set<String> roles = getRoles(msalAuth);
+			if (roles.isEmpty() || !roles.contains(PRIVILEGED_ADMIN)) {
+				redirectUnauthenticatedUser(request, response, UNAUTHORIZED_PRIVILEGED_ADMIN_MESSAGE);
+				return;
 			}
 		}
-
 		chain.doFilter(req, res);
+	}
+
+	private void redirectUnauthenticatedUser(HttpServletRequest request, HttpServletResponse response, String message)
+			throws ServletException, IOException {
+		Config.logger.log(Level.INFO, "redirecting to error page to display auth error to user.");
+		request.setAttribute("bodyContent", "auth/403.jsp");
+		request.setAttribute("details", message);
+		final RequestDispatcher view = request.getRequestDispatcher("index.jsp");
+		view.forward(request, response);
 
 	}
+
+	private Set<String> getRoles(MsalAuthSession msalAuth) throws IOException {
+		Map<String, String> idTokenClaims = msalAuth.getIdTokenClaims();
+		if (idTokenClaims == null)
+			return Collections.emptySet();
+		ObjectMapper mapper = new ObjectMapper();
+		String roles = idTokenClaims.get(ROLES);
+		if (roles == null) {
+			return Collections.emptySet();
+		}
+		String[] rolesList = mapper.readValue(roles, String[].class);
+		return new HashSet<>(Arrays.asList(rolesList));
+	}
+
 }

@@ -19,25 +19,13 @@
 		<p>This sample shows how to build a Java servlet Web app that uses
 			Azure AD app roles for authorization.</p>
 		<br />
-			
-		
-		<table>
-			<tr height=20px></tr>
-			<tr>
-				<td>Click here to get your <a class="btn btn-success"
-				href="<c:url value="./token_details"></c:url>">ID Token Details</a></td>
-			</tr>
-			<tr>
-				<td>Click here to visit the <a class="btn btn-primary"
-					href="<c:url value="./privileged_admin"></c:url>">Admin Page</a></td>
-			</tr>
-			<tr>
-				<td>Click here to visit the <a class="btn btn-primary"
-					href="<c:url value="./regular_user"></c:url>">User Page</a></td>
-			</tr>
-
-		</table>
-		<br />
+		<div class="btn-group">
+			<a class="btn btn-info"
+				href="<c:url value="./privileged_admin"></c:url>">Admin Page</a> <a
+				class="btn btn-info" href="<c:url value="./regular_user"></c:url>">User
+				Page</a> <a class="btn btn-success"
+				href="<c:url value="./token_details"></c:url>">ID Token Details</a>
+		</div>
 		<%
 			} else {
 		%>
