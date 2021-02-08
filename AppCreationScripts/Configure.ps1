@@ -100,6 +100,25 @@ Function GetRequiredPermissions([string] $applicationDisplayName, [string] $requ
     }
     return $requiredAccess
 }
+<#.Description
+   This function creates a new Azure AD AppRole with default and provided values
+#>  
+Function CreateAppRole([string] $types, [string] $name, [string] $description)
+{
+    $appRole = New-Object Microsoft.Open.AzureAD.Model.AppRole
+    $appRole.AllowedMemberTypes = New-Object System.Collections.Generic.List[string]
+    $typesArr = $types.Split(',')
+    foreach($type in $typesArr)
+    {
+        $appRole.AllowedMemberTypes.Add($type);
+    }
+    $appRole.DisplayName = $name
+    $appRole.Id = New-Guid
+    $appRole.IsEnabled = $true
+    $appRole.Description = $description
+    $appRole.Value = $name;
+    return $appRole
+}
 
 
 Function ReplaceInLine([string] $line, [string] $key, [string] $value)
@@ -213,8 +232,14 @@ Function ConfigureApplications
         Write-Host "'$($user.UserPrincipalName)' added as an application owner to app '$($webAppServicePrincipal.DisplayName)'"
    }
 
-
-   Write-Host "Done creating the webApp application (java-servlet-webapp-roles)"
+    # Add application Roles
+    $appRoles = New-Object System.Collections.Generic.List[Microsoft.Open.AzureAD.Model.AppRole]
+    $newRole = CreateAppRole -types "User" -name "PrivilegedAdmin" -description "Authorized to access the PrivilegedAdmin page."
+    $appRoles.Add($newRole)
+    $newRole = CreateAppRole -types "User" -name "RegularUser" -description "Authorized to access the RegularUser page."
+    $appRoles.Add($newRole)
+    Set-AzureADApplication -ObjectId $webAppAadApplication.ObjectId -AppRoles $appRoles
+    Write-Host "Done creating the webApp application (java-servlet-webapp-roles)"
 
    # URL of the AAD application in the Azure portal
    # Future? $webAppPortalUrl = "https://portal.azure.com/#@"+$tenantName+"/blade/Microsoft_AAD_RegisteredApps/ApplicationMenuBlade/Overview/appId/"+$webAppAadApplication.AppId+"/objectId/"+$webAppAadApplication.ObjectId+"/isMSAApp/"
@@ -231,7 +256,8 @@ Function ConfigureApplications
    Write-Host "Updating the sample code ($configFile)"
    $dictionary = @{ "{enter-your-tenant-id-here}" = $tenantId;"{enter-your-client-id-here}" = $webAppAadApplication.AppId;"{enter-your-client-secret-here}" = $webAppAppKey };
    ReplaceInTextFile -configFilePath $configFile -dictionary $dictionary
-  
+   
+   Write-Host "  - You can run the ..\CreateUsersAndAssignRoles.ps1 command to automatically create a number of users, and assign users to these roles or assign users to this application app roles using the portal.To receive the `roles` claim with the name of the app roles this user is assigned to, make sure that the user accounts you plan to sign-in to this app is assigned to the app roles of this app. The guide, https://docs.microsoft.com/azure/active-directory/manage-apps/assign-user-or-group-access-portal#assign-a-user-to-an-app---portal provides step by step instructions." -ForegroundColor Red 
    Add-Content -Value "</tbody></table></body></html>" -Path createdApps.html  
 }
 

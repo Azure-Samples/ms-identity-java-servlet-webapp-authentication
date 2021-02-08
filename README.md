@@ -65,9 +65,6 @@ These application roles are defined in the [Azure portal](https://portal.azure.c
 
 NOTE: Role claims will not be present for guest users in a tenant if the `https://login.microsoftonline.com/common/` endpoint is used as the authority to sign in users.
 
-![Sign in with the Microsoft identity platform](ReadmeFiles/sign-in.png)
-
-
 ## Contents
 
 | File/folder       | Description                                |
@@ -178,7 +175,7 @@ Following this guide, you must:
 ##### Define your Application Roles
 
 1. In the blade for your  application in Azure Portal, click **Manifest**.
-1. Edit the manifest by locating the `appRoles` setting and adding the two Application Roles.  The role definitions are provided in the JSON code block below.  Leave the `allowedMemberTypes` to **User** only.  Each role definition in this manifest must have a different valid **Guid** for the "id" property. Note that the `"value"` property of each role is set to the exact strings **DirectoryViewers** and **UserReaders** (as these strings are used in the code in the application).
+1. Edit the manifest by locating the `appRoles` setting and adding the two Application Roles.  The role definitions are provided in the JSON code block below.  Leave the `allowedMemberTypes` to **User** only.  Each role definition in this manifest must have a different valid **Guid** for the "id" property. Note that the `"value"` property of each role is set to the exact strings **PrivilegedAdmin** and **RegularUser** (as these strings are used in the code in the application).
 1. Save the manifest.
 
 The content of `appRoles` should be the following (the `id` should be a unique Guid)
@@ -197,7 +194,7 @@ The content of `appRoles` should be the following (the `id` should be a unique G
             "isEnabled": true,
             "lang": null,
             "origin": "Application",
-            "value": "UserReaders"
+            "value": "PrivilegedAdmin"
         },
         {
             "allowedMemberTypes": [
@@ -209,7 +206,7 @@ The content of `appRoles` should be the following (the `id` should be a unique G
             "isEnabled": true,
             "lang": null,
             "origin": "Application",
-            "value": "DirectoryViewers"
+            "value": "RegularUser"
         }
     ],
  ...
