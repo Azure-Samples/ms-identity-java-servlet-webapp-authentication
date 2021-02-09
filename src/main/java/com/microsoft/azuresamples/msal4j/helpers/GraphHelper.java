@@ -3,11 +3,19 @@
 
 package com.microsoft.azuresamples.msal4j.helpers;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.microsoft.graph.authentication.IAuthenticationProvider;
+import com.microsoft.graph.core.ClientException;
 import com.microsoft.graph.http.IHttpRequest;
 import com.microsoft.graph.httpcore.ICoreAuthenticationProvider;
+import com.microsoft.graph.models.extensions.Group;
 import com.microsoft.graph.models.extensions.IGraphServiceClient;
 import com.microsoft.graph.requests.extensions.GraphServiceClient;
+import com.microsoft.graph.requests.extensions.IGroupCollectionPage;
+import com.microsoft.graph.requests.extensions.IGroupCollectionRequest;
+import com.microsoft.graph.requests.extensions.IGroupCollectionRequestBuilder;
 
 import okhttp3.Request;
 
@@ -23,6 +31,46 @@ public class GraphHelper {
         .builder()
         .authenticationProvider(new MsalGraphAuthenticationProvider(accessToken))
         .buildClient();
+    }
+
+    public static List<Group> getGroups(IGraphServiceClient graphClient) {
+        // Set up the initial request builder and build request for the first page
+        IGroupCollectionRequestBuilder groupsRequestBuilder = graphClient.groups();
+        IGroupCollectionRequest groupsRequest = groupsRequestBuilder
+            .buildRequest()
+            .top(999);
+        
+        List<Group> allGroups = new ArrayList<>();
+
+        do {
+            try {
+                // Execute the request
+                IGroupCollectionPage groupsCollection = groupsRequest.get(); 
+
+                // Process each of the items in the response
+                for (Group group : groupsCollection.getCurrentPage()) {
+                    allGroups.add(group);
+                }
+
+                // Build the request for the next page, if there is one
+                groupsRequestBuilder = groupsCollection.getNextPage();
+                if (groupsRequestBuilder == null) {
+                    groupsRequest = null;
+                } else {
+                    groupsRequest = groupsRequestBuilder.buildRequest();
+                }
+
+            } catch(ClientException ex) {
+
+                // Handle failure
+                ex.printStackTrace();
+                groupsRequest = null;
+            }
+
+        } while (groupsRequest != null);
+
+        return allGroups;
+
     }
 }
 

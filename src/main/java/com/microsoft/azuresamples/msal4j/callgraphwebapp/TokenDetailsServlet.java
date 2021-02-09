@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Iterator;
 
 /**
  * This class defines a page for showing the user their token detailss
@@ -44,7 +45,18 @@ public class TokenDetailsServlet extends HttpServlet {
         HashMap<String,String> filteredClaims = new HashMap<>();
         context.getIdTokenClaims().forEach((k,v) -> {
             if (includeClaims.contains(k))
-                filteredClaims.put(k, v.toString());
+                // if (k.equals("groups")){
+                //     Iterator<String> it = ((List)v).iterator();
+                //     if (it.hasNext()) {
+                //         filteredClaims.put(k, it.next())
+                //     }
+
+                // } else {
+                    filteredClaims.put(k, v.toString());
+                // }
+                    
+                    // if && (.hasNext() &&  )
+                
         });
         return filteredClaims;
     }

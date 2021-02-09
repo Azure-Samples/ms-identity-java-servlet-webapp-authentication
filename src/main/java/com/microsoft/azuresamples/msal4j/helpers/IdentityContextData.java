@@ -5,7 +5,11 @@ package com.microsoft.azuresamples.msal4j.helpers;
 
 import com.microsoft.aad.msal4j.IAccount;
 import com.microsoft.aad.msal4j.IAuthenticationResult;
+import com.microsoft.graph.models.extensions.Group;
+import com.microsoft.graph.models.extensions.User;
+import com.microsoft.graph.requests.extensions.GraphServiceClient;
 import com.nimbusds.jose.shaded.json.JSONArray;
+import com.nimbusds.jose.shaded.json.JSONObject;
 import com.nimbusds.jwt.SignedJWT;
 
 import java.io.Serializable;
@@ -13,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -123,6 +128,31 @@ public class IdentityContextData implements Serializable {
             groups.forEach(elem -> this.idTokenGroups.add((String)elem));
         }
         this.setHasChanged(true);
+    }
+
+    public void setIdTokenGroups(Map<String,Object> idTokenClaims) {
+        this.idTokenGroups = new ArrayList<>();
+
+        JSONArray groups = (JSONArray)this.idTokenClaims.get("groups");
+        if (groups != null) {
+            groups.forEach(elem -> this.idTokenGroups.add((String)elem));
+        } else {
+            // check for potential groups overage scenario!
+            JSONObject jsonObj = (JSONObject)idTokenClaims.get("_claim_names");
+            if (jsonObj != null && jsonObj.containsKey("groups")) {
+                // overage scenario exists, handle it:
+                this.idTokenGroups.add("MSAL-ERROR-ID-TOKEN-GROUPS-OVERAGE");
+            }
+        }
+    }
+
+    public void setGroups(List<Group> groups) {
+        this.idTokenGroups = new ArrayList<>();
+
+        Iterator<Group> it = groups.iterator();
+        while(it.hasNext()){
+            this.idTokenGroups.add(it.next().id);
+        }
     }
 
     public void clearIdTokenClaims() {

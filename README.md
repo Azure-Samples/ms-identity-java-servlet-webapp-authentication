@@ -5,7 +5,7 @@ languages:
 products:
   - azure
   - msal-java
-- azure-active-directory
+  - azure-active-directory
   - microsoft-identity-platform
 name: Enable your Java Servlet web app to sign in users and restrict access to pages based on group membership with the Microsoft identity platform
 urlFragment: ms-identity-java-servlet-webapp-groups

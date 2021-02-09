@@ -57,10 +57,10 @@ public class AuthenticationFilter implements Filter {
         } else {
             Set<String> routeRequiresGroup = protectedRoutes.requireGroup.get(request.getServletPath());
             if (!idTokenHasRequiredGroup(routeRequiresGroup, context.getIdTokenGroups())) {
-                    sendToForbiddenPage(request, response);
+                sendToForbiddenPage(request, response);
             } else {
                 // not a protected route? continue!
-                chain.doFilter(req, res);
+                chain.doFilter(request, response);
             }
         }
     }

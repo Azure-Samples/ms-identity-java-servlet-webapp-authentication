@@ -1,3 +1,4 @@
+<jsp:useBean id="msalAuth" scope="session" class="com.microsoft.azuresamples.msal4j.helpers.IdentityContextData"/>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <div class="card">
     <h5 class="card-header bg-primary">
@@ -7,6 +8,8 @@
         <p class="card-text">
             <c:forEach items="${claims}" var="claim">
                 <strong>${claim.key}:</strong> ${claim.value}
+                <br>
+                <a class="btn btn-warning" href="<c:url value="/overage"></c:url>">Handle Groups Overage</a>
                 <br>
             </c:forEach>
             <br>

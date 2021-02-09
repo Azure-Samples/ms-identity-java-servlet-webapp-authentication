@@ -46,7 +46,6 @@ public class AADRedirectServlet extends HttpServlet {
                 rd.forward(req, resp);
             } catch (Exception except) {
                 except.printStackTrace();
-                System.out.println("WHAT THE FUCK");
             }
         }
     }
