@@ -9,9 +9,9 @@
             <c:forEach items="${claims}" var="claim">
                 <strong>${claim.key}:</strong> ${claim.value}
                 <br>
-                <a class="btn btn-warning" href="<c:url value="/overage"></c:url>">Handle Groups Overage</a>
-                <br>
             </c:forEach>
+            <br>
+            <a class="btn btn-warning" href="<c:url value="/overage"></c:url>">Handle Groups Overage</a>
             <br>
             Click here to see your <a class="btn btn-success" href="<c:url value="/sign_in_status"></c:url>">Sign-in Status</a>
             or <a class="btn btn-success" href="<c:url value="/call_graph"></c:url>">Call Graph</a>

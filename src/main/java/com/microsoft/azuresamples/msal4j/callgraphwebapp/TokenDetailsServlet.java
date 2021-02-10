@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Iterator;
 
 /**
- * This class defines a page for showing the user their token detailss
+ * This class defines a page for showing the user their token details
  * This is here only for sample demonstration purposes.
  */
 @WebServlet(name = "TokenDetailsServlet", urlPatterns = {"/token_details"})
@@ -39,25 +39,21 @@ public class TokenDetailsServlet extends HttpServlet {
     }
 
     private HashMap<String,String> filterClaims(IdentityContextData context) {
-        final String[] claimKeys = {"sub", "aud", "ver", "iss", "name", "oid", "preferred_username", "nonce", "tid", "roles", "groups"};
+        final String[] claimKeys = {"sub", "aud", "ver", "iss", "name", "oid", "preferred_username", "nonce", "tid", "roles", "groups", "_groups_overage"};
         final List<String> includeClaims = Arrays.asList(claimKeys);
 
         HashMap<String,String> filteredClaims = new HashMap<>();
         context.getIdTokenClaims().forEach((k,v) -> {
             if (includeClaims.contains(k))
-                // if (k.equals("groups")){
-                //     Iterator<String> it = ((List)v).iterator();
-                //     if (it.hasNext()) {
-                //         filteredClaims.put(k, it.next())
-                //     }
-
-                // } else {
                     filteredClaims.put(k, v.toString());
-                // }
-                    
-                    // if && (.hasNext() &&  )
-                
         });
+        if (!context.getIdTokenGroups().isEmpty()) {
+            String groups = "";
+            Iterator<String> it = context.getIdTokenGroups().iterator();
+            while (it.hasNext())
+                groups = groups + it.next() + ", ";
+            filteredClaims.put("groups", groups);
+        }
         return filteredClaims;
     }
 }

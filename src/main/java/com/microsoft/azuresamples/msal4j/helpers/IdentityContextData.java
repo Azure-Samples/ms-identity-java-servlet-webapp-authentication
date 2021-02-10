@@ -141,7 +141,7 @@ public class IdentityContextData implements Serializable {
             JSONObject jsonObj = (JSONObject)idTokenClaims.get("_claim_names");
             if (jsonObj != null && jsonObj.containsKey("groups")) {
                 // overage scenario exists, handle it:
-                this.idTokenGroups.add("MSAL-ERROR-ID-TOKEN-GROUPS-OVERAGE");
+                this.idTokenClaims.put("_groups_overage", "error");
             }
         }
     }
