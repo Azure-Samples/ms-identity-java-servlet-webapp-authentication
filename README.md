@@ -351,7 +351,7 @@ In this sample, these values are read from the [authentication.properties](src/m
     msalAuth.setAuthenticated(true);
     msalAuth.setUsername(msalAuth.getIdTokenClaims().get("name"));
    ```
-6. Once the user clicks on the Admin Page, the program control flows to the AuthorizationFilter class which has the logic to verify if the user has the **PrivilegedAdmin** role associated with them. Auth error page is displayed if the logged in user doesn't have the role. 
+6.  Once the user clicks on the User Page, the program control flows to the AuthorizationFilter class which has the logic to verify if the user has the **RegularUser** role associated with them. Auth error page is displayed if the logged in user doesn't have the role. 
    
   ```Java
 		if (request.getRequestURI().contains("regular_user")) {
@@ -362,7 +362,7 @@ In this sample, these values are read from the [authentication.properties](src/m
 			}
 		}
    ```
-7. Once the user clicks on the User Page, the program control flows to the AuthorizationFilter class which has the logic to verify if the user has the **RegularUser** role associated with them. Auth error page is displayed if the logged in user doesn't have the role. 
+7. Once the user clicks on the Admin Page, the program control flows to the AuthorizationFilter class which has the logic to verify if the user has the **PrivilegedAdmin** role associated with them. Auth error page is displayed if the logged in user doesn't have the role.
   
   ```Java
   	if (request.getRequestURI().contains("privileged_admin")) {
