@@ -56,7 +56,7 @@ public class AuthenticationFilter implements Filter {
         // check for group-related access requirements and claims if authorized
         } else {
             Set<String> routeRequiresGroup = protectedRoutes.requireGroup.get(request.getServletPath());
-            if (!idTokenHasRequiredGroup(routeRequiresGroup, context.getIdTokenGroups())) {
+            if (!idTokenHasRequiredGroup(routeRequiresGroup, context.getGroups())) {
                 sendToForbiddenPage(request, response);
             } else {
                 // not a protected route? continue!

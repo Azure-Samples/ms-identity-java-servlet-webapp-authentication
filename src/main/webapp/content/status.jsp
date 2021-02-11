@@ -9,11 +9,16 @@
         <p class="card-text">
             <% if (msalAuth.getAuthenticated()) { %>
                 Click here to get your <a class="btn btn-success" href="<c:url value="/token_details"></c:url>">ID Token Details</a>
-                or <a class="btn btn-success" href="<c:url value="/call_graph"></c:url>">Call Graph</a>
+                or see your <a class="btn btn-success" href="<c:url value="/groups"></c:url>">Groups</a>
+                or go to the <a class="btn btn-success" href="<c:url value="/admin_only"></c:url>">Admins Only</a> page
+                or go to the <a class="btn btn-success" href="<c:url value="/regular_user"></c:url>">Regular Users</a> page
             <% } else { %>
                 Use the button on the top right to sign in.
-                Attempts to get your <a href="<c:url value="/token_details"></c:url>">ID Token Details</a>
-                or <a href="<c:url value="/call_graph"></c:url>">Call Graph</a> will result in a 401 error.
+                Attempts to visit <a href="<c:url value="/token_details"></c:url>">ID Token Details</a>,
+                <a href="<c:url value="/groups"></c:url>">Groups</a>,
+                <a href="<c:url value="/admin_only"></c:url>">Admins Only</a>, 
+                or <a href="<c:url value="/regular_user"></c:url>">Regular Users</a>
+                will result in a 401 error.
             <% } %>
         </p>
     </div>

@@ -9,14 +9,23 @@
     "AADApps": [
       {
         "Id": "webApp",
-        "Name": "java-servlet-webapp-authentication",
+        "Name": "java-servlet-webapp-groups",
         "Kind": "WebApp",
         "Audience": "AzureADMyOrg",
         "PasswordCredentials": "Auto",
         "AllowImplicitFlow": false,
-        "HomePage": "http://localhost:8080/ms-identity-java-servlet-webapp-authentication/index",
-        "ReplyUrls": "http://localhost:8080/ms-identity-java-servlet-webapp-authentication/auth/redirect",
-        "RequiredResourcesAccess": []
+        "HomePage": "http://localhost:8080/msal4j-servlet-webapp/auth/redirect/index",
+        "ReplyUrls": "http://localhost:8080/msal4j-servlet-webapp/auth/redirect",
+        "RequiredResourcesAccess": [
+          {
+            "Resource": "Microsoft Graph",
+            "DelegatedPermissions": ["GroupMember.Read.All" ]
+          }
+        ],
+        "ManualSteps": [
+          { "Comment": "On Azure Portal, create a security group named GroupAdmin, assign some users to it, and configure your ID and Access token to emit GroupID in your app registration." },
+          { "Comment": "On Azure Portal, create a security group named GroupMember, assign some users to it, and configure your ID and Access token to emit GroupID in your app registration." }
+        ]
       }
     ],
     "CodeConfiguration": [

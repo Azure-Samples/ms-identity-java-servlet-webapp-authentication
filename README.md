@@ -7,11 +7,11 @@ products:
   - msal-java
   - azure-active-directory
   - microsoft-identity-platform
-name: Enable your Java Servlet web app to sign in users and restrict access to pages based on group membership with the Microsoft identity platform
+name: Enable your Java Servlet web app to sign in users and restrict access to pages using security groups and groups claims with the Microsoft identity platform
 urlFragment: ms-identity-java-servlet-webapp-groups
 description: "This sample demonstrates how to create a Java Servlet web app that signs in users and restricts access to pages based on group membership with the Microsoft identity platform"
 ---
-# Enable your Java Servlet web app to sign in users and restrict access to pages based on group membership with the Microsoft identity platform
+# Enable your Java Servlet web app to sign in users and restrict access to pages using security groups and groups claims with the Microsoft identity platform
 
 - [Overview](#overview)
 - [Scenario](#scenario)
@@ -26,6 +26,9 @@ description: "This sample demonstrates how to create a Java Servlet web app that
   - [Configure the web app (java-servlet-webapp-groups) to recognize Group IDs](#configure-the-web-app-java-servlet-webapp-groups-to-recognize-group-ids)
 - [Running the sample](#running-the-sample)
 - [Explore the sample](#explore-the-sample)
+- [Processing Groups claim in tokens, including handling **overage**](#processing-groups-claim-in-tokens-including-handling-overage)
+  - [The `groups` claim](#the-groups-claim)
+  - [The groups overage claim](#the-groups-overage-claim)
 - [We'd love your feedback!](#wed-love-your-feedback)
 - [About the code](#about-the-code)
   - [Step-by-step walkthrough](#step-by-step-walkthrough)
@@ -37,9 +40,10 @@ description: "This sample demonstrates how to create a Java Servlet web app that
 
 ## Overview
 
-This sample demonstrates how to create a Java Servlet web app that signs in users with [Microsoft Authentication Library (MSAL) for Java](https://github.com/AzureAD/microsoft-authentication-library-for-java) and restricts access to pages based on Azure Active Directory group membership.
+This sample demonstrates how to create a Java Servlet web app that signs in users with [Microsoft Authentication Library (MSAL) for Java](https://github.com/AzureAD/microsoft-authentication-library-for-java) and restricts access to pages based on Azure Active Directory security group membership.
 
 ![Overview](./ReadmeFiles/topology.png)
+An Identity Developer session covered Azure AD App roles and security groups, featuring this scenario and how to handle the overage claim. [Watch the video Using Security Groups and Application Roles in your apps](https://www.youtube.com/watch?v=LRoc-na27l0)
 
 ## Scenario
 
@@ -68,9 +72,8 @@ This sample demonstrates how to create a Java Servlet web app that signs in user
 - [Maven 3](https://maven.apache.org/download.cgi)
 - [Tomcat 9](https://tomcat.apache.org/download-90.cgi)
 - An Azure Active Directory (Azure AD) tenant. For more information on how to get an Azure AD tenant, see [How to get an Azure AD tenant](https://azure.microsoft.com/documentation/articles/active-directory-howto-tenant/)
-- A user account in your own Azure AD tenant if you want to work with **accounts in your organizational directory only** (single-tenant mode). If have not yet [created a user account](https://docs.microsoft.com/azure/active-directory/fundamentals/add-users-azure-active-directory) in your AD tenant yet, you should do so before proceeding.
-- A user account in any organization's Azure AD tenant if you want to work with **accounts in any organizational directory** (multi-tenant mode).  This sample must be modified to work with a **personal Microsoft account**. If have not yet [created a user account](https://docs.microsoft.com/azure/active-directory/fundamentals/add-users-azure-active-directory) in your AD tenant yet, you should do so before proceeding.
-- Two security groups, **PrivilegedAdmin** and **RegularUser**, containing users you want to test with.
+- A user account in your own Azure AD tenant.
+- Two security groups, **GroupAdmin** and **GroupMember**, containing users you want to test with.
 
 ## Setup
 
@@ -135,9 +138,7 @@ Following this guide, you must:
 1. Select **New registration**.
 1. In the **Register an application page** that appears, enter your application's registration information:
    - In the **Name** section, enter a meaningful application name that will be displayed to users of the app, for example `java-servlet-webapp-groups`.
-   - Under **Supported account types**, select an option.
-     - Select **Accounts in this organizational directory only** if you're building an application for use only by users in your tenant (**single-tenant**).
-     - Select **Accounts in any organizational directory** if you'd like users in any Azure AD tenant to be able to use your application (**multi-tenant**).
+   - Under **Supported account types**, select **Accounts in this organizational directory only**.
    - In the **Redirect URI** section, select **Web** in the combo-box and enter the following redirect URI: `http://localhost:8080/msal4j-servlet-webapp/auth/redirect`.
 1. Select **Register** to create the application.
 1. In the app's registration screen, find and note the **Application (client) ID**. You use this value in your app's configuration file(s) later in your code.
@@ -173,7 +174,7 @@ Open the project in your IDE to configure the code.
 
 You have two different options available to you on how you can further configure your application(s) to receive the `groups` claim.
 
-1. [Receive **all the groups** that the signed-in user is assigned to in an Azure AD tenant, included nested groups](#configure-your-application-to-receive-all-the-groups-the-signed-in-user-is-assigned-to-including-nested-groups).
+1. [Receive **all the groups** that the signed-in user is assigned to in an Azure AD tenant, including nested groups](#configure-your-application-to-receive-all-the-groups-the-signed-in-user-is-assigned-to-including-nested-groups).
 2. [Receive the **groups** claim values from a **filtered set of groups** that your application is programmed to work with](#configure-your-application-to-receive-the-groups-claim-values-from-a-filtered-set-of-groups-a-user-may-be-assigned-to) (Not available in the [Azure AD Free edition](https://azure.microsoft.com/pricing/details/active-directory/)).
 
 > To get the on-premise group's `samAccountName` or `On Premises Group Security Identifier` instead of Group ID, please refer to the document [Configure group claims for applications with Azure Active Directory](https://docs.microsoft.com/azure/active-directory/hybrid/how-to-connect-fed-group-claims#prerequisites-for-using-group-attributes-synchronized-from-active-directory).
@@ -221,8 +222,8 @@ You have two different options available to you on how you can further configure
 > During **Token Configuration**, if you have chosen any other option except **groupID** (e.g. like **DNSDomain\sAMAccountName**) you should enter the **group name** (for example `contoso.com\Test Group`) instead of the **object ID** below:
 
 1. Open the `./src/main/resources/authentication.properties` file.
-2. Find the string `{enter-your-admins-group-id-here}` and replace the existing value with the **object ID** of the **PrivilegedAdmin** group copied from the Azure portal.
-3. Find the string `{enter-your-users-group-id-here}` and replace the existing value with the **object ID** of the **RegularUser** group copied from the Azure portal.
+2. Find the string `{enter-your-admins-group-id-here}` and replace the existing value with the **object ID** of the **GroupAdmin** group copied from the Azure portal. Do NOT include curly braces.
+3. Find the string `{enter-your-users-group-id-here}` and replace the existing value with the **object ID** of the **GroupMember** group copied from the Azure portal. Do NOT include curly braces.
 
 ## Running the sample
 
@@ -250,14 +251,67 @@ You have two different options available to you on how you can further configure
 - On the consent screen, note the scopes that are being requested.
 - Note the context-sensitive button now says `Sign out` and displays your username to its left.
 - The middle of the screen now has an option to click for **ID Token Details**: click it to see some of the ID token's decoded claims.
-- Click the **Admin Only** or **Regular User**button to access the groups claim protected endpoints.
-  - If your signed in user is in the PrivilegedAdmin group, the user will be able to enter both pages.
-  - If your signed in user is in the RegularUser group, the user will be able to enter the Regular User page only.
+- Click the **Groups** button to see any information about security group membership for the signed in user.
+- Click the **Admin Only** or **Regular User** buttons to access the groups claim protected endpoints.
+  - If your signed in user is in the GroupAdmin group, the user will be able to enter both pages.
+  - If your signed in user is in the GroupMember group, the user will be able to enter the Regular User page only.
   - If your signed in user is in neither group, the user will be able to access to none of the two pages.
 - You can also use the button on the top right to sign out.
 - After signing out, click the link to `ID Token Details` to observe that the app displays a `401: unauthorized` error instead of the ID token claims when the user is not authorized.
 
 > :information_source: Did the sample not work for you as expected? Did you encounter issues trying this sample? Then please reach out to us using the [GitHub Issues](../../issues) page.
+
+## Processing Groups claim in tokens, including handling **overage**
+
+### The `groups` claim
+
+The object id of the security groups the signed in user is member of is returned in the `groups` claim of the token.
+
+```JSON
+{
+  ...
+  "groups": [
+    "0bbe91cc-b69e-414d-85a6-a043d6752215",
+    "48931dac-3736-45e7-83e8-015e6dfd6f7c",]
+  ...
+}
+```
+
+### The groups overage claim
+
+To ensure that the token size doesn’t exceed HTTP header size limits, the Microsoft Identity Platform limits the number of object Ids that it includes in the **groups** claim.
+
+If a user is member of more groups than the overage limit (**150 for SAML tokens, 200 for JWT tokens, 6 for Single Page applications**), then the Microsoft Identity Platform does not emit the group IDs in the `groups` claim in the token. Instead, it includes an **overage** claim in the token that indicates to the application to query the [MS Graph API](https://graph.microsoft.com) to retrieve the user’s group membership.
+
+```JSON
+{
+  ...
+  "_claim_names": {
+    "groups": "src1"
+    },
+    {
+   "_claim_sources": {
+    "src1": {
+        "endpoint":"[Graph Url to get this user's group membership from]"
+        }
+    }
+  ...
+}
+```
+
+#### Create the overage scenario in this sample for testing
+
+1. You can use the `BulkCreateGroups.ps1` provided in the [App Creation Scripts](./AppCreationScripts/) folder to create a large number of groups and assign users to them. This will help test overage scenarios during development. Remember to change the user's **objectId** provided in the `BulkCreateGroups.ps1` script.
+1. When you run this sample and an overage occurred, then you'd see the  `_claim_names` in the home page after the user signs-in.
+1. We strongly advise you use the [group filtering feature](#configure-your-application-to-receive-the-groups-claim-values-from-a-filtered-set-of-groups-a-user-may-be-assigned-to) (if possible) to avoid running into group overages.
+1. In case you cannot avoid running into group overage, we suggest you use the following logic to process groups claim in your token.  
+    1. Check for the claim `_claim_names` with one of the values being `groups`. This indicates overage.
+    1. If found, make a call to the endpoint specified in `_claim_sources` to fetch user’s groups.
+    1. If none found, look into the `groups`  claim for user’s groups.
+
+> When attending to overage scenarios, which requires a call to [Microsoft Graph](https://graph.microsoft.com) to read the signed-in user's group memberships, your app will need to have the [GroupMember.Read.All](https://docs.microsoft.com/graph/permissions-reference#group-permissions) for the [getMemberObjects](https://docs.microsoft.com/graph/api/user-getmemberobjects?view=graph-rest-1.0) function to execute successfully.
+
+> Developers who wish to gain good familiarity of programming for Microsoft Graph are advised to go through the [An introduction to Microsoft Graph for developers](https://www.youtube.com/watch?v=EBbnpFdB92A) recorded session.
 
 ## We'd love your feedback!
 
@@ -307,10 +361,6 @@ In this sample, these values are read from the [authentication.properties](src/m
     - **SCOPES**: [Scopes](https://docs.microsoft.com/azure/active-directory/develop/access-tokens#scopes) are permissions requested by the application.
       - Normally, the three scopes `openid profile offline_access` suffice for receiving an ID Token response.
       - Full list of scopes requested by the app can be found in the [authentication.properties file](./src/main/resources/authentication.properties). You can add more scopes like User.Read and so on.
-    - **ResponseMode.QUERY**: AAD can return the response as form params in an HTTP POST request or as query string params in an HTTP GET request. You'd normally leave this as-is.
-    - **Prompt.SELECT_ACCOUNT**: AAD should ask the user to select the account that they intend to authenticate against. The [OIDC protocol documentation](https://openid.net/specs/openid-connect-core-1_0.html#AuthRequest) lists other available options and their uses.
-    - **state**: a unique variable set by the app into the session on each token request, and destroyed after receiving the corresponding AAD redirect callback. The state variable ensures that AAD requests to the [/auth/redirect endpoint](src/main/java/com/microsoft/azuresamples/authentication/AADRedirectServlet.java) are actually from AAD authorization requests originating from this app and this session, thereby preventing CSRF attacks.You'd normally leave this as-is.
-    - **nonce**: a unique variable set by the app into the session on each token request, and destroyed after receiving the corresponding token. This nonce is transcribed to the resulting tokens dispensed AAD, thereby ensuring that there is no token-replay attack occurring. You'd normally leave this as-is.
 
 2. The user is presented with a sign-in prompt by Azure Active Directory. If the sign-in attempt is successful, the user's browser is redirected to our app's redirect endpoint. A valid request to this endpoint will contain an [**authorization code**](https://docs.microsoft.com/azure/active-directory/develop/v2-oauth2-auth-code-flow).
 3. Our ConfidentialClientApplication instance then exchanges this authorization code for an ID Token and Access Token from Azure Active Directory.
@@ -331,29 +381,17 @@ In this sample, these values are read from the [authentication.properties](src/m
     - **REDIRECT_URI**: The redirect URI used in the previous step must be passed again.
     - **SCOPES**: The scopes used in the previous step must be passed again.
 
-4. If `acquireToken` is successful, the token claims are extracted and the nonce claim is validated against the nonce stored in the session.
+4. If `acquireToken` is successful, the token claims are extracted and placed in an instance of IdentityContextData (e.g., `context`).
 
-    ```Java
-    parseJWTClaimsSetAndStoreResultInSession(msalAuth, result, serializedTokenCache);
-    validateNonce(msalAuth)
-    processSuccessfulAuthentication(msalAuth);
-    ```
-
-5. If the nonce is successfully validated, authentication status is put into a server-side session, leveraging methods exposed by the class [MsalAuthSession.java](src/main/java/com/microsoft/azuresamples/authentication/MsalAuthSession.java):
-
-    ```Java
-    msalAuth.setAuthenticated(true);
-    msalAuth.setUsername(msalAuth.getIdTokenClaims().get("name"));
-   ```
+5. If the user is a member of too many groups, a call to `context.getGroups()` will be empty at this point. Meanwhile, `context.getGroupsOverage()` will return `true`, signalling that getting the full list of groups will require a call to Microsoft Graph. See OverageServlet.java for an example of how to populate `context.groups`.
 
 ### Scopes
 
 - [Scopes](https://docs.microsoft.com/azure/active-directory/develop/v2-permissions-and-consent) tell Azure AD the level of access that the application is requesting.
 - Based on the requested scopes, Azure AD presents a consent dialogue to the user upon signing in.
 - If the user consents to one or more scopes and obtains a token, the scopes-consented-to are encoded into the resulting `access_token`.
-- Note the scope requested by the application by referring to [authentication.properties](./src/main/resources/authentication.properties). By default, the application sets the scopes value to `User.Read`.
-- This particular MS Graph API scope is for accessing the information of the currently-signed-in user. The graph endpoint for accessing this info is `https://graph.microsoft.com/v1.0/me`
-- Any valid requests made to this endpoint must bear an `access_token` that contains the scope `User.Read` in the Authorization header.
+- Note the scope requested by the application by referring to [authentication.properties](./src/main/resources/authentication.properties). By default, the application sets the scopes value to `GroupMember.Read.All`.
+- This particular MS Graph API scope is required in case the application needs to call Graph for getting the user's group memberships.
 
 ## Deploy to Azure
 

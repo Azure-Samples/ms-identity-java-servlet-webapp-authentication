@@ -4,10 +4,12 @@
 package com.microsoft.azuresamples.msal4j.authservlets;
 
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -34,7 +36,12 @@ public class SignInServlet extends HttpServlet {
             logger.log(Level.WARNING, ex.getMessage());
             logger.log(Level.WARNING, Arrays.toString(ex.getStackTrace()));
             logger.log(Level.INFO, "redirecting to error page to display auth error to user.");
-            resp.sendRedirect(resp.encodeRedirectURL(String.format("/auth_error_details?details=%s", ex.getMessage())));
+            try {
+                RequestDispatcher rd = req.getRequestDispatcher(String.format("/auth_error_details?details=%s", URLEncoder.encode(ex.getMessage(), "UTF-8")));
+                rd.forward(req, resp);
+            } catch (Exception except) {
+                except.printStackTrace();
+            }
         }
     }
 }
