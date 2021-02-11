@@ -11,6 +11,7 @@ import com.nimbusds.jose.shaded.json.JSONObject;
 import com.nimbusds.jwt.SignedJWT;
 
 import java.io.Serializable;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -117,7 +118,7 @@ public class IdentityContextData implements Serializable {
         return this.groupsOverage;
     }
 
-    public void setIdTokenClaims(String rawIdToken) throws java.text.ParseException {
+    public void setIdTokenClaims(String rawIdToken) throws ParseException {
         final Map<String, Object> tokenClaims = SignedJWT.parse(rawIdToken).getJWTClaimsSet().getClaims();
         this.idTokenClaims = tokenClaims;
         setGroupsFromIdToken(tokenClaims);
@@ -125,17 +126,17 @@ public class IdentityContextData implements Serializable {
     }
 
     public void setGroupsFromIdToken(Map<String,Object> idTokenClaims) {
-        this.groups = new ArrayList<>();
-
         JSONArray groupsFromToken = (JSONArray)this.idTokenClaims.get("groups");
         if (groupsFromToken != null) {
+            setGroupsOverage(false);
+            this.groups = new ArrayList<>();
             groupsFromToken.forEach(elem -> this.groups.add((String)elem));
         } else {
             // check for potential groups overage scenario!
             JSONObject jsonObj = (JSONObject)idTokenClaims.get("_claim_names");
             if (jsonObj != null && jsonObj.containsKey("groups")) {
                 // overage scenario exists, handle it:
-                setGroupsOverage();
+                setGroupsOverage(true);
             }
         }
         setHasChanged(true);
@@ -227,8 +228,8 @@ public class IdentityContextData implements Serializable {
         this.setHasChanged(true);
     }
 
-    private void setGroupsOverage() {
-        this.groupsOverage = true;
+    private void setGroupsOverage(boolean groupsOverage) {
+        this.groupsOverage = groupsOverage;
         this.setHasChanged(true);
     }
 

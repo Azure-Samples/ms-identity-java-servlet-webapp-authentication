@@ -2,14 +2,13 @@
 
 <div class="card">
     <h5 class="card-header bg-primary">
-        403: Forbidden
+        200: OK!
     </h5>
     <div class="card-body">
         <p class="card-text">
-            Visiting this page requires the signed in user to be assigned to <strong>the correct group(s)</strong> as defined in the authentication.properties file.
+            Excellent! You have are a member of the group(s) that are allowed to visit this page!
             <br>
-            Click here to check the <a class="btn btn-success" href="<c:url value="/groups"></c:url>">Groups</a> page to see if you are a member of too many groups. Membership in over 200 groups will preclude groups from being emitted in the ID token.
-            <br>
+            Click here to see your <a class="btn btn-success" href="<c:url value="/groups"></c:url>">Groups</a>
             or go to the <a class="btn btn-success" href="<c:url value="/admin_only"></c:url>">Admins Only</a> page
             or go to the <a class="btn btn-success" href="<c:url value="/regular_user"></c:url>">Regular Users</a> page
         </p>

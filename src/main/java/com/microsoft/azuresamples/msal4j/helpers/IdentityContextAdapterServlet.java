@@ -15,8 +15,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Implementation of IdentityContextAdapter for AuthHelper for use with Java HttpServletRequests/Responses
- * MUST BE INSTANTIATED ONCE PER REQUEST IN WEB APPS / WEB APIs before passing to AuthHelper
+ * Implementation of IdentityContextAdapter for AuthHelper for use with Java
+ * HttpServletRequests/Responses MUST BE INSTANTIATED ONCE PER REQUEST IN WEB
+ * APPS / WEB APIs before passing to AuthHelper
  */
 
 public class IdentityContextAdapterServlet implements IdentityContextAdapter, HttpSessionActivationListener {
@@ -62,13 +63,13 @@ public class IdentityContextAdapterServlet implements IdentityContextAdapter, Ht
     }
 
     @Override
-    public IdentityContextData getContext(){
+    public IdentityContextData getContext() {
         loadContext();
         return this.context;
     }
 
     @Override
-    public void setContext(IdentityContextData context){
+    public void setContext(IdentityContextData context) {
         this.context = context;
         saveContext();
     }
@@ -79,7 +80,7 @@ public class IdentityContextAdapterServlet implements IdentityContextAdapter, Ht
         try {
             this.response.sendRedirect(location);
         } catch (IOException ex) {
-            // fill this later
+            logger.log(Level.WARNING, ex.getMessage());
         }
     }
 
