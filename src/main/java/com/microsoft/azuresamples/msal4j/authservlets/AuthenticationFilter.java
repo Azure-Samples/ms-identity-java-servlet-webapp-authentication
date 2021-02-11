@@ -28,7 +28,7 @@ import com.microsoft.azuresamples.msal4j.helpers.IdentityContextAdapterServlet;
 @WebFilter(filterName = "AuthenticationFilter", urlPatterns = "/*")
 public class AuthenticationFilter implements Filter {
 
-    String [] protectedEndpoints = Config.PROTECTED_ENDPOINTS.split(" ");
+    String [] protectedEndpoints = Config.PROTECTED_ENDPOINTS.split(", ");
 
     @Override
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws ServletException, IOException {

@@ -16,7 +16,12 @@
         "AllowImplicitFlow": false,
         "HomePage": "http://localhost:8080/msal4j-servlet-webapp/index",
         "ReplyUrls": "http://localhost:8080/msal4j-servlet-webapp/auth/redirect",
-        "RequiredResourcesAccess": []
+        "RequiredResourcesAccess": [
+          {
+            "Resource": "Microsoft Graph",
+            "DelegatedPermissions": ["User.Read" ]
+          }
+        ],
       }
     ],
     "CodeConfiguration": [

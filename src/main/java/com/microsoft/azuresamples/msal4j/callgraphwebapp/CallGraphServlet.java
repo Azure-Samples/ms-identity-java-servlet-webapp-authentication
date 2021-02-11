@@ -43,13 +43,15 @@ public class CallGraphServlet extends HttpServlet {
             IdentityContextData context = contextAdapter.getContext();
             String accessToken = context.getAccessToken();
             User user = GraphHelper.getGraphClient(accessToken).me().buildRequest().get();
+            if (user == null)
+                throw new NullPointerException("user returned by Graph SDK was null");
 
             req.setAttribute("user", graphUserProperties(user));
             req.setAttribute("bodyContent", "content/graph.jsp");
             final RequestDispatcher view = req.getRequestDispatcher("index.jsp");
             view.forward(req, resp);
 
-        } catch (AuthException|ClientException ex) {
+        } catch (AuthException|ClientException|NullPointerException ex) {
             logger.log(Level.WARNING, ex.getMessage());
             logger.log(Level.WARNING, Arrays.toString(ex.getStackTrace()));
             logger.log(Level.INFO, "redirecting to error page to display auth error to user.");

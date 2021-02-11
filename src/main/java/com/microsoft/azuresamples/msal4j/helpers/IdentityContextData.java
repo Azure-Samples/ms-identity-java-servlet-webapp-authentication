@@ -8,6 +8,7 @@ import com.microsoft.aad.msal4j.IAuthenticationResult;
 import com.nimbusds.jwt.SignedJWT;
 
 import java.io.Serializable;
+import java.text.ParseException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -99,7 +100,7 @@ public class IdentityContextData implements Serializable {
         return this.authResult;
     }
 
-    public void setIdTokenClaims(String rawIdToken) throws java.text.ParseException {
+    public void setIdTokenClaims(String rawIdToken) throws ParseException {
         final Map<String, Object> tokenClaims = SignedJWT.parse(rawIdToken).getJWTClaimsSet().getClaims();
         this.idTokenClaims = new HashMap<>();
         tokenClaims.forEach((String claim, Object value) -> {

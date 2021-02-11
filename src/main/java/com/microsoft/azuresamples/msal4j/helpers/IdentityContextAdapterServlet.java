@@ -79,7 +79,7 @@ public class IdentityContextAdapterServlet implements IdentityContextAdapter, Ht
         try {
             this.response.sendRedirect(location);
         } catch (IOException ex) {
-            // fill this later
+            logger.log(Level.WARNING, ex.getMessage());
         }
     }
 
