@@ -385,6 +385,23 @@ In this sample, these values are read from the [authentication.properties](src/m
 
 5. If the user is a member of too many groups, a call to `context.getGroups()` will be empty at this point. Meanwhile, `context.getGroupsOverage()` will return `true`, signalling that getting the full list of groups will require a call to Microsoft Graph. See OverageServlet.java for an example of how to populate `context.groups`.
 
+#### Protecting the routes
+
+See `AuthenticationFilter.java` for how the sample app filters access to routes. In authentication.properties, the key `app.protect.authenticated` contains the comma-separated routes that are to be accessed by authenticated users only.
+
+```ini
+#define groups for the app
+app.groups=admin {enter-your-admins-group-id-here}, user {enter-your-users-group-id-here}
+```
+
+The comma-separated routes under the `app.protect.groups` key are also only accessible by authenticated users. However, these routes also contain a space-separated list of user security group memberships: only users belonging to at least one of the corresponding groups will be able to access these routes after authenticating.
+
+```ini
+# A route and its corresponding group(s) that can view it, <space-separated>; the start of the next route & its group(s) is delimited by a <comma-and-space-separator>
+# this says: /admins_only can be accessed by admin group, /regular_user can be accessed by admin group and user group
+app.protect.groups=/admin_only admin, /regular_user admin user
+```
+
 ### Scopes
 
 - [Scopes](https://docs.microsoft.com/azure/active-directory/develop/v2-permissions-and-consent) tell Azure AD the level of access that the application is requesting.
