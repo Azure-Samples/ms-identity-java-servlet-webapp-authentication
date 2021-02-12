@@ -37,7 +37,7 @@ description: "This sample demonstrates how to add authorization using app roles 
 
 ## Overview
 
-This sample shows how a Java servlet web app that uses [OpenID Connect](https://docs.microsoft.com/azure/active-directory/develop/v1-protocols-openid-connect-code) to sign in users and use Azure AD Application Roles (app roles) for authorization. App roles, along with Security groups are popular means to implement authorization.
+This sample shows how a Java servlet web app that uses [OpenID Connect](https://docs.microsoft.com/azure/active-directory/develop/v1-protocols-openid-connect-code) to sign in users and use [**Azure AD Application Roles (app roles)**](https://docs.microsoft.com/azure/active-directory/develop/howto-add-app-roles-in-azure-ad-apps) for authorization. App roles, along with Security groups are popular means to implement authorization.
 
 This application implements RBAC using Azure AD's Application Roles & Role Claims feature. Another approach is to use Azure AD Groups and Group Claims. Azure AD Groups and Application Roles are by no means mutually exclusive; they can be used in tandem to provide even finer grained access control.
 
@@ -51,8 +51,7 @@ For more information about how the protocols work in this scenario and other sce
 
 1. This web application uses [**MSAL for Java (MSAL4J)**](https://github.com/AzureAD/microsoft-authentication-library-for-java) to sign in a user and obtain an [ID Token](https://docs.microsoft.com/azure/active-directory/develop/id-tokens) from **Azure AD**:
 
-
-This sample first leverages the  **MSAL for Java (MSAL4J)** to sign in the user. On the home page it displays an option for the user to view the claims in their ID Tokens. This web application also allows the users to view a privileged admin page or a regular user page depending on the app role they have been assigned to. The idea is to provide an example of how, within an application, access to certain functionality/page is restricted to subsets of users depending on which role they belong to.
+This sample first leverages the  **MSAL for Java (MSAL4J)** to sign in the user. On the home page it displays an option for the user to view the claims in their ID Tokens. This web application also allows the users to view a **privileged admin page** or a **regular user page** depending on the app role they have been assigned to. The idea is to provide an example of how, within an application, access to certain functionality/page is restricted to subsets of users depending on which role they belong to.
 
 This kind of authorization is implemented using role-based access control (RBAC). When using RBAC, an administrator grants permissions to roles, not to individual users or groups. The administrator can then assign roles to different users and groups to control who has then access to certain content and functionality.  
 
@@ -63,7 +62,7 @@ This sample application defines the following two *Application Roles*:
 
 These application roles are defined in the [Azure portal](https://portal.azure.com) in the application's registration manifest.  When a user signs into the application, Azure AD emits a `roles` claim for each role that the user has been granted individually to the user in the from of role membership.  Assignment of users and groups to roles can be done through the portal's UI, or programmatically using the [Microsoft Graph](https://graph.microsoft.com) and [Azure AD PowerShell](https://docs.microsoft.com/powershell/module/azuread/?view=azureadps-2.0).  In this sample, application role management is done through the Azure portal or using PowerShell.
 
-NOTE: Role claims will not be present for guest users in a tenant if the `https://login.microsoftonline.com/common/` endpoint is used as the authority to sign in users. You need to sign-in a user to a tenanted endpoint like 'https://login.microsoftonline.com/tenantid'
+⚠️NOTE: Role claims will not be present for guest users in a tenant if the `https://login.microsoftonline.com/common/` endpoint is used as the authority to sign in users. You need to sign-in a user to a tenanted endpoint like 'https://login.microsoftonline.com/tenantid'
 
 
 ## Contents
@@ -168,46 +167,22 @@ Following this guide, you must:
    - The generated key value will be displayed when you click the **Add** button. Copy the generated value for use in the steps later.
    - You'll need this key later in your code's configuration files. This key value will not be displayed again, and is not retrievable by any other means, so make sure to note it from the Azure portal before navigating to any other screen or blade.
 
-##### Define your Application Roles
+#### Define Application Roles
 
-1. In the blade for your  application in Azure Portal, click **Manifest**.
-1. Edit the manifest by locating the `appRoles` setting and adding the two Application Roles.  The role definitions are provided in the JSON code block below.  Leave the `allowedMemberTypes` to **User** only.  Each role definition in this manifest must have a different valid **Guid** for the "id" property. Note that the `"value"` property of each role is set to the exact strings **PrivilegedAdmin** and **RegularUser** (as these strings are used in the code in the application).
-1. Save the manifest.
+1. Still on the same app registration, select the **App roles** blade to the left.
+1. Select **Create app role**:
+    - For **Display name**, enter a suitable name, for instance **PrivilegedAdmin**.
+    - For **Allowed member types**, choose **User**.
+    - For **Value**, enter **PrivilegedAdmin**.
+    - For **Description**, enter **PrivilegedAdmins who can view the Admin Page**.
+1. Select **Create app role**:
+    - For **Display name**, enter a suitable name, for instance **RegularUser**.
+    - For **Allowed member types**, choose **User**.
+    - For **Value**, enter **RegularUser**.
+    - For **Description**, enter **RegularUsers who can view the User Page**.
+1. Select **Apply** to save your changes.
 
-The content of `appRoles` should be the following (the `id` should be a unique Guid)
-
-```JSon
-{
-  ...
-    "appRoles": [
-        {
-            "allowedMemberTypes": [
-                "User"
-            ],
-            "description": "Authorized to access the PrivilegedAdmin page.",
-            "displayName": "PrivilegedAdmin",
-            "id": "a816142a-2e8e-46c4-9997-f984faccb625",
-            "isEnabled": true,
-            "lang": null,
-            "origin": "Application",
-            "value": "PrivilegedAdmin"
-        },
-        {
-            "allowedMemberTypes": [
-                "User"
-            ],
-            "description": "Authorized to access the RegularUser page.",
-            "displayName": "RegularUser",
-            "id": "72ff9f52-8011-49e0-a4f4-cc1bb26206fa",
-            "isEnabled": true,
-            "lang": null,
-            "origin": "Application",
-            "value": "RegularUser"
-        }
-    ],
- ...
-}
-```
+To add users to this app role, follow the guidelines here: [Assign users and groups to roles](https://docs.microsoft.com/azure/active-directory/develop/howto-add-app-roles-in-azure-ad-apps#assign-users-and-groups-to-roles).
 
 > Note:  To receive the `roles` claim with the name of the app roles this user is assigned to, make sure that the user accounts you plan to sign-in to this app is assigned to the app roles of this app. The guide, [Assign a user or group to an enterprise app in Azure Active Directory](https://docs.microsoft.com/azure/active-directory/manage-apps/assign-user-or-group-access-portal#assign-a-user-to-an-app---portal) provides step by step instructions.
 
@@ -219,11 +194,7 @@ Open the project in your IDE to configure the code.
 > In the steps below, "ClientID" is the same as "Application ID" or "AppId".
 
 1. Open the `./src/main/resources/authentication.properties` file
-2. Find the string `{enter-your-tenant-id-here}`. Replace the existing value with:
-    - **Your Azure AD tenant ID** if you registered your app with the **Accounts in this organizational directory only** option.
-    - The word `organizations` if you registered your app with the **Accounts in any organizational directory** option.
-    - The word `common` if you registered your app with the **Accounts in any organizational directory and personal Microsoft accounts** option.
-    - The word `consumers` if you registered your app with the **Personal Microsoft accounts** option
+2. Find the string `{enter-your-tenant-id-here}`. Replace the existing value with your Azure AD tenant ID 
 3. Find the string `{enter-your-client-id-here}` and replace the existing value with the application ID (clientId) of the `java-servlet-webapp-call-graph` application copied from the Azure portal.
 4. Find the string `{enter-your-client-secret-here}` and replace the existing value with the key you saved during the creation of the `java-servlet-webapp-roles` app, in the Azure portal.
 

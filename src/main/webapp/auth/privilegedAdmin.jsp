@@ -5,7 +5,7 @@
     </h5>
     <div class="card-body">
         <p class="card-text">
-          Welcome to the Privileged Admin page! You are authorized to view this page because you have the PrivilegedAdmin app role
+          Welcome to the Privileged Admin page! You are authorized to view this page because you have the <b>PrivilegedAdmin</b> app role
                       
         </p>
     </div>

@@ -14,8 +14,7 @@
 				if (msalAuth.getAuthenticated()) {
 			%>
 		
-		<h2>Integrating Azure AD V2 into an Java servlet Web app and
-			using Azure AD app roles for authorization.</h2>
+		<h2>Integrate a Java servlet web app that uses App roles with the Microsoft Identity Platform</h2>
 		<p>This sample shows how to build a Java servlet Web app that uses
 			Azure AD app roles for authorization.</p>
 		<br />

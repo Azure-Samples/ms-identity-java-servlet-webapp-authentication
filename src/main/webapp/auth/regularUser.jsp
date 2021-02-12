@@ -5,7 +5,7 @@
     </h5>
     <div class="card-body">
         <p class="card-text">
-          Welcome to the Regular User page! You are authorized to view this page because you have the RegularUser app role
+          Welcome to the Regular User page! You are authorized to view this page because you have the <b>RegularUser</b> app role
                       
         </p>
     </div>
