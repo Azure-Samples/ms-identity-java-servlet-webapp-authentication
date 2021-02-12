@@ -12,7 +12,7 @@ name: "Add authorization using app roles & roles claims to a Java servlet web ap
 urlFragment: "ms-identity-java-servlet-webapp-call-roles"
 description: "This sample demonstrates how to add authorization using app roles & roles claims to a Java servlet web app that signs-in users with the Microsoft identity platform"
 ---
-# Enable your Java Servlet web app to sign in users and call Microsoft Graph with the Microsoft identity platform
+# Enable your Java Servlet web app to limit access to routes based on app roles with the Microsoft Identity Platform
 
 - [Overview](#overview)
 - [Scenario](#scenario)
