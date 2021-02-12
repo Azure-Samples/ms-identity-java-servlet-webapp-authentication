@@ -167,7 +167,7 @@ Following this guide, you must:
    - The generated key value will be displayed when you click the **Add** button. Copy the generated value for use in the steps later.
    - You'll need this key later in your code's configuration files. This key value will not be displayed again, and is not retrievable by any other means, so make sure to note it from the Azure portal before navigating to any other screen or blade.
 
-#### Define Application Roles
+#### Define the Application Roles
 
 1. Still on the same app registration, select the **App roles** blade to the left.
 1. Select **Create app role**:
@@ -182,9 +182,9 @@ Following this guide, you must:
     - For **Description**, enter **RegularUsers who can view the User Page**.
 1. Select **Apply** to save your changes.
 
-To add users to this app role, follow the guidelines here: [Assign users and groups to roles](https://docs.microsoft.com/azure/active-directory/develop/howto-add-app-roles-in-azure-ad-apps#assign-users-and-groups-to-roles).
+#### Assign users to the Application roles
 
-> Note:  To receive the `roles` claim with the name of the app roles this user is assigned to, make sure that the user accounts you plan to sign-in to this app is assigned to the app roles of this app. The guide, [Assign a user or group to an enterprise app in Azure Active Directory](https://docs.microsoft.com/azure/active-directory/manage-apps/assign-user-or-group-access-portal#assign-a-user-to-an-app---portal) provides step by step instructions.
+ To add users to the app role defined earlier, follow the guidelines here: [Assign users and groups to roles.](https://docs.microsoft.com/en-us/azure/active-directory/develop/howto-add-app-roles-in-azure-ad-apps#assign-users-and-groups-to-roles)
 
 
 ### Configure the web app (java-servlet-webapp-roles) to use your app registration
@@ -339,7 +339,23 @@ In this sample, these values are read from the [authentication.properties](src/m
 			}
 		}
   ```
+8. The private method getRoles reads the roles from the *id token* in the session variable *msalAuth* via the method *getIdTokenClaims* , parses it to a set of roles and returns the same. If no roles claim is found then an empty set is returned. 
+  
+  ```Java
+  	private Set<String> getRoles(MsalAuthSession msalAuth) throws IOException {
+		Map<String, String> idTokenClaims = msalAuth.getIdTokenClaims();
+		if (idTokenClaims == null)
+			return Collections.emptySet();
+		ObjectMapper mapper = new ObjectMapper();
+		String roles = idTokenClaims.get(ROLES);
+		if (roles == null) {
+			return Collections.emptySet();
+		}
+		String[] rolesList = mapper.readValue(roles, String[].class);
+		return new HashSet<>(Arrays.asList(rolesList));
+	}
 
+  ```
 
 ## Scopes
 
@@ -360,6 +376,8 @@ Follow [this guide](https://github.com/Azure-Samples/ms-identity-java-servlet-we
 - [Understanding Azure AD application consent experiences](https://docs.microsoft.com/azure/active-directory/develop/application-consent-experience)
 - [Understand user and admin consent](https://docs.microsoft.com/azure/active-directory/develop/howto-convert-app-to-be-multi-tenant#understand-user-and-admin-consent)
 - [MSAL code samples](https://docs.microsoft.com/azure/active-directory/develop/sample-v2-code)
+- [How to: Add app roles to your application and receive them in the token](https://docs.microsoft.com/azure/active-directory/develop/howto-add-app-roles-in-azure-ad-apps)
+- [Manage user assignment for an app in Azure Active Directory](https://docs.microsoft.com/en-us/azure/active-directory/manage-apps/assign-user-or-group-access-portal#assign-a-user-to-an-app---portal)
 
 ## Community Help and Support
 
