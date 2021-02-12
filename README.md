@@ -9,7 +9,7 @@ products:
   - microsoft-identity-platform
 
 name: "Add authorization using app roles & roles claims to a Java servlet web app that signs-in users with the Microsoft identity platform"
-urlFragment: "ms-identity-java-servlet-webapp-call-roles"
+urlFragment: "msal4j-servlet-webapp-call-roles"
 description: "This sample demonstrates how to add authorization using app roles & roles claims to a Java servlet web app that signs-in users with the Microsoft identity platform"
 ---
 # Add authorization using app roles & roles claims to Java servlet Web app that signs-in users with the Microsoft identity platform
@@ -98,7 +98,7 @@ These application roles are defined in the [Azure portal](https://portal.azure.c
 From your shell or command line:
 
 ```console
-git clone https://github.com/Azure-Samples/ms-identity-java-servlet-webapp-roles.git
+git clone https://github.com/Azure-Samples/msal4j-servlet-webapp-roles.git
 ```
 
 or download and extract the repository .zip file.
@@ -156,7 +156,7 @@ Following this guide, you must:
    - In the **Name** section, enter a meaningful application name that will be displayed to users of the app, for example `java-servlet-webapp-roles`.
    - Under **Supported account types**, select an option.
      - Select **Accounts in this organizational directory only** if you're building an application for use only by users in your tenant (**single-tenant**).
-   - In the **Redirect URI** section, select **Web** in the combo-box and enter the following redirect URI: `http://localhost:8080/ms-identity-java-servlet-webapp-roles/auth/redirect`.
+   - In the **Redirect URI** section, select **Web** in the combo-box and enter the following redirect URI: `http://localhost:8080/msal4j-servlet-webapp-roles/auth/redirect`.
 1. Select **Register** to create the application.
 1. In the app's registration screen, find and note the **Application (client) ID**. You use this value in your app's configuration file(s) later in your code.
 1. Select **Save** to save your changes.
@@ -209,10 +209,10 @@ Open the project in your IDE to configure the code.
     mvn clean package
     ```
 
-4. Find the resulting `.war` file in `./target/ms-identity-java-servlet-webapp-roles.war` and deploy it to Tomcat or any other J2EE container solution.
+4. Find the resulting `.war` file in `./target/msal4j-servlet-webapp-roles.war` and deploy it to Tomcat or any other J2EE container solution.
      - To deploy to Tomcat, copy this `.war` file to the `/webapps/` directory in your Tomcat installation directory and start the Tomcat server.
-5. Ensure that the context path that the app is served on is `/ms-identity-java-servlet-webapp-roles` (or change the `app.homePage` value in your [authentication.properties](src/main/resources/authentication.properties) file and in the AAD app registration). If you change the properties file, you'll needs to repeat step 3 above (maven clean and package).
-6. Open your browser and navigate to `http://localhost:8080/ms-identity-java-servlet-webapp-roles/`
+5. Ensure that the context path that the app is served on is `/msal4j-servlet-webapp-roles` (or change the `app.homePage` value in your [authentication.properties](src/main/resources/authentication.properties) file and in the AAD app registration). If you change the properties file, you'll needs to repeat step 3 above (maven clean and package).
+6. Open your browser and navigate to `http://localhost:8080/msal4j-servlet-webapp-roles/`
 
 ![Experience](./ReadmeFiles/app.png)
 
@@ -365,7 +365,7 @@ In this sample, these values are read from the [authentication.properties](src/m
 
 ## Deploy to Azure
 
-Follow [this guide](https://github.com/Azure-Samples/ms-identity-java-servlet-webapp-deployment) to deploy this app to **Azure App Service**.
+Follow [this guide](https://github.com/Azure-Samples/msal4j-servlet-webapp-deployment) to deploy this app to **Azure App Service**.
 
 ## More information
 

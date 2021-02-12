@@ -3,7 +3,7 @@
       "Title": "Add authorization using app roles & roles claims to Java servlet Web app that signs-in users with the Microsoft identity platform",
       "Level": 100,
       "Client": "Java Servlet web app",
-      "RepositoryUrl": "ms-identity-java-servlet-webapp-roles",
+      "RepositoryUrl": "msal4j-servlet-webapp-roles",
       "Endpoint": "AAD v2.0"
     },
     "AADApps": [
@@ -14,8 +14,8 @@
         "Audience": "AzureADMyOrg",
         "PasswordCredentials": "Auto",
         "AllowImplicitFlow": false,
-        "HomePage": "http://localhost:8080/ms-identity-java-servlet-webapp-roles/index",
-        "ReplyUrls": "http://localhost:8080/ms-identity-java-servlet-webapp-roles/auth/redirect",
+        "HomePage": "http://localhost:8080/msal4j-servlet-webapp-roles/index",
+        "ReplyUrls": "http://localhost:8080/msal4j-servlet-webapp-roles/auth/redirect",
         "RequiredResourcesAccess": [],
         "AppRoles": [
         {
