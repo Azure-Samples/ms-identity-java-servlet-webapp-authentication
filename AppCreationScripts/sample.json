@@ -1,6 +1,6 @@
 {
     "Sample": {
-      "Title": "Enable your Java Servlet web app to sign in users to your Azure Active Directory tenant with the Microsoft identity platform",
+      "Title": "Add authorization using app roles & roles claims to Java servlet Web app that signs-in users with the Microsoft identity platform",
       "Level": 100,
       "Client": "Java Servlet web app",
       "RepositoryUrl": "ms-identity-java-servlet-webapp-roles",
