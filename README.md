@@ -98,7 +98,7 @@ These application roles are defined in the [Azure portal](https://portal.azure.c
 From your shell or command line:
 
 ```console
-git clone https://github.com/Azure-Samples/msal4j-servlet-webapp-roles.git
+git clone https://github.com/Azure-Samples/ms-identity-java-servlet-webapp-roles.git
 ```
 
 or download and extract the repository .zip file.
