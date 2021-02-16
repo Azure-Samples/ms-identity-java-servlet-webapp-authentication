@@ -8,10 +8,10 @@
     <div class="card-body">
         <p class="card-text">
             <% if (msalAuth.getAuthenticated()) { %>
-                Click here to get your <a class="btn btn-success" href="<c:url value="/token_details"></c:url>">ID Token Details</a>
-                or see your <a class="btn btn-success" href="<c:url value="/groups"></c:url>">Groups</a>
-                or go to the <a class="btn btn-success" href="<c:url value="/admin_only"></c:url>">Admins Only</a> page
-                or go to the <a class="btn btn-success" href="<c:url value="/regular_user"></c:url>">Regular Users</a> page
+                <a class="btn btn-success" href="<c:url value="/token_details"></c:url>">ID Token Details</a>
+                <a class="btn btn-success" href="<c:url value="/groups"></c:url>">Groups</a>
+                <a class="btn btn-success" href="<c:url value="/admin_only"></c:url>">Admins Only</a>
+                <a class="btn btn-success" href="<c:url value="/regular_user"></c:url>">Regular Users</a>
             <% } else { %>
                 Use the button on the top right to sign in.
                 Attempts to visit <a href="<c:url value="/token_details"></c:url>">ID Token Details</a>,

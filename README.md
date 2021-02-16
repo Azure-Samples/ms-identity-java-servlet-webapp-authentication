@@ -53,18 +53,18 @@ An Identity Developer session covered Azure AD App roles and security groups, fe
 
 ## Contents
 
-| File/folder       | Description                                |
-|-------------------|--------------------------------------------|
-|`AppCreationScripts/`| Scripts to automatically configure Azure AD app registrations. |
-|`src/main/java/com/microsoft/azuresamples/msal4j/groups/`| This directory contains the classes that define the web app's backend business logic. |
-|`____Servlet.java`    | All of the endpoints available are defined in .java classes ending in ____Servlet.java |
-|`src/main/java/com/microsoft/azuresamples/msal4j/helpers/` | Helper classes for authentication. |
-|`AuthenticationFilter.java`| Redirects unauthenticated requests to protected endpoints to a 401 page. |
-|`src/main/resources/authentication.properties`| Azure AD and program configuration. |
-|`src/main/webapp/` | This directory contains the UI (JSP templates) |
-|`CHANGELOG.md`    | List of changes to the sample.             |
-|`CONTRIBUTING.md` | Guidelines for contributing to the sample. |
-|`LICENSE`         | The license for the sample.                |
+| File/folder                                                     | Description                                                                            |
+| --------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| `AppCreationScripts/`                                           | Scripts to automatically configure Azure AD app registrations.                         |
+| `src/main/java/com/microsoft/azuresamples/msal4j/groupswebapp/` | This directory contains the classes that define the web app's backend business logic.  |
+| `____Servlet.java`                                              | All of the endpoints available are defined in .java classes ending in ____Servlet.java |
+| `src/main/java/com/microsoft/azuresamples/msal4j/helpers/`      | Helper classes for authentication.                                                     |
+| `AuthenticationFilter.java`                                     | Redirects unauthenticated requests to protected endpoints to a 401 page.               |
+| `src/main/resources/authentication.properties`                  | Azure AD and program configuration.                                                    |
+| `src/main/webapp/`                                              | This directory contains the UI (JSP templates)                                         |
+| `CHANGELOG.md`                                                  | List of changes to the sample.                                                         |
+| `CONTRIBUTING.md`                                               | Guidelines for contributing to the sample.                                             |
+| `LICENSE`                                                       | The license for the sample.                                                            |
 
 ## Prerequisites
 
@@ -161,12 +161,11 @@ Following this guide, you must:
 
 Open the project in your IDE to configure the code.
 
-> In the steps below, "ClientID" is the same as "Application ID" or "AppId".
+> In the steps below, "ClientID" is the same as "Application ID" or "AppId". Remove the curly braces from the placeholder values as well.
 
 1. Open the `./src/main/resources/authentication.properties` file
 2. Find the string `{enter-your-tenant-id-here}`. Replace the existing value with:
     - **Your Azure AD tenant ID** if you registered your app with the **Accounts in this organizational directory only** option.
-    - The word `organizations` if you registered your app with the **Accounts in any organizational directory** option.
 3. Find the string `{enter-your-client-id-here}` and replace the existing value with the application ID (clientId) of the `java-servlet-webapp-groups` application copied from the Azure portal.
 4. Find the string `{enter-your-client-secret-here}` and replace the existing value with the key you saved during the creation of the `java-servlet-webapp-groups` app, in the Azure portal.
 
@@ -222,8 +221,8 @@ You have two different options available to you on how you can further configure
 > During **Token Configuration**, if you have chosen any other option except **groupID** (e.g. like **DNSDomain\sAMAccountName**) you should enter the **group name** (for example `contoso.com\Test Group`) instead of the **object ID** below:
 
 1. Open the `./src/main/resources/authentication.properties` file.
-2. Find the string `{enter-your-admins-group-id-here}` and replace the existing value with the **object ID** of the **GroupAdmin** group copied from the Azure portal. Do NOT include curly braces.
-3. Find the string `{enter-your-users-group-id-here}` and replace the existing value with the **object ID** of the **GroupMember** group copied from the Azure portal. Do NOT include curly braces.
+2. Find the string `{enter-your-admins-group-id-here}` and replace the existing value with the **object ID** of the **GroupAdmin** group copied from the Azure portal. Remove the curly braces from the placeholder value as well.
+3. Find the string `{enter-your-users-group-id-here}` and replace the existing value with the **object ID** of the **GroupMember** group copied from the Azure portal. Remove the curly braces from the placeholder value as well.
 
 ## Running the sample
 
