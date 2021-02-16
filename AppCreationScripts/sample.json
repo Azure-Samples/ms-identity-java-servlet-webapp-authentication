@@ -14,8 +14,8 @@
         "Audience": "AzureADMyOrg",
         "PasswordCredentials": "Auto",
         "AllowImplicitFlow": false,
-        "HomePage": "http://localhost:8080/ms-identity-java-servlet-webapp-authentication/index",
-        "ReplyUrls": "http://localhost:8080/ms-identity-java-servlet-webapp-authentication/auth/redirect",
+        "HomePage": "http://localhost:8080/msal4j-servlet-webapp/index",
+        "ReplyUrls": "http://localhost:8080/msal4j-servlet-webapp/auth/redirect",
         "RequiredResourcesAccess": []
       }
     ],

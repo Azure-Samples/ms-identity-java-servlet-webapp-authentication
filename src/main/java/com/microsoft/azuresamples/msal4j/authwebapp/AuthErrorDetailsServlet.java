@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-package com.microsoft.azuresamples.authentication;
+package com.microsoft.azuresamples.msal4j.authwebapp;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -20,11 +20,11 @@ public class AuthErrorDetailsServlet extends HttpServlet {
 
     @Override
     protected void doGet(final HttpServletRequest req, final HttpServletResponse resp)
-            throws ServletException, IOException {        
+            throws ServletException, IOException {
         final String details = req.getParameter("details");
 
         req.setAttribute("details", details);
-        req.setAttribute("bodyContent", "auth/500.jsp");
+        req.setAttribute("bodyContent", "content/500.jsp");
         final RequestDispatcher view = req.getRequestDispatcher("index.jsp");
         view.forward(req, resp);
     }

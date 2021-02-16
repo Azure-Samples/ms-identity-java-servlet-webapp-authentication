@@ -4,7 +4,6 @@
         ID Token Details
     </h5>
     <div class="card-body">
-        <!-- <h5 class="card-title"></h5> -->
         <p class="card-text">
             <c:forEach items="${claims}" var="claim">
                 <strong>${claim.key}:</strong> ${claim.value}
@@ -13,6 +12,5 @@
             <br>
             Click here to see your <a class="btn btn-success" href="<c:url value="./sign_in_status"></c:url>">Sign-in Status</a>
         </p>
-        <!-- <div class="card-footer"></div> -->
     </div>
 </div>
