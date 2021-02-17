@@ -44,8 +44,6 @@ public class Config {
     public static final String REDIRECT_URI = String.format("%s%s", HOME_PAGE, REDIRECT_ENDPOINT);
     public static final String SESSION_PARAM = Config.getProperty("app.sessionParam");
     public static final String PROTECTED_ENDPOINTS = Config.getProperty("app.protect.authenticated");
-    public static final String GROUPS_PROTECTED_ENDPOINTS = Config.getProperty("app.protect.groups");
-    public static final String GROUP_NAMES_AND_IDS = Config.getProperty("app.groups");
 
     public static String getProperty(final String key) {
         String prop = null;
