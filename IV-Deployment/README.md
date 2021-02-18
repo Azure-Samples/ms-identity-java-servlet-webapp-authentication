@@ -125,8 +125,8 @@ This guide is for deploying to **Azure App Service** via **VS Code Azure Tools E
 - Navigate back to to the [Azure Portal](https://portal.azure.com).
 - In the left-hand navigation pane, select the **Azure Active Directory** service, and then select **App registrations**.
 - In the resulting screen, select the name of your application.
-- In the Authentication blade, paste the URI you copied earlier from your deployed app instance. If the app had multiple redirect URIs, make sure to add new corresponding entries using the App service's full domain in lieu of `http:localhost:8000` for each redirect URI. For example, this might be `https://example-domain.azurewebsites.net/auth_redirect`. Save the configuration.
-- From the *Branding* menu, update the **Home page URL**, to the address of your service, for example `https://example-domain.azurewebsites.net/index`. Save the configuration.
+- In the Authentication blade, paste the URI you copied earlier from your deployed app instance. If the app had multiple redirect URIs, make sure to add new corresponding entries using the App service's full domain in lieu of `http:localhost:8000` for each redirect URI. For example, this might be `https://example-domain.azurewebsites.net/auth/redirect`. Save the configuration.
+- From the *Branding* menu, update the **Home page URL**, to the address of your service, for example `https://example-domain.azurewebsites.net/`. Save the configuration.
 - Disable App Service's default authentication:
 
     Navigate to the **Azure App Service** Portal and locate your project. Once you do, click on the **Authentication/Authorization** blade. There, make sure that the **App Services Authentication** is switched off (and nothing else is checked), as this sample is using MSAL for authentication.
