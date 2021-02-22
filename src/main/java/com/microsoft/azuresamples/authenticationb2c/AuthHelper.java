@@ -220,6 +220,13 @@ public class AuthHelper {
         resp.sendRedirect(HOME_PAGE);
     }
 
+    /**
+     *  User needs to be signed out and signed back in on password reset and profile edit
+     * @param req
+     * @param resp
+     * @param msalAuth
+     * @throws Exception
+     */
     private static void handlePolicyChange(final HttpServletRequest req, final HttpServletResponse resp, final MsalAuthSession msalAuth) throws Exception {
         String acrClaim = msalAuth.getIdTokenClaims().get("acr");
 
