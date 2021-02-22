@@ -199,6 +199,9 @@ public class AuthHelper {
 
             // set user to authenticated:
             processSuccessfulAuthentication(msalAuth);
+
+            // have they done an edit profile or a password reset? Handle it by re-authorizing
+            handlePolicyChange(req, resp, msalAuth);
         } catch (final AADPasswordResetException pre) {
             // this is a password reset request.
             // unlike *unexpected redirect endpoint exceptions*  DO NOT clear the session on PW reset
@@ -215,6 +218,15 @@ public class AuthHelper {
         Config.logger.log(Level.INFO, "redirecting to home page.");
         resp.setStatus(302);
         resp.sendRedirect(HOME_PAGE);
+    }
+
+    private static void handlePolicyChange(final HttpServletRequest req, final HttpServletResponse resp, final MsalAuthSession msalAuth) throws Exception {
+        String acrClaim = msalAuth.getIdTokenClaims().get("acr");
+
+        if (acrClaim.equals(EDIT_PROFILE_POLICY) || acrClaim.equals(PW_RESET_POLICY)) {
+            req.getSession().invalidate();
+            redirectToAuthorizationEndpoint(req, resp, SIGN_IN_POLICY);
+        }
     }
 
     private static void validateState(final MsalAuthSession msalAuth, final String stateFromRequest) throws Exception{
