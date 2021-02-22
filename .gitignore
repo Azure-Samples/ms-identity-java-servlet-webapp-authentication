@@ -26,4 +26,4 @@ target/
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
-.vs/msal4j-servlet-webapp-authentication/v16/.suo
+.vs/ms-identity-java-servlet-webapp-authentication/v16/.suo

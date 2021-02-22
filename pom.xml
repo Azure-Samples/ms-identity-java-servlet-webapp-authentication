@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.microsoft.azuresamples</groupId>
-    <artifactId>msal4j-servlet-webapp-roles</artifactId>
+    <artifactId>msal4j-servlet-webapp</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>war</packaging>
     <properties>
@@ -42,10 +42,17 @@
             <version>9.0.1</version>
         </dependency>
 
+        <!-- For MS Graph -->
+        <dependency>
+            <groupId>com.microsoft.graph</groupId>
+            <artifactId>microsoft-graph</artifactId>
+            <version>2.5.0</version>
+        </dependency>
+
     </dependencies>
 
     <build>
-        <finalName>msal4j-servlet-webapp-roles</finalName>
+        <finalName>msal4j-servlet-webapp</finalName>
         <plugins>
             <!-- This can be useful if you want maven to deploy to your tomcat server -->
             <!-- <plugin>
@@ -54,7 +61,7 @@
                 <version>2.2</version>
                 <configuration>
                     <url>http://localhost:8080/manager/text</url>
-                    <path>/msal4j-servlet-webapp-roles</path>
+                    <path>/msal4j-servlet-webapp</path>
                     <username>azure-samples</username>
                     <password>azure-samples</password>
                 </configuration>

@@ -22,8 +22,8 @@ description: "This sample demonstrates how to add authorization using app roles 
   - [Clone or download this repository](#clone-or-download-this-repository)
 - [Register the sample application with your Azure Active Directory tenant](#register-the-sample-application-with-your-azure-active-directory-tenant)
   - [Choose the Azure AD tenant where you want to create your applications](#choose-the-azure-ad-tenant-where-you-want-to-create-your-applications)
-  - [Register the web app (java-servlet-webapp-call-graph)](#register-the-web-app-java-servlet-webapp-call-graph)
-  - [Configure the web app (java-servlet-webapp-call-graph) to use your app registration](#configure-the-web-app-java-servlet-webapp-call-graph-to-use-your-app-registration)
+  - [Register the web app (java-servlet-webapp-roles)](#register-the-web-app-java-servlet-webapp-roles)
+  - [Configure the web app (java-servlet-webapp-roles) to use your app registration](#configure-the-web-app-java-servlet-webapp-roles-to-use-your-app-registration)
 - [Running the sample](#running-the-sample)
 - [Explore the sample](#explore-the-sample)
 - [We'd love your feedback!](#wed-love-your-feedback)
@@ -58,7 +58,7 @@ This kind of authorization is implemented using role-based access control (RBAC)
 This sample application defines the following two *Application Roles*:
 
 - `PrivilegedAdmin`: Authorized to access the PrivilegedAdmin page.
-- `RegularUser`: Authorized to access the RegularUser page 
+- `RegularUser`: Authorized to access the RegularUser page.
 
 These application roles are defined in the [Azure portal](https://portal.azure.com) in the application's registration manifest.  When a user signs into the application, Azure AD emits a `roles` claim for each role that the user has been granted individually to the user in the from of role membership.  Assignment of users and groups to roles can be done through the portal's UI, or programmatically using the [Microsoft Graph](https://graph.microsoft.com) and [Azure AD PowerShell](https://docs.microsoft.com/powershell/module/azuread/?view=azureadps-2.0).  In this sample, application role management is done through the Azure portal or using PowerShell.
 
@@ -303,69 +303,35 @@ In this sample, these values are read from the [authentication.properties](src/m
     - **REDIRECT_URI**: The redirect URI used in the previous step must be passed again.
     - **SCOPES**: The scopes used in the previous step must be passed again.
 
-4. If `acquireToken` is successful, the token claims are extracted and the nonce claim is validated against the nonce stored in the session.
+4. If `acquireToken` is successful, the token claims are extracted and placed in an instance of IdentityContextData (e.g., `context`).
 
-    ```Java
-    parseJWTClaimsSetAndStoreResultInSession(msalAuth, result, serializedTokenCache);
-    validateNonce(msalAuth)
-    processSuccessfulAuthentication(msalAuth);
-    ```
+#### Protecting the routes
 
-5. If the nonce is successfully validated, authentication status is put into a server-side session, leveraging methods exposed by the class [MsalAuthSession.java](src/main/java/com/microsoft/azuresamples/authentication/MsalAuthSession.java):
+See `AuthenticationFilter.java` for how the sample app filters access to routes. In authentication.properties, the key `app.protect.authenticated` contains the comma-separated routes that are to be accessed by authenticated users only.
 
-    ```Java
-    msalAuth.setAuthenticated(true);
-    msalAuth.setUsername(msalAuth.getIdTokenClaims().get("name"));
-   ```
-6.  Once the user clicks on the User Page, the program control flows to the AuthorizationFilter class which has the logic to verify if the user has the **RegularUser** role associated with them. Auth error page is displayed if the logged in user doesn't have the role. 
-   
-  ```Java
-		if (request.getRequestURI().contains("regular_user")) {
-			Set<String> roles = getRoles(msalAuth);
-			if (roles.isEmpty() || !roles.contains(REGULAR_USER)) {
-				redirectUnauthenticatedUser(request, response, UNAUTHORIZED_REGULAR_USER_MESSAGE);
-				return;
-			}
-		}
-   ```
-7. Once the user clicks on the Admin Page, the program control flows to the AuthorizationFilter class which has the logic to verify if the user has the **PrivilegedAdmin** role associated with them. Auth error page is displayed if the logged in user doesn't have the role.
-  
-  ```Java
-  	if (request.getRequestURI().contains("privileged_admin")) {
-			Set<String> roles = getRoles(msalAuth);
-			if (roles.isEmpty() || !roles.contains(REGULAR_USER)) {
-				redirectUnauthenticatedUser(request, response, UNAUTHORIZED_REGULAR_USER_MESSAGE);
-				return;
-			}
-		}
-  ```
-8. The private method getRoles reads the roles from the *id token* in the session variable *msalAuth* via the method *getIdTokenClaims* , parses it to a set of roles and returns the same. If no roles claim is found then an empty set is returned. 
-  
-  ```Java
-  	private Set<String> getRoles(MsalAuthSession msalAuth) throws IOException {
-		Map<String, String> idTokenClaims = msalAuth.getIdTokenClaims();
-		if (idTokenClaims == null)
-			return Collections.emptySet();
-		ObjectMapper mapper = new ObjectMapper();
-		String roles = idTokenClaims.get(ROLES);
-		if (roles == null) {
-			return Collections.emptySet();
-		}
-		String[] rolesList = mapper.readValue(roles, String[].class);
-		return new HashSet<>(Arrays.asList(rolesList));
-	}
+```ini
+# list and name roles for the app
+app.roles=admin PrivilegedAdmin, user RegularUser
+```
 
-  ```
+The comma-separated routes under the `app.protect.roles` key are also only accessible by authenticated users. However, these routes also contain a space-separated list of app role memberships: only users having at least one of the corresponding roles will be able to access these routes after authenticating.
 
-## Scopes
+```ini
+# A route and its corresponding role(s) that can access it, <space-separated>; the start of the next route & its role(s) is delimited by a <comma-and-space-separator>
+# this says: /admins_only can be accessed by admin role, /regular_user can be accessed by admin role and user role
+app.protect.roles=/admin_only admin, /regular_user admin user
+```
+
+### Scopes
 
 - [Scopes](https://docs.microsoft.com/azure/active-directory/develop/v2-permissions-and-consent) tell Azure AD the level of access that the application is requesting.
 - Based on the requested scopes, Azure AD presents a consent dialogue to the user upon signing in.
-
+- If the user consents to one or more scopes and obtains a token, the scopes-consented-to are encoded into the resulting `access_token`.
+- Note the scope requested by the application by referring to [authentication.properties](./src/main/resources/authentication.properties).
 
 ## Deploy to Azure
 
-Follow [this guide](https://github.com/Azure-Samples/msal4j-servlet-webapp-deployment) to deploy this app to **Azure App Service**.
+Follow [this guide](https://github.com/Azure-Samples/ms-identity-java-servlet-webapp-deployment) to deploy this app to **Azure App Service**.
 
 ## More information
 
