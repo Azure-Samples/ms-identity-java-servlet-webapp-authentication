@@ -13,6 +13,8 @@
                 or <a class="btn btn-success" href="<c:url value="./auth_edit_profile"></c:url>">Edit Your Profile</a>
             <% } else { %>
                 Use the button on the top right to sign in.
+                <br>
+                Note: You may have been signed out as a result of a password reset or edit profile.
             <% } %>
         </p>
         <!-- <div class="card-footer"></div> -->

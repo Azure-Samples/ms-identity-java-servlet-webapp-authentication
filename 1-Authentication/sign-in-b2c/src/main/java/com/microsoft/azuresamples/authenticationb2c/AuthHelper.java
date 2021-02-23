@@ -229,10 +229,10 @@ public class AuthHelper {
      */
     private static void handlePolicyChange(final HttpServletRequest req, final HttpServletResponse resp, final MsalAuthSession msalAuth) throws Exception {
         String acrClaim = msalAuth.getIdTokenClaims().get("acr");
+        acrClaim = String.format("%s/", acrClaim);
 
         if (acrClaim.equals(EDIT_PROFILE_POLICY) || acrClaim.equals(PW_RESET_POLICY)) {
-            req.getSession().invalidate();
-            redirectToAuthorizationEndpoint(req, resp, SIGN_IN_POLICY);
+            redirectToSignoutEndpoint(req, resp);
         }
     }
 
