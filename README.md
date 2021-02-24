@@ -69,8 +69,7 @@ This sample demonstrates a Java Servlet web application that authenticates users
 From your shell or command line:
 
 ```console
-git clone https://github.com/Azure-Samples/ms-identity-java-servlet-webapp-authentication.git
-cd 1-Authentication/sign-in-b2c
+git clone https://github.com/Azure-Samples/ms-identity-b2c-java-servlet-webapp-authentication.git
 ```
 
 or download and extract the repository .zip file.
