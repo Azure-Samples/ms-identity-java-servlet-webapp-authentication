@@ -71,7 +71,7 @@ You must first modify the configuration files in your application.
 # the default value was:
 # app.homePage=http://localhost:8080/msal4j-servlet-webapp
 # the correct format for the new value is as follows:
-app.redirectUri=https://example-domain.azurewebsites.net
+app.homePage=https://example-domain.azurewebsites.net
 ```
 
 You **may skip the rest of this step** if you are doing a test deployment with a development Azure Active Directory App registration that does not have any sensitive data. **It is not secure to deploy secrets in a config file to a production application**. To deploy your app more securely, you must:
