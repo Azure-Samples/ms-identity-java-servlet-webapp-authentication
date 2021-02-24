@@ -64,24 +64,18 @@ This sample demonstrates a Java Servlet web application that authenticates users
 
 ## Setup
 
-### Step 1: Clone or download this repository
+### Clone or download this repository
 
 From your shell or command line:
 
 ```console
 git clone https://github.com/Azure-Samples/ms-identity-b2c-java-servlet-webapp-authentication.git
+cd 1-Authentication/sign-in-b2c
 ```
 
 or download and extract the repository .zip file.
 
 > :warning: To avoid file path length limitations on Windows, clone the repository into a directory near the root of your hard drive.
-
-### Step 2: Install project dependencies
-
-```Console
-cd project-directory
-mvn install -f pom.xml
-```
 
 ### Register the sample application with your Azure AD B2C tenant
 
@@ -98,9 +92,9 @@ As a first step you'll need to:
 
 ### Create User Flows and Custom Policies
 
-Please refer to [Tutorial: Create user flows in Azure Active Directory B2C](https://docs.microsoft.com/azure/active-directory-b2c/tutorial-create-user-flows) to create common user flows like sign up, sign in, edit profile, and passowrd reset.
+Please refer to [Tutorial: Create user flows in Azure Active Directory B2C](https://docs.microsoft.com/azure/active-directory-b2c/tutorial-create-user-flows) to create common user flows like sign up, sign in, edit profile, and password reset.
 
-You may consider creating [Custom policies in Azure Active Directory B2C](https://docs.microsoft.com/en-us/azure/active-directory-b2c/custom-policy-overview) as well, however, this is beyond the scope of this tutorial.
+You may consider creating [Custom policies in Azure Active Directory B2C](https://docs.microsoft.com/azure/active-directory-b2c/custom-policy-overview) as well, however, this is beyond the scope of this tutorial.
 
 ### Add External Identity Providers
 
@@ -146,17 +140,17 @@ Open the project in your IDE (like **Visual Studio Code**) to configure the code
 ## Running the sample
 
 1. Make certain that your Tomcat server is running and you have privileges to deploy a webapp to it.
-1. Make certain that it serves the web app on `http://localhost:8080` (or change the base addresses listed in the [authentication.properties](src/main/resources/authentication.properties) file and in the AAD app registration).
-1. Compile and package the project using **Maven**:
+2. Make certain that it serves the web app on `http://localhost:8080` (or change the base addresses listed in the [authentication.properties](src/main/resources/authentication.properties) file and in the AAD app registration).
+3. Compile and package the project using **Maven**:
 
     ```Shell
     cd project-directory
-    mvn package -f pom.xml
+    mvn clean package
     ```
 
-1. Find the resulting `.war` file in `./target/ms-identity-b2c-java-servlet-webapp-authentication.war` and upload it to your server.
-1. Ensure that the context path that the app is served on is `http://localhost:8080/ms-identity-b2c-java-servlet-webapp-authentication` (or change the addresses listed in the [authentication.properties](src/main/resources/authentication.properties) file and in the AAD app registration).
-1. Open your browser and navigate to `http://localhost:8080/ms-identity-b2c-java-servlet-webapp-authentication/index`
+4. Find the resulting `.war` file in `./target/ms-identity-b2c-java-servlet-webapp-authentication.war` and upload it to your server.
+5. Ensure that the context path that the app is served on is `http://localhost:8080/ms-identity-b2c-java-servlet-webapp-authentication` (or change the addresses listed in the [authentication.properties](src/main/resources/authentication.properties) file and in the AAD app registration).
+6. Open your browser and navigate to `http://localhost:8080/ms-identity-b2c-java-servlet-webapp-authentication/index`
 
 ![Experience](./ReadmeFiles/app.png)
 

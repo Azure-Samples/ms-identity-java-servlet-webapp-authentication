@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@WebServlet(name = "SignInStatusServlet", urlPatterns = "/auth_sign_in_status")
+@WebServlet(name = "SignInStatusServlet", urlPatterns = {"", "/index", "/sign_in_status"})
 public class SignInStatusServlet extends HttpServlet {
 
     @Override
