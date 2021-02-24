@@ -57,6 +57,7 @@ An Identity Developer session covered Azure AD App roles and security groups, fe
 | --------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
 | `AppCreationScripts/`                                           | Scripts to automatically configure Azure AD app registrations.                         |
 | `src/main/java/com/microsoft/azuresamples/msal4j/groupswebapp/` | This directory contains the classes that define the web app's backend business logic.  |
+| `src/main/java/com/microsoft/azuresamples/msal4j/authservlets/` | This directory contains the classes that are used for sign in and sign out endpoints.  |
 | `____Servlet.java`                                              | All of the endpoints available are defined in .java classes ending in ____Servlet.java |
 | `src/main/java/com/microsoft/azuresamples/msal4j/helpers/`      | Helper classes for authentication.                                                     |
 | `AuthenticationFilter.java`                                     | Redirects unauthenticated requests to protected endpoints to a 401 page.               |
@@ -82,7 +83,8 @@ An Identity Developer session covered Azure AD App roles and security groups, fe
 From your shell or command line:
 
 ```console
-git clone https://github.com/Azure-Samples/ms-identity-java-servlet-webapp-groups.git
+git clone https://github.com/Azure-Samples/ms-identity-java-servlet-webapp-authentication.git
+cd 3-Authorization-II/groups
 ```
 
 or download and extract the repository .zip file.
@@ -318,7 +320,7 @@ Were we successful in addressing your learning objective? Consider taking a mome
 
 ## About the code
 
-This sample uses **MSAL for Java (MSAL4J)** to sign a user in and obtain a token for MS Graph API. It leverages [Microsoft Graph SDK for Java](https://github.com/microsoftgraph/msgraph-sdk-java) to obtain data from Graph. You must add these to your projects using Maven. As a developer, you may copy the `AuthHelper.java`,`Config.java`, `MsalAuthSession.java` and `GraphHelper.java` classes to your project to access the functionality demonstrated by this sample.
+This sample uses **MSAL for Java (MSAL4J)** to sign a user in and obtain an ID token that may contain the groups claim. Based on the groups present in the claim, the signed in user will be able to access two protected pages, Admin Page and User Page. It leverages [Microsoft Graph SDK for Java](https://github.com/microsoftgraph/msgraph-sdk-java) to obtain extra group data from Graph if this is required. You must add these to your projects using Maven. As a developer, you may copy the contents of the `helpers` and `authservlets` package folders in the `src/main/java/com/microsoft/azuresamples/msal4j` package. You'll also need an [authentication.properties file](src/main/resources/authentication.properties).
 
 A **ConfidentialClientApplication** instance is created in the [AuthHelper.java](src/main/java/com/microsoft/azuresamples/authentication/AuthHelper.java) class. This object helps craft the AAD authorization URL and also helps exchange the authentication token for an access token.
 
@@ -380,7 +382,7 @@ In this sample, these values are read from the [authentication.properties](src/m
     - **REDIRECT_URI**: The redirect URI used in the previous step must be passed again.
     - **SCOPES**: The scopes used in the previous step must be passed again.
 
-4. If `acquireToken` is successful, the token claims are extracted and placed in an instance of IdentityContextData (e.g., `context`).
+4. If `acquireToken` is successful, the token claims are extracted and placed in an instance of IdentityContextData (e.g., `context`) and saved to the session. The application then instantiates this from the session whenever it needs access to it.
 
 5. If the user is a member of too many groups, a call to `context.getGroups()` will be empty at this point. Meanwhile, `context.getGroupsOverage()` will return `true`, signalling that getting the full list of groups will require a call to Microsoft Graph. See OverageServlet.java for an example of how to populate `context.groups`.
 
