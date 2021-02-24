@@ -7,7 +7,6 @@ products:
 - azure-app-services
 - azure-storage
 - azure-key-vault
-- azure-functions
 - azure-active-directory
 - azure-active-directory-b2c
 - microsoft-identity-platform
@@ -70,7 +69,7 @@ Please refer to each sample's README for sample-specific recommendations.
 
 |                 |               |
 |-----------------|---------------|
-| <img src="./ReadmeFiles/sign-in.png" width="100"> | [**4.1 Deploy to Azure Storage and App Service**](./4-Deployment/) </br> Prepare your app for deployment to various Azure services. Learn how to package and upload files, configure authentication parameters and use the various Azure services for managing your operations. |
+| <img src="./ReadmeFiles/sign-in.png" width="100"> | [**4.1 Deploy to Azure App Service**](./4-Deployment/) </br> Prepare your app for deployment to Azure App Service. Learn how to package and upload files, configure authentication parameters and use various Azure services for managing your operations. |
 
 ## We'd love your feedback!
 
