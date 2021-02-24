@@ -78,7 +78,7 @@ You **may skip the rest of this step** if you are doing a test deployment with a
 
 1. Supply a config file that omits secrets (i.e., `authentication.properties` that does not contain `aad.secret` and its value)
 2. After you've deployed your app in the next sections, come back and add the secrets from a secure location such as:
-   1. **Azure Vault**. Use the [Microsoft Azure Key Vault SDK for Java](https://github.com/Azure/azure-sdk-for-java/tree/master/sdk/keyvault). Set the client secret value in vault, naming it `CLIENT_SECRET` for example. Then set up the Azure key vault client in your app. Modify the `helpers/Config.java` file as follows:
+   1. **Azure Keyv Vault**. Use the [Microsoft Azure Key Vault SDK for Java](https://github.com/Azure/azure-sdk-for-java/tree/master/sdk/keyvault). Set the client secret value in vault, naming it `CLIENT_SECRET` for example. Then set up the Azure key vault client in your app. Modify the `helpers/Config.java` file as follows:
 
          ```Java
          // remove this line:
