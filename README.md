@@ -18,7 +18,7 @@
 
 ## Overview
 
-This readme demonstrates how to deploy a Java Servlet web application to **Azure Cloud** using [Azure App Service](https://docs.microsoft.com/azure/app-service/). It is recommended that the code sample from [Enable your Java Servlet webapp to sign in users and call Microsoft Graph with the Microsoft identity platform](https://github.com/azure-samples/ms-identity-java-servlet-webapp-call-graph) is used for deployment. You may choose to follow these steps with a different sample or your own project.
+This readme demonstrates how to deploy a Java Servlet web application that signs in users and calls graph to **Azure Cloud** using [Azure App Service](https://docs.microsoft.com/azure/app-service/). It is recommended that you clone the respository [Enable your Java Servlet webapp to sign in users and call Microsoft Graph with the Microsoft identity platform](https://github.com/azure-samples/ms-identity-java-servlet-authentication) and use the sample in the `2-Authorization-I/call-graph` directory for deployment. You may choose to follow these steps with a different sample or your own project, noting that the instructions here are specific to the sample listed.
 
 ## Prerequisites
 
@@ -64,21 +64,21 @@ In order to get your deployed app fully functional, you must:
 ### Step 2: Prepare the web app for deployment
 
 You must first modify the configuration files in your application.
-- Go to `src/main/resources/authentication.properties` and note the values for `app.redirectUri` and `app.homePage`.
-- The values are prefixed with `http://localhost:8080/ms-identity-java-servlet-webapp-authentication` by default. You must replace this prefix with your app's full domain name. For example, if you chose `example-domain` for your app name in [Step 1: Create a new app on Azure App Service](#step-1-create-a-new-app-on-azure-app-service), you must now substitute the prefixes with  `https://example-domain.azurewebsites.net`. Be sure that you have also changed the protocol from `http` to `https`.
 
-```text
-// the correct format for the values is as follows:
-app.redirectUri=https://example-domain.azurewebsites.net/auth_redirect
-...
-app.homePage=https://example-domain.azurewebsites.net/index
+- Go to your app's [properties file](./src/main/resources/authentication.properties) and change the value of `app.homePage` to your deployed app's domain name. For example, if you chose `example-domain` for your app name in [Step 1: Create a new app on Azure App Service](#step-1-create-a-new-app-on-azure-app-service), you must now use the value  `https://example-domain.azurewebsites.net`. Be sure that you have also changed the protocol from `http` to `https`.
+
+```ini
+# the default value was:
+# app.homePage=http://localhost:8080/msal4j-servlet-webapp
+# the correct format for the new value is as follows:
+app.homePage=https://example-domain.azurewebsites.net
 ```
 
 You **may skip the rest of this step** if you are doing a test deployment with a development Azure Active Directory App registration that does not have any sensitive data. **It is not secure to deploy secrets in a config file to a production application**. To deploy your app more securely, you must:
 
 1. Supply a config file that omits secrets (i.e., `authentication.properties` that does not contain `aad.secret` and its value)
-1. After you've deployed your app in the next sections, come back and add the secrets from a secure location such as:
-   1. **Azure Vault**. Use the [Microsoft Azure Key Vault SDK for Java](https://github.com/Azure/azure-sdk-for-java/tree/master/sdk/keyvault). Set the client secret value in vault, naming it `CLIENT_SECRET` for example. Then set up the Azure key vault client in your app. Modify the `AuthHelper.java` file as follows:
+2. After you've deployed your app in the next sections, come back and add the secrets from a secure location such as:
+   1. **Azure Vault**. Use the [Microsoft Azure Key Vault SDK for Java](https://github.com/Azure/azure-sdk-for-java/tree/master/sdk/keyvault). Set the client secret value in vault, naming it `CLIENT_SECRET` for example. Then set up the Azure key vault client in your app. Modify the `helpers/Config.java` file as follows:
 
          ```Java
          // remove this line:
@@ -89,17 +89,16 @@ You **may skip the rest of this step** if you are doing a test deployment with a
          // See Key Vault SDK documentation here: https://azuresdkdocs.blob.core.windows.net/$web/java/azure-security-keyvault-secrets/4.2.3/overview-summary.html#retrieve-a-secret
          ```
 
-   1. **Environment Variables** (*Azure Portal > App Services > `Your App` > Configuration*). You must set the value for `CLIENT_SECRET`.Modify the last line in the sample's `app.py` file as follows and then redeploy your app:
+   2. **Environment Variables** (*Azure Portal > App Services > `<Your App Name>` > Configuration*). Go to the Azure Portal and set the value for `CLIENT_SECRET`. Now, back in your local code, modify the following lines in the `helpers/Config.java` file as follows:
 
          ```Java
          // remove this line:
          static final String SECRET = Config.getProperty("aad.secret");
          // replace it with this line:
-         static final String SECRET = 
-         System.getenv('CLIENT_SECRET')
+         static final String SECRET = System.getenv('CLIENT_SECRET')
          ```
 
-1. If you are sure you want to continue, proceed to [Step 3](#step-3-deploy-the-web-app).
+3. If you are sure you want to continue, proceed to [Step 3](#step-3-deploy-the-web-app).
 
 ### Step 3: Deploy the web app
 
@@ -126,8 +125,8 @@ This guide is for deploying to **Azure App Service** via **VS Code Azure Tools E
 - Navigate back to to the [Azure Portal](https://portal.azure.com).
 - In the left-hand navigation pane, select the **Azure Active Directory** service, and then select **App registrations**.
 - In the resulting screen, select the name of your application.
-- In the Authentication blade, paste the URI you copied earlier from your deployed app instance. If the app had multiple redirect URIs, make sure to add new corresponding entries using the App service's full domain in lieu of `http:localhost:8000` for each redirect URI. For example, this might be `https://example-domain.azurewebsites.net/auth_redirect`. Save the configuration.
-- From the *Branding* menu, update the **Home page URL**, to the address of your service, for example `https://example-domain.azurewebsites.net/index`. Save the configuration.
+- In the Authentication blade, paste the URI you copied earlier from your deployed app instance. If the app had multiple redirect URIs, make sure to add new corresponding entries using the App service's full domain in lieu of `http://localhost:8000` for each redirect URI. For example, this might be `https://example-domain.azurewebsites.net/auth/redirect`. Save the configuration.
+- From the *Branding* menu, update the **Home page URL**, to the address of your service, for example `https://example-domain.azurewebsites.net/`. Save the configuration.
 - Disable App Service's default authentication:
 
     Navigate to the **Azure App Service** Portal and locate your project. Once you do, click on the **Authentication/Authorization** blade. There, make sure that the **App Services Authentication** is switched off (and nothing else is checked), as this sample is using MSAL for authentication.
@@ -137,7 +136,7 @@ This guide is for deploying to **Azure App Service** via **VS Code Azure Tools E
 
 ## We'd love your feedback!
 
-Were we successful in addressing your learning objective? Consider taking a moment to [share your experience with us](https://forms.office.com/Pages/ResponsePage.aspx?id=v4j5cvGGr0GRqy180BHbR73pcsbpbxNJuZCMKN0lURpUM0dYSFlIMzdHT0o3NlRNVFpJSzcwRVMxRyQlQCN0PWcu).
+Were we successful in addressing your learning objective? Consider taking a moment to [share your experience with us](https://forms.office.com/Pages/ResponsePage.aspx?id=v4j5cvGGr0GRqy180BHbR73pcsbpbxNJuZCMKN0lURpURDQwVUxQWENUMlpLUlA0QzdJNVE3TUJRSyQlQCN0PWcu).
 
 ## More information
 
