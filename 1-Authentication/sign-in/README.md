@@ -27,6 +27,7 @@ description: "This sample demonstrates a Java Servlet web app that signs in user
 - [We'd love your feedback!](#wed-love-your-feedback)
 - [About the code](#about-the-code)
   - [Step-by-step walkthrough](#step-by-step-walkthrough)
+  - [Scopes](#scopes)
 - [Next Steps or Deploy to Azure](#next-steps-or-deploy-to-azure)
 - [Community Help and Support](#community-help-and-support)
 - [Contributing](#contributing)
@@ -47,21 +48,19 @@ This sample demonstrates a Java Servlet web app that signs in users to your Azur
 
 ## Contents
 
-| File/folder       | Description                                |
-|-------------------|--------------------------------------------|
-|`AppCreationScripts/`| Scripts to automatically configure Azure AD app registrations. |
-|`src/main/java/com/microsoft/azuresamples/authentication/`| This directory contains the classes that define the web app's backend business logic. |
-|`AuthHelper.java` | Helper functions for authentication. |
-|`AuthException.java` | Exception class to group auth-related errors and handle them differently. |
-|`Config.java` | Runs on startup and configures properties reader and logger. |
-|`AuthenticationFilter.java`| Redirects unauthenticated requests to protected endpoints to a 401 page. |
-|`MsalAuthSession` | Instantiated with an HttpSession, stores all MSAL related session attributes in session attribute. |
-|`____Servlet.java`    | All of the endpoints available are defined in .java classes ending in ____Servlet.java |
-|`src/main/resources/authentication.properties`| Azure AD and program configuration. |
-|`src/main/webapp/` | This directory contains the UI (JSP templates) |
-|`CHANGELOG.md`    | List of changes to the sample.             |
-|`CONTRIBUTING.md` | Guidelines for contributing to the sample. |
-|`LICENSE`         | The license for the sample.                |
+| File/folder                                                        | Description                                                                            |
+| ------------------------------------------------------------------ | -------------------------------------------------------------------------------------- |
+| `AppCreationScripts/`                                              | Scripts to automatically configure Azure AD app registrations.                         |
+| `src/main/java/com/microsoft/azuresamples/msal4j/authwebapp/`      | This directory contains the classes that define the web app's backend business logic.  |
+| `src/main/java/com/microsoft/azuresamples/msal4j/authservlets/`    | This directory contains the classes that are used for sign in and sign out endpoints.  |
+| `____Servlet.java`                                                 | All of the endpoints available are defined in .java classes ending in ____Servlet.java.|
+| `src/main/java/com/microsoft/azuresamples/msal4j/helpers/`         | Helper classes for authentication.                                                     |
+| `AuthenticationFilter.java`                                        | Redirects unauthenticated requests to protected endpoints to a 401 page.               |
+| `src/main/resources/authentication.properties`                     | Azure AD and program configuration.                                                    |
+| `src/main/webapp/`                                                 | This directory contains the UI (JSP templates)                                         |
+| `CHANGELOG.md`                                                     | List of changes to the sample.                                                         |
+| `CONTRIBUTING.md`                                                  | Guidelines for contributing to the sample.                                             |
+| `LICENSE`                                                          | The license for the sample.                                                            |
 
 ## Prerequisites
 
@@ -81,6 +80,7 @@ From your shell or command line:
 
 ```console
 git clone https://github.com/Azure-Samples/ms-identity-java-servlet-webapp-authentication.git
+cd 1-Authentication/sign-in
 ```
 
 or download and extract the repository .zip file.
@@ -170,8 +170,7 @@ Open the project in your IDE to configure the code.
 
     ```Shell
     cd project-directory
-    mvn clean
-    mvn package
+    mvn clean package
     ```
 
 4. Find the resulting `.war` file in `./target/msal4j-servlet-webapp.war` and deploy it to Tomcat or any other J2EE container solution.
@@ -200,7 +199,7 @@ Were we successful in addressing your learning objective? Consider taking a mome
 
 ## About the code
 
-This sample shows how to use **MSAL for Java (MSAL4J)** to sign in users into your Azure AD tenant. You must add it to the project using Maven. As a developer, you may copy `AuthHelper.java`,`Config.java` and `MsalAuthSession.java` classes to your project to access the functionality demonstrated by this sample.
+This sample shows how to use **MSAL for Java (MSAL4J)** to sign in users into your Azure AD tenant. You must add it to the project using Maven. You must add these to your projects using Maven. As a developer, you may copy the contents of the `helpers` and `authservlets` package folders in the `src/main/java/com/microsoft/azuresamples/msal4j` package. You'll also need an [authentication.properties file](src/main/resources/authentication.properties).
 
 A **ConfidentialClientApplication** instance is created in the [AuthHelper.java](src/main/java/com/microsoft/azuresamples/authentication/AuthHelper.java) class. This object helps craft the AAD authorization URL and also helps exchange the authentication token for an access token.
 
@@ -242,10 +241,6 @@ In this sample, these values are read from the [authentication.properties](src/m
     - **SCOPES**: [Scopes](https://docs.microsoft.com/azure/active-directory/develop/access-tokens#scopes) are permissions requested by the application.
       - Normally, the three scopes `openid profile offline_access` suffice for receiving an ID Token response.
       - Full list of scopes requested by the app can be found in the [authentication.properties file](./src/main/resources/authentication.properties). You can add more scopes like User.Read and so on.
-    - **ResponseMode.QUERY**: AAD can return the response as form params in an HTTP POST request or as query string params in an HTTP GET request. You'd normally leave this as-is.
-    - **Prompt.SELECT_ACCOUNT**: AAD should ask the user to select the account that they intend to authenticate against. The [OIDC protocol documentation](https://openid.net/specs/openid-connect-core-1_0.html#AuthRequest) lists other available options and their uses.
-    - **state**: a unique variable set by the app into the session on each token request, and destroyed after receiving the corresponding AAD redirect callback. The state variable ensures that AAD requests to the [/auth/redirect endpoint](src/main/java/com/microsoft/azuresamples/authentication/AADRedirectServlet.java) are actually from AAD authorization requests originating from this app and this session, thereby preventing CSRF attacks.You'd normally leave this as-is.
-    - **nonce**: a unique variable set by the app into the session on each token request, and destroyed after receiving the corresponding token. This nonce is transcribed to the resulting tokens dispensed AAD, thereby ensuring that there is no token-replay attack occurring. You'd normally leave this as-is.
 
 2. The user is presented with a sign-in prompt by Azure Active Directory. If the sign-in attempt is successful, the user's browser is redirected to our app's redirect endpoint. A valid request to this endpoint will contain an [**authorization code**](https://docs.microsoft.com/azure/active-directory/develop/v2-oauth2-auth-code-flow).
 3. Our ConfidentialClientApplication instance then exchanges this authorization code for an ID Token and Access Token from Azure Active Directory.
@@ -266,20 +261,14 @@ In this sample, these values are read from the [authentication.properties](src/m
     - **REDIRECT_URI**: The redirect URI used in the previous step must be passed again.
     - **SCOPES**: The scopes used in the previous step must be passed again.
 
-4. If `acquireToken` is successful, the token claims are extracted and the nonce claim is validated against the nonce stored in the session.
+4. If `acquireToken` is successful, the token claims are extracted and placed in an instance of IdentityContextData (e.g., `context`) and saved to the session. The application then instantiates this from the session whenever it needs access to it.
 
-    ```Java
-    parseJWTClaimsSetAndStoreResultInSession(msalAuth, result, serializedTokenCache);
-    validateNonce(msalAuth)
-    processSuccessfulAuthentication(msalAuth);
-    ```
+### Scopes
 
-5. If the nonce is successfully validated, authentication status is put into a server-side session, leveraging methods exposed by the class [MsalAuthSession.java](src/main/java/com/microsoft/azuresamples/authentication/MsalAuthSession.java):
-
-    ```Java
-    msalAuth.setAuthenticated(true);
-    msalAuth.setUsername(msalAuth.getIdTokenClaims().get("name"));
-    ```
+- [Scopes](https://docs.microsoft.com/azure/active-directory/develop/v2-permissions-and-consent) tell Azure AD the level of access that the application is requesting.
+- Based on the requested scopes, Azure AD presents a consent dialogue to the user upon signing in.
+- If the user consents to one or more scopes and obtains a token, the scopes-consented-to are encoded into the resulting `access_token`.
+- Note the scopes requested by the application by referring to [authentication.properties](./src/main/resources/authentication.properties). These three scopes are requested by MSAL and given by Azure Active Directory by default.
 
 ## Next Steps or Deploy to Azure
 

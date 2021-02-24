@@ -18,7 +18,7 @@
 
 ## Overview
 
-This readme demonstrates how to deploy a Java Servlet web application to **Azure Cloud** using [Azure App Service](https://docs.microsoft.com/azure/app-service/). It is recommended that the code sample from [Enable your Java Servlet webapp to sign in users and call Microsoft Graph with the Microsoft identity platform](https://github.com/azure-samples/ms-identity-java-servlet-webapp-call-graph) is used for deployment. You may choose to follow these steps with a different sample or your own project.
+This readme demonstrates how to deploy a Java Servlet web application that signs in users and calls graph to **Azure Cloud** using [Azure App Service](https://docs.microsoft.com/azure/app-service/). It is recommended that you clone the respository [Enable your Java Servlet webapp to sign in users and call Microsoft Graph with the Microsoft identity platform](https://github.com/azure-samples/ms-identity-java-servlet-authentication) and use the sample in the `3-Authentication-2/groups` directory for deployment. You may choose to follow these steps with a different sample or your own project, noting that the instructions here are specific to the sample listed.
 
 ## Prerequisites
 

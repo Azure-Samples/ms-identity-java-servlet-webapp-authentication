@@ -51,7 +51,8 @@ This sample demonstrates a Java Servlet web app that signs in users and obtains 
 | ------------------------------------------------------------------ | -------------------------------------------------------------------------------------- |
 | `AppCreationScripts/`                                              | Scripts to automatically configure Azure AD app registrations.                         |
 | `src/main/java/com/microsoft/azuresamples/msal4j/callgraphwebapp/` | This directory contains the classes that define the web app's backend business logic.  |
-| `____Servlet.java`                                                 | All of the endpoints available are defined in .java classes ending in ____Servlet.java |
+| `src/main/java/com/microsoft/azuresamples/msal4j/authservlets/`    | This directory contains the classes that are used for sign in and sign out endpoints.  |
+| `____Servlet.java`                                                 | All of the endpoints available are defined in .java classes ending in ____Servlet.java.|
 | `src/main/java/com/microsoft/azuresamples/msal4j/helpers/`         | Helper classes for authentication.                                                     |
 | `AuthenticationFilter.java`                                        | Redirects unauthenticated requests to protected endpoints to a 401 page.               |
 | `src/main/resources/authentication.properties`                     | Azure AD and program configuration.                                                    |
@@ -77,7 +78,8 @@ This sample demonstrates a Java Servlet web app that signs in users and obtains 
 From your shell or command line:
 
 ```console
-git clone https://github.com/Azure-Samples/ms-identity-java-servlet-webapp-call-graph.git
+git clone https://github.com/Azure-Samples/ms-identity-java-servlet-webapp-authentication.git
+cd 2-Authorization-I/call-graph
 ```
 
 or download and extract the repository .zip file.
@@ -199,7 +201,6 @@ Open the project in your IDE to configure the code.
 - The middle of the screen now has an option to click for **ID Token Details**: click it to see some of the ID token's decoded claims.
 - Click the **Call Graph** button to make a call to MS Graph API's [/users](https://docs.microsoft.comgraph/api/user-list) endpoint to see a selection of user details obtained from the `/me` endpoint in Graph.
 - You can also use the button on the top right to sign out.
-- After signing out, click the link to `ID Token Details` to observe that the app displays a `401: unauthorized` error instead of the ID token claims when the user is not authorized.
 
 > :information_source: Did the sample not work for you as expected? Did you encounter issues trying this sample? Then please reach out to us using the [GitHub Issues](../../issues) page.
 
@@ -209,7 +210,7 @@ Were we successful in addressing your learning objective? Consider taking a mome
 
 ## About the code
 
-This sample uses **MSAL for Java (MSAL4J)** to sign a user in and obtain a token for MS Graph API. It leverages [Microsoft Graph SDK for Java](https://github.com/microsoftgraph/msgraph-sdk-java) to obtain data from Graph. You must add these to your projects using Maven. As a developer, you may copy the `AuthHelper.java`,`Config.java`, `MsalAuthSession.java` and `GraphHelper.java` classes to your project to access the functionality demonstrated by this sample.
+This sample uses **MSAL for Java (MSAL4J)** to sign a user in and obtain a token for MS Graph API. It leverages [Microsoft Graph SDK for Java](https://github.com/microsoftgraph/msgraph-sdk-java) to obtain data from Graph. You must add these to your projects using Maven. As a developer, you may copy the contents of the `helpers` and `authservlets` package folders in the `src/main/java/com/microsoft/azuresamples/msal4j` package. You'll also need an [authentication.properties file](src/main/resources/authentication.properties).
 
 A **ConfidentialClientApplication** instance is created in the [AuthHelper.java](src/main/java/com/microsoft/azuresamples/authentication/AuthHelper.java) class. This object helps craft the AAD authorization URL and also helps exchange the authentication token for an access token.
 
@@ -271,7 +272,7 @@ In this sample, these values are read from the [authentication.properties](src/m
     - **REDIRECT_URI**: The redirect URI used in the previous step must be passed again.
     - **SCOPES**: The scopes used in the previous step must be passed again.
 
-4. If `acquireToken` is successful, the token claims are extracted and placed in an instance of IdentityContextData (e.g., `context`).
+4. If `acquireToken` is successful, the token claims are extracted and placed in an instance of IdentityContextData (e.g., `context`) and saved to the session. The application then instantiates this from the session whenever it needs access to it.
 
 #### Call Graph
 
