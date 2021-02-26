@@ -141,7 +141,7 @@ Following this guide, you must:
 1. In the **Register an application page** that appears, enter your application's registration information:
    - In the **Name** section, enter a meaningful application name that will be displayed to users of the app, for example `java-servlet-webapp-groups`.
    - Under **Supported account types**, select **Accounts in this organizational directory only**.
-   - In the **Redirect URI** section, select **Web** in the combo-box and enter the following redirect URI: `http://localhost:8080/msal4j-servlet-webapp/auth/redirect`.
+   - In the **Redirect URI** section, select **Web** in the combo-box and enter the following redirect URI: `http://localhost:8080/msal4j-servlet-groups/auth/redirect`.
 1. Select **Register** to create the application.
 1. In the app's registration screen, find and note the **Application (client) ID**. You use this value in your app's configuration file(s) later in your code.
 1. Select **Save** to save your changes.
@@ -237,10 +237,10 @@ You have two different options available to you on how you can further configure
     mvn clean package
     ```
 
-4. Find the resulting `.war` file in `./target/msal4j-servlet-webapp.war` and deploy it to Tomcat or any other J2EE container solution.
+4. Find the resulting `.war` file in `./target/msal4j-servlet-groups.war` and deploy it to Tomcat or any other J2EE container solution.
      - To deploy to Tomcat, copy this `.war` file to the `/webapps/` directory in your Tomcat installation directory and start the Tomcat server.
-5. Ensure that the context path that the app is served on is `/msal4j-servlet-webapp` (or change the `app.homePage` value in your [authentication.properties](src/main/resources/authentication.properties) file and in the AAD app registration). If you change the properties file, you'll needs to repeat step 3 above (maven clean and package).
-6. Open your browser and navigate to `http://localhost:8080/msal4j-servlet-webapp/`
+5. Ensure that the context path that the app is served on is `/msal4j-servlet-groups` (or change the `app.homePage` value in your [authentication.properties](src/main/resources/authentication.properties) file and in the AAD app registration). If you change the properties file, you'll needs to repeat step 3 above (maven clean and package).
+6. Open your browser and navigate to `http://localhost:8080/msal4j-servlet-groups/`
 
 ![Experience](./ReadmeFiles/app.png)
 
@@ -347,14 +347,11 @@ In this sample, these values are read from the [authentication.properties](src/m
 
     ```Java
     final ConfidentialClientApplication client = getConfidentialClientInstance();
-    final AuthorizationRequestUrlParameters parameters = AuthorizationRequestUrlParameters
-        .builder(REDIRECT_URI, Collections.singleton(SCOPES)).responseMode(ResponseMode.QUERY)
-        .prompt(Prompt.SELECT_ACCOUNT).state(state).nonce(nonce).build();
+    AuthorizationRequestUrlParameters parameters = AuthorizationRequestUrlParameters.builder(Config.REDIRECT_URI, Collections.singleton(Config.SCOPES))
+            .responseMode(ResponseMode.QUERY).prompt(Prompt.SELECT_ACCOUNT).state(state).nonce(nonce).build();
 
-    final String redirectUrl = client.getAuthorizationRequestUrl(parameters).toString();
-    Config.logger.log(Level.INFO, "Redirecting user to {0}", redirectUrl);
-    resp.setStatus(302);
-    resp.sendRedirect(redirectUrl);
+    final String authorizeUrl = client.getAuthorizationRequestUrl(parameters).toString();
+    contextAdapter.redirectUser(authorizeUrl);
     ```
 
     - **AuthorizationRequestUrlParameters**: Parameters that must be set in order to build an AuthorizationRequestUrl.
@@ -367,14 +364,14 @@ In this sample, these values are read from the [authentication.properties](src/m
 3. Our ConfidentialClientApplication instance then exchanges this authorization code for an ID Token and Access Token from Azure Active Directory.
 
     ```Java
+    // First, validate the state, then parse any error codes in response, then extract the authCode. Then:
+    // build the auth code params:
     final AuthorizationCodeParameters authParams = AuthorizationCodeParameters
-                        .builder(authCode, new URI(REDIRECT_URI))
-                        .scopes(Collections.singleton(SCOPES)).build();
+            .builder(authCode, new URI(Config.REDIRECT_URI)).scopes(Collections.singleton(Config.SCOPES)).build();
 
-    final ConfidentialClientApplication client = AuthHelper
-            .getConfidentialClientInstance();
-    final Future<IAuthenticationResult> future = client.acquireToken(authParams);
-    final IAuthenticationResult result = future.get();
+    // Get a client instance and leverage it to acquire the token:
+    final ConfidentialClientApplication client = AuthHelper.getConfidentialClientInstance();
+    final IAuthenticationResult result = client.acquireToken(authParams).get();
     ```
 
     - **AuthorizationCodeParameters**: Parameters that must be set in order to exchange the Authorization Code for an ID and/or access token.
@@ -382,9 +379,26 @@ In this sample, these values are read from the [authentication.properties](src/m
     - **REDIRECT_URI**: The redirect URI used in the previous step must be passed again.
     - **SCOPES**: The scopes used in the previous step must be passed again.
 
-4. If `acquireToken` is successful, the token claims are extracted and placed in an instance of IdentityContextData (e.g., `context`) and saved to the session. The application then instantiates this from the session whenever it needs access to it.
+4. If `acquireToken` is successful, the token claims are extracted. If the nonce check passes, the results are placed in `context` (an instance of `IdentityContextData`) and saved to the session. The application can then instantiate this from the session (by way of an instance of `IdentityContextAdapterServlet`) whenever it needs access to it:
 
-5. If the user is a member of too many groups, a call to `context.getGroups()` will be empty at this point. Meanwhile, `context.getGroupsOverage()` will return `true`, signalling that getting the full list of groups will require a call to Microsoft Graph. See OverageServlet.java for an example of how to populate `context.groups`.
+    ```java
+    // parse IdToken claims from the IAuthenticationResult:
+    // (the next step - validateNonce - requires parsed claims)
+    context.setIdTokenClaims(result.idToken());
+
+    // if nonce is invalid, stop immediately! this could be a token replay!
+    // if validation fails, throws exception and cancels auth:
+    validateNonce(context);
+
+    // set user to authenticated:
+    context.setAuthResult(result, client.tokenCache().serialize());
+
+    // handle groups overage if it has occurred.
+    handleGroupsOverage(context);
+    ```
+
+5. After previous step, group memberships may be extracted by calling `context.getGroups()` (an instance of `IdentityContextData`).
+6. If the user is a member of too many groups (>200), a call to `context.getGroups()` might have been empty if it weren't for the call to `handleGroupsOverage()`. Meanwhile, `context.getGroupsOverage()` will return `true`, signalling that an overage has occurred, and that getting the full list of groups will require a call to Microsoft Graph. See `handleGroupsOverage()` method in `AuthHelper.java` for this application uses `context.setGroups()` when there is an overage.
 
 #### Protecting the routes
 

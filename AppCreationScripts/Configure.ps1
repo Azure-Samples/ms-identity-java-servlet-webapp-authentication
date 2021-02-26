@@ -195,8 +195,8 @@ Function ConfigureApplications
    $webAppAppKey = $pw
    # create the application 
    $webAppAadApplication = New-AzureADApplication -DisplayName "java-servlet-webapp-groups" `
-                                                  -HomePage "http://localhost:8080/msal4j-servlet-webapp/auth/redirect/index" `
-                                                  -ReplyUrls "http://localhost:8080/msal4j-servlet-webapp/auth/redirect" `
+                                                  -HomePage "http://localhost:8080/msal4j-servlet-groups/auth/redirect/index" `
+                                                  -ReplyUrls "http://localhost:8080/msal4j-servlet-groups/auth/redirect" `
                                                   -IdentifierUris "https://$tenantName/java-servlet-webapp-groups" `
                                                   -PasswordCredentials $key `
                                                   -PublicClient $False
