@@ -406,16 +406,24 @@ In this sample, these values are read from the [authentication.properties](src/m
 
 ### Protecting the routes
 
-See the contents of the `AuthenticationFilter.java` to understand how this sample app filters access to its routes. In the `authentication.properties` file, the key `app.protect.authenticated` contains the comma-separated routes that are to be accessed by authenticated users only.
+See `AuthenticationFilter.java` for how the sample app filters access to routes. In the `authentication.properties` file, the key `app.protect.authenticated` contains the comma-separated routes that are to be accessed by authenticated users only.
 
 ```ini
-#define groups for the app
-app.groups=admin {enter-your-admins-group-id-here}, user {enter-your-users-group-id-here}
+# e.g., /token_details requires any user to be signed in and does not require special groups claim
+app.protect.authenticated=/token_details
 ```
 
-The comma-separated routes under the `app.protect.groups` key are also only accessible by authenticated users. However, these routes also contain a space-separated list of user security group memberships: only users belonging to at least one of the corresponding groups will be able to access these routes after authenticating.
+Any of the routes listed in the comma-separated rule sets under the `app.protect.groups` are also off-limits to non-authenticated authenticated users.
+
+However, these routes also contain a space-separated list of group memberships: only users belonging to at least one of the corresponding groups will be able to access these routes after authenticating.
 
 ```ini
+# define short names for group IDs here for the app. This will be useful in the next key (app.protect.groups).
+# EXCLUDE the curly braces, they are in this file only as delimiters.
+# example:
+# app.groups=groupA abcdef-qrstuvw-xyz groupB abcdef-qrstuv-wxyz
+app.groups=admin {enter-your-admins-group-id-here}, user {enter-your-users-group-id-here}
+
 # A route and its corresponding group(s) that can view it, <space-separated>; the start of the next route & its group(s) is delimited by a <comma-and-space-separator>
 # this says: /admins_only can be accessed by admin group, /regular_user can be accessed by admin group and user group
 app.protect.groups=/admin_only admin, /regular_user admin user
