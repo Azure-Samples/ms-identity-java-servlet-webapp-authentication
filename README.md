@@ -345,9 +345,12 @@ Any of the routes listed in the comma-separated rule sets under the `app.protect
 However, these routes also contain a space-separated list of app role memberships: only users having at least one of the corresponding roles will be able to access these routes after authenticating.
 
 ```ini
+#local short names for app roles - e.g., sets admin to mean PrivilegedAdmin (useful for long rule sets defined in the next key, app.protect.roles)
+app.roles=admin PrivilegedAdmin, user RegularUser
+
 # A route and its corresponding <space-separated> role(s) that can access it; the start of the next route & its role(s) is delimited by a <comma-and-space-separator>
 # this says: /admins_only can be accessed by PrivilegedAdmin, /regular_user can be accessed by PrivilegedAdmin role and the RegularUser role
-app.protect.roles=/admin_only PrivilegedAdmin, /regular_user PrivilegedAdmin RegularUser
+app.protect.roles=/admin_only admin, /regular_user admin user
 ```
 
 ### Scopes
