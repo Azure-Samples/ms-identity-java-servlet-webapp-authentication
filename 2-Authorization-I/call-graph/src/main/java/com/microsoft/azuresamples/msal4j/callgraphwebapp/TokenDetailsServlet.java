@@ -44,7 +44,7 @@ public class TokenDetailsServlet extends HttpServlet {
         HashMap<String,String> filteredClaims = new HashMap<>();
         context.getIdTokenClaims().forEach((k,v) -> {
             if (includeClaims.contains(k))
-                filteredClaims.put(k, v);
+                filteredClaims.put(k, v.toString());
         });
         return filteredClaims;
     }
