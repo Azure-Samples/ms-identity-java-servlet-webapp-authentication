@@ -21,7 +21,7 @@ import java.util.Map;
 
 /**
  * This class defines all auth-related session properties that are required MSAL
- * Java apps using this sample repo's paradigm will require this.
+ * Java apps using this sample repository's paradigm will require this.
  */
 public class IdentityContextData implements Serializable {
     private static final long serialVersionUID = 2L;
@@ -38,7 +38,6 @@ public class IdentityContextData implements Serializable {
     private IAccount account = null;
     private Map<String, Object> idTokenClaims = new HashMap<>();
     private String tokenCache = null;
-    private IAuthenticationResult authResult = null;
     private boolean hasChanged = false;
     private boolean groupsOverage = false;
 
@@ -55,7 +54,6 @@ public class IdentityContextData implements Serializable {
         account = null;
         idTokenClaims = new HashMap<>();
         tokenCache = null;
-        authResult = null;
         groupsOverage = false;
         roles = new ArrayList<>();
         setHasChanged(true);
@@ -114,10 +112,6 @@ public class IdentityContextData implements Serializable {
 
     public Date getStateDate() {
         return this.stateDate;
-    }
-
-    public IAuthenticationResult getAuthResult() {
-        return this.authResult;
     }
 
     public boolean getGroupsOverage() {
@@ -222,7 +216,6 @@ public class IdentityContextData implements Serializable {
 
     public void setAuthResult(IAuthenticationResult authResult, String serializedTokenCache)
             throws java.text.ParseException {
-        this.authResult = authResult;
         this.setAccount(authResult.account());
         this.idToken = authResult.idToken();
         this.setAccessToken(authResult.accessToken());
