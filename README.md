@@ -27,6 +27,7 @@ description: "This sample demonstrates a Java Servlet web app that signs in user
 - [We'd love your feedback!](#wed-love-your-feedback)
 - [About the code](#about-the-code)
   - [Step-by-step walkthrough](#step-by-step-walkthrough)
+  - [Protecting the routes](#protecting-the-routes)
   - [Scopes](#scopes)
 - [Next Steps or Deploy to Azure](#next-steps-or-deploy-to-azure)
 - [Community Help and Support](#community-help-and-support)
@@ -134,7 +135,7 @@ Following this guide, you must:
      - Select **Accounts in any organizational directory** if you'd like users in any Azure AD tenant to be able to use your application (**multi-tenant**).
      - Select **Accounts in any organizational directory and personal Microsoft accounts** for the widest set of customers (**multi-tenant** that also supports Microsoft personal accounts).
    - Select **Personal Microsoft accounts** for use only by users of personal Microsoft accounts (e.g., Hotmail, Live, Skype, Xbox accounts).
-   - In the **Redirect URI** section, select **Web** in the combo-box and enter the following redirect URI: `http://localhost:8080/msal4j-servlet-webapp/auth/redirect`.
+   - In the **Redirect URI** section, select **Web** in the combo-box and enter the following redirect URI: `http://localhost:8080/msal4j-servlet-auth/auth/redirect`.
 1. Select **Register** to create the application.
 1. In the app's registration screen, find and note the **Application (client) ID**. You use this value in your app's configuration file(s) later in your code.
 1. Select **Save** to save your changes.
@@ -173,10 +174,10 @@ Open the project in your IDE to configure the code.
     mvn clean package
     ```
 
-4. Find the resulting `.war` file in `./target/msal4j-servlet-webapp.war` and deploy it to Tomcat or any other J2EE container solution.
+4. Find the resulting `.war` file in `./target/msal4j-servlet-auth.war` and deploy it to Tomcat or any other J2EE container solution.
      - To deploy to Tomcat, copy this `.war` file to the `/webapps/` directory in your Tomcat installation directory and start the Tomcat server.
-5. Ensure that the context path that the app is served on is `/msal4j-servlet-webapp` (or change the `app.homePage` value in your [authentication.properties](src/main/resources/authentication.properties) file and in the AAD app registration). If you change the properties file, you'll needs to repeat step 3 above (maven clean and package).
-6. Open your browser and navigate to `http://localhost:8080/msal4j-servlet-webapp/`
+5. Ensure that the context path that the app is served on is `/msal4j-servlet-auth` (or change the `app.homePage` value in your [authentication.properties](src/main/resources/authentication.properties) file and in the AAD app registration). If you change the properties file, you'll needs to repeat step 3 above (maven clean and package).
+6. Open your browser and navigate to `http://localhost:8080/msal4j-servlet-auth/`
 
 ![Experience](./ReadmeFiles/app.png)
 
@@ -199,7 +200,9 @@ Were we successful in addressing your learning objective? Consider taking a mome
 
 ## About the code
 
-This sample shows how to use **MSAL for Java (MSAL4J)** to sign in users into your Azure AD tenant. You must add it to the project using Maven. You must add these to your projects using Maven. As a developer, you may copy the contents of the `helpers` and `authservlets` package folders in the `src/main/java/com/microsoft/azuresamples/msal4j` package. You'll also need an [authentication.properties file](src/main/resources/authentication.properties).
+This sample shows how to use **MSAL for Java (MSAL4J)** to sign in users into your Azure AD tenant. If you'd like to use MSAL4J in your own applications, must add it to your projects using Maven.
+
+If you want to replicate this sample's behavior, you may choose to copy the `pom.xml` file, and the contents of the `helpers` and `authservlets` packages in the `src/main/java/com/microsoft/azuresamples/msal4j` package. You'll also need the [authentication.properties file](src/main/resources/authentication.properties). These classes and files contain generic code that can be used in a wide array of applications. The rest of the sample may be copied as well, but the other classes and files are built specifically to address this sample's objective.
 
 A **ConfidentialClientApplication** instance is created in the [AuthHelper.java](src/main/java/com/microsoft/azuresamples/authentication/AuthHelper.java) class. This object helps craft the AAD authorization URL and also helps exchange the authentication token for an access token.
 
@@ -226,18 +229,15 @@ In this sample, these values are read from the [authentication.properties](src/m
 
     ```Java
     final ConfidentialClientApplication client = getConfidentialClientInstance();
-    final AuthorizationRequestUrlParameters parameters = AuthorizationRequestUrlParameters
-        .builder(REDIRECT_URI, Collections.singleton(SCOPES)).responseMode(ResponseMode.QUERY)
-        .prompt(Prompt.SELECT_ACCOUNT).state(state).nonce(nonce).build();
+    AuthorizationRequestUrlParameters parameters = AuthorizationRequestUrlParameters.builder(Config.REDIRECT_URI, Collections.singleton(Config.SCOPES))
+            .responseMode(ResponseMode.QUERY).prompt(Prompt.SELECT_ACCOUNT).state(state).nonce(nonce).build();
 
-    final String redirectUrl = client.getAuthorizationRequestUrl(parameters).toString();
-    Config.logger.log(Level.INFO, "Redirecting user to {0}", redirectUrl);
-    resp.setStatus(302);
-    resp.sendRedirect(redirectUrl);
+    final String authorizeUrl = client.getAuthorizationRequestUrl(parameters).toString();
+    contextAdapter.redirectUser(authorizeUrl);
     ```
 
     - **AuthorizationRequestUrlParameters**: Parameters that must be set in order to build an AuthorizationRequestUrl.
-    - **REDIRECT_URI**: Where AAD will redirect the browser (along with auth code) after collecting user credentials. It must match the redirect URI in the  Azure AD app registration on https://portal.azure.com
+    - **REDIRECT_URI**: Where AAD will redirect the browser (along with auth code) after collecting user credentials. It must match the redirect URI in the  Azure AD app registration on [Azure Portal](https://portal.azure.com)
     - **SCOPES**: [Scopes](https://docs.microsoft.com/azure/active-directory/develop/access-tokens#scopes) are permissions requested by the application.
       - Normally, the three scopes `openid profile offline_access` suffice for receiving an ID Token response.
       - Full list of scopes requested by the app can be found in the [authentication.properties file](./src/main/resources/authentication.properties). You can add more scopes like User.Read and so on.
@@ -246,14 +246,14 @@ In this sample, these values are read from the [authentication.properties](src/m
 3. Our ConfidentialClientApplication instance then exchanges this authorization code for an ID Token and Access Token from Azure Active Directory.
 
     ```Java
+    // First, validate the state, then parse any error codes in response, then extract the authCode. Then:
+    // build the auth code params:
     final AuthorizationCodeParameters authParams = AuthorizationCodeParameters
-                        .builder(authCode, new URI(REDIRECT_URI))
-                        .scopes(Collections.singleton(SCOPES)).build();
+            .builder(authCode, new URI(Config.REDIRECT_URI)).scopes(Collections.singleton(Config.SCOPES)).build();
 
-    final ConfidentialClientApplication client = AuthHelper
-            .getConfidentialClientInstance();
-    final Future<IAuthenticationResult> future = client.acquireToken(authParams);
-    final IAuthenticationResult result = future.get();
+    // Get a client instance and leverage it to acquire the token:
+    final ConfidentialClientApplication client = AuthHelper.getConfidentialClientInstance();
+    final IAuthenticationResult result = client.acquireToken(authParams).get();
     ```
 
     - **AuthorizationCodeParameters**: Parameters that must be set in order to exchange the Authorization Code for an ID and/or access token.
@@ -261,7 +261,32 @@ In this sample, these values are read from the [authentication.properties](src/m
     - **REDIRECT_URI**: The redirect URI used in the previous step must be passed again.
     - **SCOPES**: The scopes used in the previous step must be passed again.
 
-4. If `acquireToken` is successful, the token claims are extracted and placed in an instance of IdentityContextData (e.g., `context`) and saved to the session. The application then instantiates this from the session whenever it needs access to it.
+4. If `acquireToken` is successful, the token claims are extracted. If the nonce check passes, the results are placed in `context` (an instance of `IdentityContextData`) and saved to the session. The application can then instantiate this from the session (by way of an instance of `IdentityContextAdapterServlet`) whenever it needs access to it:
+
+    ```java
+    // parse IdToken claims from the IAuthenticationResult:
+    // (the next step - validateNonce - requires parsed claims)
+    context.setIdTokenClaims(result.idToken());
+
+    // if nonce is invalid, stop immediately! this could be a token replay!
+    // if validation fails, throws exception and cancels auth:
+    validateNonce(context);
+
+    // set user to authenticated:
+    context.setAuthResult(result, client.tokenCache().serialize());
+
+    // handle groups overage if it has occurred.
+    handleGroupsOverage(context);
+    ```
+
+### Protecting the routes
+
+See `AuthenticationFilter.java` for how the sample app filters access to routes. In the `authentication.properties` file, the key `app.protect.authenticated` contains the comma-separated routes that are to be accessed by authenticated users only.
+
+```ini
+# e.g., /token_details requires any user to be signed in and does not require special roles claim(s)
+app.protect.authenticated=/token_details
+```
 
 ### Scopes
 
