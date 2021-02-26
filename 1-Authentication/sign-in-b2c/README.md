@@ -150,7 +150,7 @@ Open the project in your IDE (like **Visual Studio Code**) to configure the code
 
 4. Find the resulting `.war` file in `./target/ms-identity-b2c-java-servlet-webapp-authentication.war` and upload it to your server.
 5. Ensure that the context path that the app is served on is `http://localhost:8080/ms-identity-b2c-java-servlet-webapp-authentication` (or change the addresses listed in the [authentication.properties](src/main/resources/authentication.properties) file and in the AAD app registration).
-6. Open your browser and navigate to `http://localhost:8080/ms-identity-b2c-java-servlet-webapp-authentication/index`
+6. Open your browser and navigate to `http://localhost:8080/ms-identity-b2c-java-servlet-webapp-authentication/`
 
 ![Experience](./ReadmeFiles/app.png)
 
@@ -169,7 +169,7 @@ Open the project in your IDE (like **Visual Studio Code**) to configure the code
 
 ## About the code
 
-This sample shows how to use **MSAL4J** to sign in users into your Azure AD B2C tenant.
+This sample demonstrates how to use **MSAL4J** to sign in users into your Azure AD B2C tenant.
 
 A **ConfidentialClientApplication** instance is created in the [AuthHelper.java](src/main/java/com/microsoft/azuresamples/webapp/AuthHelper.java) class. This object helps craft the AAD B2C authorization URL and also helps exchange the authentication token for an access token.
 
@@ -268,7 +268,7 @@ Use [Stack Overflow](http://stackoverflow.com/questions/tagged/msal) to get supp
 Ask your questions on Stack Overflow first and browse existing issues to see if someone has asked your question before.
 Make sure that your questions or comments are tagged with [`azure-active-directory` `azure-ad-b2c` `ms-identity` `adal` `msal`].
 
-If you find a bug in the sample, please raise the issue on [GitHub Issues](../../issues).
+If you find a bug in the sample, please raise the issue on [GitHub Issues](../../../../issues).
 
 To provide a recommendation, visit the following [User Voice page](https://feedback.azure.com/forums/169401-azure-active-directory).
 
