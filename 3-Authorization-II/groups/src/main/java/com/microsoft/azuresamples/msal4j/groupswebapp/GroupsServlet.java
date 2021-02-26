@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -32,25 +33,26 @@ public class GroupsServlet extends HttpServlet {
     @Override
     protected void doGet(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
         try {
-            // re-auth (prefer silently) in case the access token is not valid anymore.
             IdentityContextAdapterServlet contextAdapter = new IdentityContextAdapterServlet(req, resp);
-
             IdentityContextData context = contextAdapter.getContext();
-            boolean groupsOverage = context.getGroupsOverage();
 
-            String groupsFromGraph = "";
+            List<String> groups = context.getGroups();
+            boolean groupsOverage = context.getGroupsOverage(); // for signalling to the user that an overage has happened.
+            StringBuilder groupsStringBuilder = new StringBuilder();
 
-            if (groupsOverage && !context.getGroups().isEmpty()) {
-                int counter = 0;
-                Iterator<String> it = context.getGroups().iterator();
-                while (it.hasNext() && counter < 10) {
-                    counter ++;
-                    groupsFromGraph = groupsFromGraph + it.next() + ", <br>";
+            // get 10 of the groups if they exist (for showing the user in UI)
+            if (!groups.isEmpty()) {
+                Iterator<String> it = groups.iterator();
+                for (int i=0; it.hasNext() && i < 10; i++){
+                    groupsStringBuilder = groupsStringBuilder.append(it.next()).append(", <br>");
                 }
-                groupsFromGraph += "...";
+                groupsStringBuilder = groupsStringBuilder.append("...");
+            } else {
+                groupsStringBuilder = groupsStringBuilder.append("User is not a member of any groups. <br>");
             }
 
-            req.setAttribute("groupsFromGraph", groupsFromGraph);
+            req.setAttribute("groups", groupsStringBuilder.toString());
+            req.setAttribute("groupsNum", context.getGroups().size());
             req.setAttribute("groupsOverage", groupsOverage);
             req.setAttribute("bodyContent", "content/groups.jsp");
             final RequestDispatcher view = req.getRequestDispatcher("index.jsp");

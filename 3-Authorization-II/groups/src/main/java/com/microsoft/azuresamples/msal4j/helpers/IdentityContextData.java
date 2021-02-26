@@ -37,7 +37,6 @@ public class IdentityContextData implements Serializable {
     private IAccount account = null;
     private Map<String, Object> idTokenClaims = new HashMap<>();
     private String tokenCache = null;
-    private IAuthenticationResult authResult = null;
     private boolean hasChanged = false;
     private boolean groupsOverage = false;
 
@@ -54,7 +53,6 @@ public class IdentityContextData implements Serializable {
         account = null;
         idTokenClaims = new HashMap<>();
         tokenCache = null;
-        authResult = null;
         groupsOverage = false;
         setHasChanged(true);
     }
@@ -108,10 +106,6 @@ public class IdentityContextData implements Serializable {
 
     public Date getStateDate() {
         return this.stateDate;
-    }
-
-    public IAuthenticationResult getAuthResult() {
-        return this.authResult;
     }
 
     public boolean getGroupsOverage() {
@@ -206,7 +200,6 @@ public class IdentityContextData implements Serializable {
 
     public void setAuthResult(IAuthenticationResult authResult, String serializedTokenCache)
             throws java.text.ParseException {
-        this.authResult = authResult;
         this.setAccount(authResult.account());
         this.idToken = authResult.idToken();
         this.setAccessToken(authResult.accessToken());
