@@ -34,7 +34,7 @@ import com.microsoft.azuresamples.msal4j.helpers.IdentityContextAdapterServlet;
 @WebFilter(filterName = "AuthenticationFilter", urlPatterns = "/*")
 public class AuthenticationFilter implements Filter {
 
-    Map<String,String> roleNameIdLookup = parseGroupNamesAndIds(Config.ROLE_NAMES_AND_IDS);
+    Map<String,String> roleNameIdLookup = parseShortNames(Config.ROLE_NAMES_AND_IDS);
 
     ProtectedRoutes protectedRoutes = new ProtectedRoutes(
         Arrays.asList(Config.PROTECTED_ENDPOINTS.split(", ")),
@@ -55,8 +55,8 @@ public class AuthenticationFilter implements Filter {
                 sendToUnauthorizedPage(request, response);
         // check for role-related access requirements and claims if authorized
         } else {
-            Set<String> routeRequiresRole = protectedRoutes.requireRole.get(request.getServletPath());
-            if (!userHasRequiredRoleOrGroup(routeRequiresRole, context.getRoles())) {
+            Set<String> routeRequiresTheseRoles = protectedRoutes.requireRole.get(request.getServletPath());
+            if (!userHasRequiredRoleOrGroup(routeRequiresTheseRoles, context.getRoles())) {
                 sendToForbiddenPage(request, response);
             } else {
                 // not a protected route? continue!
@@ -79,15 +79,15 @@ public class AuthenticationFilter implements Filter {
         view.forward(req, resp);
     }
 
-    private boolean userHasRequiredRoleOrGroup(Set<String> routeRequiresRoleOrGroup, List<String> userTokenRoleOrGroupsList) {
+    private boolean userHasRequiredRoleOrGroup(Set<String> routeRequiresRoleOrGroup, List<String> userRoleOrGroupsList) {
         if (routeRequiresRoleOrGroup == null || routeRequiresRoleOrGroup.isEmpty())
             return true;
-        if (userTokenRoleOrGroupsList.isEmpty())
+        if (userRoleOrGroupsList.isEmpty())
             return false;
-        return userTokenRoleOrGroupsList.stream().anyMatch(routeRequiresRoleOrGroup::contains);
+        return userRoleOrGroupsList.stream().anyMatch(routeRequiresRoleOrGroup::contains);
     }
 
-    private Map<String,String> parseGroupNamesAndIds(String groupNamesAndIds) {
+    private Map<String,String> parseShortNames(String groupNamesAndIds) {
         String [] groupAndId = groupNamesAndIds.split(", ");
         Map<String,String> groupsIds = new HashMap<>();
         for (int x=0; x < groupAndId.length; x++) {
