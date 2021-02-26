@@ -21,7 +21,7 @@ import java.util.Map;
 
 /**
  * This class defines all auth-related session properties that are required MSAL
- * Java apps using this sample repo's paradigm will require this.
+ * Java apps using this sample repository's paradigm will require this.
  */
 public class IdentityContextData implements Serializable {
     private static final long serialVersionUID = 2L;
@@ -34,10 +34,10 @@ public class IdentityContextData implements Serializable {
     private String accessToken = null;
     private String idToken = null;
     private List<String> groups = new ArrayList<>();
+    private List<String> roles = new ArrayList<>();
     private IAccount account = null;
     private Map<String, Object> idTokenClaims = new HashMap<>();
     private String tokenCache = null;
-    private IAuthenticationResult authResult = null;
     private boolean hasChanged = false;
     private boolean groupsOverage = false;
 
@@ -54,8 +54,8 @@ public class IdentityContextData implements Serializable {
         account = null;
         idTokenClaims = new HashMap<>();
         tokenCache = null;
-        authResult = null;
         groupsOverage = false;
+        roles = new ArrayList<>();
         setHasChanged(true);
     }
 
@@ -80,6 +80,10 @@ public class IdentityContextData implements Serializable {
 
     public List<String> getGroups() {
         return this.groups;
+    }
+
+    public List<String> getRoles() {
+        return this.roles;
     }
 
     public String getTokenCache() {
@@ -110,10 +114,6 @@ public class IdentityContextData implements Serializable {
         return this.stateDate;
     }
 
-    public IAuthenticationResult getAuthResult() {
-        return this.authResult;
-    }
-
     public boolean getGroupsOverage() {
         return this.groupsOverage;
     }
@@ -122,6 +122,7 @@ public class IdentityContextData implements Serializable {
         final Map<String, Object> tokenClaims = SignedJWT.parse(rawIdToken).getJWTClaimsSet().getClaims();
         this.idTokenClaims = tokenClaims;
         setGroupsFromIdToken(tokenClaims);
+        setRolesFromIdToken(idTokenClaims);
         this.setHasChanged(true);
     }
 
@@ -140,6 +141,15 @@ public class IdentityContextData implements Serializable {
             }
         }
         setHasChanged(true);
+    }
+
+    public void setRolesFromIdToken(Map<String,Object> idTokenClaims) {
+        JSONArray rolesFromToken = (JSONArray)idTokenClaims.get("roles");
+        if (rolesFromToken != null) {
+            this.groups = new ArrayList<>();
+            rolesFromToken.forEach(elem -> this.roles.add((String)elem));
+            setHasChanged(true);
+        }
     }
 
     public void setGroups(List<Group> groups) {
@@ -206,7 +216,6 @@ public class IdentityContextData implements Serializable {
 
     public void setAuthResult(IAuthenticationResult authResult, String serializedTokenCache)
             throws java.text.ParseException {
-        this.authResult = authResult;
         this.setAccount(authResult.account());
         this.idToken = authResult.idToken();
         this.setAccessToken(authResult.accessToken());
