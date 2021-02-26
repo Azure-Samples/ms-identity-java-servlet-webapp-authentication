@@ -301,7 +301,9 @@ app.protect.authenticated=/token_details
 
 ### Call Graph
 
-When the user navigates to `/call_graph`, the application creates an instance of the IGraphServiceClient (Java Graph SDK), and passes the user's Access Token to the client. The Graph client from hereon places the access token in the Authorization headers of its requests. The app then asks the client and calls the  /me endpoint. This is all that is necessary to get all of the necessary info that this application requires from the user's profile.
+When the user navigates to `/call_graph`, the application creates an instance of the IGraphServiceClient (Java Graph SDK), passing along the signed-in user's access token. The Graph client from hereon places the access token in the Authorization headers of its requests. The app then asks the Graph Client to call the  `/me` endpoint to yield detaisl fo the currently signed-in user.
+
+The following code is all that is required for an application developer to write for accessing the `/me` endpoint, provided that they already have a valid access token for Graph Service with the `User.Read` scope.
 
   ```java
   //CallGraphServlet.java
