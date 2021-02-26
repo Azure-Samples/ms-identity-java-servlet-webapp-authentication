@@ -9,7 +9,7 @@ products:
   - microsoft-identity-platform
 
 name: "Add authorization using app roles & roles claims to a Java servlet web app that signs-in users with the Microsoft identity platform"
-urlFragment: "msal4j-servlet-webapp-call-roles"
+urlFragment: "ms-identity-java-servlet-webapp-authentication"
 description: "This sample demonstrates how to add authorization using app roles & roles claims to a Java servlet web app that signs-in users with the Microsoft identity platform"
 ---
 # Add authorization using app roles & roles claims to Java servlet Web app that signs-in users with the Microsoft identity platform
@@ -30,6 +30,7 @@ description: "This sample demonstrates how to add authorization using app roles 
 - [We'd love your feedback!](#wed-love-your-feedback)
 - [About the code](#about-the-code)
   - [Step-by-step walkthrough](#step-by-step-walkthrough)
+  - [Protecting the routes](#protecting-the-routes)
   - [Scopes](#scopes)
 - [Deploy to Azure](#deploy-to-azure)
 - [More information](#more-information)
@@ -58,13 +59,12 @@ This kind of authorization is implemented using role-based access control (RBAC)
 
 This sample application defines the following two *Application Roles*:
 
-- `PrivilegedAdmin`: Authorized to access the PrivilegedAdmin page.
-- `RegularUser`: Authorized to access the RegularUser page.
+- `PrivilegedAdmin`: Authorized to access the `Admins Only` and the `Regular Users` pages.
+- `RegularUser`: Authorized to access the `Regular Users` page.
 
 These application roles are defined in the [Azure portal](https://portal.azure.com) in the application's registration manifest.  When a user signs into the application, Azure AD emits a `roles` claim for each role that the user has been granted individually to the user in the from of role membership.  Assignment of users and groups to roles can be done through the portal's UI, or programmatically using the [Microsoft Graph](https://graph.microsoft.com) and [Azure AD PowerShell](https://docs.microsoft.com/powershell/module/azuread/?view=azureadps-2.0).  In this sample, application role management is done through the Azure portal or using PowerShell.
 
 ⚠️NOTE: Role claims will not be present for guest users in a tenant if the `https://login.microsoftonline.com/common/` endpoint is used as the authority to sign in users. You need to sign-in a user to a tenanted endpoint like 'https://login.microsoftonline.com/tenantid'
-
 
 ## Contents
 
@@ -158,7 +158,7 @@ Following this guide, you must:
    - In the **Name** section, enter a meaningful application name that will be displayed to users of the app, for example `java-servlet-webapp-roles`.
    - Under **Supported account types**, select an option.
      - Select **Accounts in this organizational directory only** if you're building an application for use only by users in your tenant (**single-tenant**).
-   - In the **Redirect URI** section, select **Web** in the combo-box and enter the following redirect URI: `http://localhost:8080/msal4j-servlet-webapp-roles/auth/redirect`.
+   - In the **Redirect URI** section, select **Web** in the combo-box and enter the following redirect URI: `http://localhost:8080/msal4j-servlet-roles/auth/redirect`.
 1. Select **Register** to create the application.
 1. In the app's registration screen, find and note the **Application (client) ID**. You use this value in your app's configuration file(s) later in your code.
 1. Select **Save** to save your changes.
@@ -198,6 +198,7 @@ Open the project in your IDE to configure the code.
 2. Find the string `{enter-your-tenant-id-here}`. Replace the existing value with your Azure AD tenant ID.
 3. Find the string `{enter-your-client-id-here}` and replace the existing value with the application ID (clientId) of the `java-servlet-webapp-call-graph` application copied from the Azure portal.
 4. Find the string `{enter-your-client-secret-here}` and replace the existing value with the key you saved during the creation of the `java-servlet-webapp-roles` app, in the Azure portal.
+5. Find the key `app.roles` and make sure the value is set to `app.roles=admin PrivilegedAdmin, user RegularUser` (or substitute the names of your specific roles).
 
 ## Running the sample
 
@@ -210,10 +211,10 @@ Open the project in your IDE to configure the code.
     mvn clean package
     ```
 
-4. Find the resulting `.war` file in `./target/msal4j-servlet-webapp.war` and deploy it to Tomcat or any other J2EE container solution.
+4. Find the resulting `.war` file in `./target/msal4j-servlet-roles.war` and deploy it to Tomcat or any other J2EE container solution.
      - To deploy to Tomcat, copy this `.war` file to the `/webapps/` directory in your Tomcat installation directory and start the Tomcat server.
-5. Ensure that the context path that the app is served on is `/msal4j-servlet-webapp` (or change the `app.homePage` value in your [authentication.properties](src/main/resources/authentication.properties) file and in the AAD app registration). If you change the properties file, you'll needs to repeat step 3 above (maven clean and package).
-6. Open your browser and navigate to `http://localhost:8080/msal4j-servlet-webapp/`
+5. Ensure that the context path that the app is served on is `/msal4j-servlet-roles` (or change the `app.homePage` value in your [authentication.properties](src/main/resources/authentication.properties) file and in the AAD app registration). If you change the properties file, you'll needs to repeat step 3 above (maven clean and package).
+6. Open your browser and navigate to `http://localhost:8080/msal4j-servlet-roles/`
 
 ![Experience](./ReadmeFiles/app.png)
 
@@ -225,11 +226,11 @@ Open the project in your IDE to configure the code.
 - On the consent screen, note the scopes that are being requested.
 - Note the context-sensitive button now says `Sign out` and displays your username to its left.
 - The middle of the screen now has an option to click for **ID Token Details**: click it to see some of the ID token's decoded claims.
-- Click the **Admin Page** button to view the Admin page. Only users with app role **PrivilegedAdmin** will be able to view this page. Otherwise an authorization failure message will be displayed.
-- Click the **User Page** button to view the Admin page. Only users with app role **RegularUser** will be able to view this page. Otherwise an authorization failure message will be displayed.
+- Click the **Admins Only** button to view the `/admin_only`. Only users with app role **PrivilegedAdmin** will be able to view this page. Otherwise an authorization failure message will be displayed.
+- Click the **Regular Users** button to view the `/regular_user` page. Only users with app role **RegularUser** or **PrivilegedAdmin** will be able to view this page. Otherwise an authorization failure message will be displayed.
 - You can also use the button on the top right to sign out.
 
-> :information_source: Did the sample not work for you as expected? Did you encounter issues trying this sample? Then please reach out to us using the [GitHub Issues](../../issues) page.
+> :information_source: Did the sample not work for you as expected? Did you encounter issues trying this sample? Then please reach out to us using the [GitHub Issues](../../../../issues) page.
 
 ## Processing Roles claim in the ID token
 
@@ -245,14 +246,15 @@ The name of the the roles that the signed in user is assigned to is returned in 
 }
 ```
 
-
 ## We'd love your feedback!
 
 Were we successful in addressing your learning objective? Consider taking a moment to [share your experience with us](https://forms.office.com/Pages/ResponsePage.aspx?id=v4j5cvGGr0GRqy180BHbR73pcsbpbxNJuZCMKN0lURpURDQwVUxQWENUMlpLUlA0QzdJNVE3TUJRSyQlQCN0PWcu).
 
 ## About the code
 
-This sample uses **MSAL for Java (MSAL4J)** to sign a user in and obtain an ID token that may contain the roles claim. Based on the roles claim present, the signed in user will be able to access two protected pages, Admin Page and User Page. As a developer, you may copy the contents of the `helpers` and `authservlets` package folders in the `src/main/java/com/microsoft/azuresamples/msal4j` package. You'll also need an [authentication.properties file](src/main/resources/authentication.properties).
+This sample uses **MSAL for Java (MSAL4J)** to sign a user in and obtain an ID token that may contain the roles claim. Based on the roles claim present, the signed-in user will be able to access none, one, or both of the protected pages, `Admins Only` and `Regular Users`.
+
+If you want to replicate this sample's behavior, you may choose to copy the `pom.xml` file, and the contents of the `helpers` and `authservlets` packages in the `src/main/java/com/microsoft/azuresamples/msal4j` package. You'll also need the [authentication.properties file](src/main/resources/authentication.properties). These classes and files contain generic code that can be used in a wide array of applications. The rest of the sample may be copied as well, but the other classes and files are built specifically to address this sample's objective.
 
 A **ConfidentialClientApplication** instance is created in the [AuthHelper.java](src/main/java/com/microsoft/azuresamples/authentication/AuthHelper.java) class. This object helps craft the AAD authorization URL and also helps exchange the authentication token for an access token.
 
@@ -279,14 +281,11 @@ In this sample, these values are read from the [authentication.properties](src/m
 
     ```Java
     final ConfidentialClientApplication client = getConfidentialClientInstance();
-    final AuthorizationRequestUrlParameters parameters = AuthorizationRequestUrlParameters
-        .builder(REDIRECT_URI, Collections.singleton(SCOPES)).responseMode(ResponseMode.QUERY)
-        .prompt(Prompt.SELECT_ACCOUNT).state(state).nonce(nonce).build();
+    AuthorizationRequestUrlParameters parameters = AuthorizationRequestUrlParameters.builder(Config.REDIRECT_URI, Collections.singleton(Config.SCOPES))
+            .responseMode(ResponseMode.QUERY).prompt(Prompt.SELECT_ACCOUNT).state(state).nonce(nonce).build();
 
-    final String redirectUrl = client.getAuthorizationRequestUrl(parameters).toString();
-    Config.logger.log(Level.INFO, "Redirecting user to {0}", redirectUrl);
-    resp.setStatus(302);
-    resp.sendRedirect(redirectUrl);
+    final String authorizeUrl = client.getAuthorizationRequestUrl(parameters).toString();
+    contextAdapter.redirectUser(authorizeUrl);
     ```
 
     - **AuthorizationRequestUrlParameters**: Parameters that must be set in order to build an AuthorizationRequestUrl.
@@ -299,14 +298,14 @@ In this sample, these values are read from the [authentication.properties](src/m
 3. Our ConfidentialClientApplication instance then exchanges this authorization code for an ID Token and Access Token from Azure Active Directory.
 
     ```Java
+    // First, validate the state, then parse any error codes in response, then extract the authCode. Then:
+    // build the auth code params:
     final AuthorizationCodeParameters authParams = AuthorizationCodeParameters
-                        .builder(authCode, new URI(REDIRECT_URI))
-                        .scopes(Collections.singleton(SCOPES)).build();
+            .builder(authCode, new URI(Config.REDIRECT_URI)).scopes(Collections.singleton(Config.SCOPES)).build();
 
-    final ConfidentialClientApplication client = AuthHelper
-            .getConfidentialClientInstance();
-    final Future<IAuthenticationResult> future = client.acquireToken(authParams);
-    final IAuthenticationResult result = future.get();
+    // Get a client instance and leverage it to acquire the token:
+    final ConfidentialClientApplication client = AuthHelper.getConfidentialClientInstance();
+    final IAuthenticationResult result = client.acquireToken(authParams).get();
     ```
 
     - **AuthorizationCodeParameters**: Parameters that must be set in order to exchange the Authorization Code for an ID and/or access token.
@@ -314,22 +313,43 @@ In this sample, these values are read from the [authentication.properties](src/m
     - **REDIRECT_URI**: The redirect URI used in the previous step must be passed again.
     - **SCOPES**: The scopes used in the previous step must be passed again.
 
-4. If `acquireToken` is successful, the token claims are extracted and placed in an instance of IdentityContextData (e.g., `context`) and saved to the session. The application then instantiates this from the session whenever it needs access to it.
+4. If `acquireToken` is successful, the token claims are extracted. If the nonce check passes, the results are placed in `context` (an instance of `IdentityContextData`) and saved to the session. The application can then instantiate this from the session (by way of an instance of `IdentityContextAdapterServlet`) whenever it needs access to it:
 
-#### Protecting the routes
+    ```java
+    // parse IdToken claims from the IAuthenticationResult:
+    // (the next step - validateNonce - requires parsed claims)
+    context.setIdTokenClaims(result.idToken());
 
-See `AuthenticationFilter.java` for how the sample app filters access to routes. In authentication.properties, the key `app.protect.authenticated` contains the comma-separated routes that are to be accessed by authenticated users only.
+    // if nonce is invalid, stop immediately! this could be a token replay!
+    // if validation fails, throws exception and cancels auth:
+    validateNonce(context);
+
+    // set user to authenticated:
+    context.setAuthResult(result, client.tokenCache().serialize());
+
+    // handle groups overage if it has occurred.
+    handleGroupsOverage(context);
+    ```
+
+### Protecting the routes
+
+See `AuthenticationFilter.java` for how the sample app filters access to routes. In the `authentication.properties` file, the key `app.protect.authenticated` contains the comma-separated routes that are to be accessed by authenticated users only.
 
 ```ini
-# list and name roles for the app
-app.roles=admin PrivilegedAdmin, user RegularUser
+# e.g., /token_details requires any user to be signed in and does not require special roles claim(s)
+app.protect.authenticated=/token_details
 ```
 
-The comma-separated routes under the `app.protect.roles` key are also only accessible by authenticated users. However, these routes also contain a space-separated list of app role memberships: only users having at least one of the corresponding roles will be able to access these routes after authenticating.
+Any of the routes listed in the comma-separated rule sets under the `app.protect.roles` are also off-limits to non-authenticated authenticated users.
+
+However, these routes also contain a space-separated list of app role memberships: only users having at least one of the corresponding roles will be able to access these routes after authenticating.
 
 ```ini
-# A route and its corresponding role(s) that can access it, <space-separated>; the start of the next route & its role(s) is delimited by a <comma-and-space-separator>
-# this says: /admins_only can be accessed by admin role, /regular_user can be accessed by admin role and user role
+#local short names for app roles - e.g., sets admin to mean PrivilegedAdmin (useful for long rule sets defined in the next key, app.protect.roles)
+app.roles=admin PrivilegedAdmin, user RegularUser
+
+# A route and its corresponding <space-separated> role(s) that can access it; the start of the next route & its role(s) is delimited by a <comma-and-space-separator>
+# this says: /admins_only can be accessed by PrivilegedAdmin, /regular_user can be accessed by PrivilegedAdmin role and the RegularUser role
 app.protect.roles=/admin_only admin, /regular_user admin user
 ```
 
@@ -362,7 +382,7 @@ Use [Stack Overflow](https://stackoverflow.com/questions/tagged/msal) to get sup
 Ask your questions on Stack Overflow first and browse existing issues to see if someone has asked your question before.
 Make sure that your questions or comments are tagged with [`azure-active-directory` `ms-identity` `adal` `msal`].
 
-If you find a bug in the sample, please raise the issue on [GitHub Issues](../../issues).
+If you find a bug in the sample, please raise the issue on [GitHub Issues](../../../../issues).
 
 To provide a recommendation, visit the following [User Voice page](https://feedback.azure.com/forums/169401-azure-active-directory).
 
