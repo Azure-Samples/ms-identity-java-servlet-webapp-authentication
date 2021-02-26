@@ -5,17 +5,23 @@ package com.microsoft.azuresamples.msal4j.helpers;
 
 import com.microsoft.aad.msal4j.IAccount;
 import com.microsoft.aad.msal4j.IAuthenticationResult;
+import com.microsoft.graph.models.extensions.Group;
+import com.nimbusds.jose.shaded.json.JSONArray;
+import com.nimbusds.jose.shaded.json.JSONObject;
 import com.nimbusds.jwt.SignedJWT;
 
 import java.io.Serializable;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 /**
  * This class defines all auth-related session properties that are required MSAL
- * Java apps using this sample repo's paradigm will require this.
+ * Java apps using this sample repository's paradigm will require this.
  */
 public class IdentityContextData implements Serializable {
     private static final long serialVersionUID = 2L;
@@ -27,11 +33,13 @@ public class IdentityContextData implements Serializable {
     private String username = null;
     private String accessToken = null;
     private String idToken = null;
+    private List<String> groups = new ArrayList<>();
+    private List<String> roles = new ArrayList<>();
     private IAccount account = null;
-    private Map<String, String> idTokenClaims = new HashMap<>();
+    private Map<String, Object> idTokenClaims = new HashMap<>();
     private String tokenCache = null;
-    private IAuthenticationResult authResult = null;
     private boolean hasChanged = false;
+    private boolean groupsOverage = false;
 
     public void clear() {
         nonce = null;
@@ -40,12 +48,14 @@ public class IdentityContextData implements Serializable {
         policy = null;
         authenticated = false;
         username = null;
-        setAccessToken(null);
+        accessToken = null;
         idToken = null;
-        setAccount(null);
+        groups = new ArrayList<>();
+        account = null;
         idTokenClaims = new HashMap<>();
         tokenCache = null;
-        authResult = null;
+        groupsOverage = false;
+        roles = new ArrayList<>();
         setHasChanged(true);
     }
 
@@ -64,8 +74,16 @@ public class IdentityContextData implements Serializable {
         return accessToken;
     }
 
-    public Map<String, String> getIdTokenClaims() {
+    public Map<String, Object> getIdTokenClaims() {
         return idTokenClaims;
+    }
+
+    public List<String> getGroups() {
+        return this.groups;
+    }
+
+    public List<String> getRoles() {
+        return this.roles;
     }
 
     public String getTokenCache() {
@@ -96,18 +114,52 @@ public class IdentityContextData implements Serializable {
         return this.stateDate;
     }
 
-    public IAuthenticationResult getAuthResult() {
-        return this.authResult;
+    public boolean getGroupsOverage() {
+        return this.groupsOverage;
     }
 
     public void setIdTokenClaims(String rawIdToken) throws ParseException {
         final Map<String, Object> tokenClaims = SignedJWT.parse(rawIdToken).getJWTClaimsSet().getClaims();
-        this.idTokenClaims = new HashMap<>();
-        tokenClaims.forEach((String claim, Object value) -> {
-            String val = value.toString();
-            this.idTokenClaims.put(claim, val);
-        });
+        this.idTokenClaims = tokenClaims;
+        setGroupsFromIdToken(tokenClaims);
+        setRolesFromIdToken(idTokenClaims);
         this.setHasChanged(true);
+    }
+
+    public void setGroupsFromIdToken(Map<String,Object> idTokenClaims) {
+        JSONArray groupsFromToken = (JSONArray)this.idTokenClaims.get("groups");
+        if (groupsFromToken != null) {
+            setGroupsOverage(false);
+            this.groups = new ArrayList<>();
+            groupsFromToken.forEach(elem -> this.groups.add((String)elem));
+        } else {
+            // check for potential groups overage scenario!
+            JSONObject jsonObj = (JSONObject)idTokenClaims.get("_claim_names");
+            if (jsonObj != null && jsonObj.containsKey("groups")) {
+                // overage scenario exists, handle it:
+                setGroupsOverage(true);
+            }
+        }
+        setHasChanged(true);
+    }
+
+    public void setRolesFromIdToken(Map<String,Object> idTokenClaims) {
+        JSONArray rolesFromToken = (JSONArray)idTokenClaims.get("roles");
+        if (rolesFromToken != null) {
+            this.groups = new ArrayList<>();
+            rolesFromToken.forEach(elem -> this.roles.add((String)elem));
+            setHasChanged(true);
+        }
+    }
+
+    public void setGroups(List<Group> groups) {
+        this.groups = new ArrayList<>();
+
+        Iterator<Group> it = groups.iterator();
+        while(it.hasNext()){
+            this.groups.add(it.next().id);
+        }
+        setHasChanged(true);
     }
 
     public void clearIdTokenClaims() {
@@ -164,13 +216,12 @@ public class IdentityContextData implements Serializable {
 
     public void setAuthResult(IAuthenticationResult authResult, String serializedTokenCache)
             throws java.text.ParseException {
-        this.authResult = authResult;
         this.setAccount(authResult.account());
         this.idToken = authResult.idToken();
         this.setAccessToken(authResult.accessToken());
         this.tokenCache = serializedTokenCache;
         setIdTokenClaims(this.idToken);
-        this.username = this.idTokenClaims.get("name");
+        this.username = (String)this.idTokenClaims.get("name");
         this.authenticated = true;
 
         this.setHasChanged(true);
@@ -185,4 +236,10 @@ public class IdentityContextData implements Serializable {
         this.accessToken = accessToken;
         this.setHasChanged(true);
     }
+
+    private void setGroupsOverage(boolean groupsOverage) {
+        this.groupsOverage = groupsOverage;
+        this.setHasChanged(true);
+    }
+
 }
