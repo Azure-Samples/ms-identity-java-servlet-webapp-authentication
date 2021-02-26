@@ -32,6 +32,7 @@ description: "This sample demonstrates how to create a Java Servlet web app that
 - [We'd love your feedback!](#wed-love-your-feedback)
 - [About the code](#about-the-code)
   - [Step-by-step walkthrough](#step-by-step-walkthrough)
+  - [Protecting the routes](#protecting-the-routes)
   - [Scopes](#scopes)
 - [Deploy to Azure](#deploy-to-azure)
 - [More information](#more-information)
@@ -43,6 +44,7 @@ description: "This sample demonstrates how to create a Java Servlet web app that
 This sample demonstrates how to create a Java Servlet web app that signs in users with [Microsoft Authentication Library (MSAL) for Java](https://github.com/AzureAD/microsoft-authentication-library-for-java) and restricts access to pages based on Azure Active Directory security group membership.
 
 ![Overview](./ReadmeFiles/topology.png)
+
 An Identity Developer session covered Azure AD App roles and security groups, featuring this scenario and how to handle the overage claim. [Watch the video Using Security Groups and Application Roles in your apps](https://www.youtube.com/watch?v=LRoc-na27l0)
 
 ## Scenario
@@ -320,7 +322,9 @@ Were we successful in addressing your learning objective? Consider taking a mome
 
 ## About the code
 
-This sample uses **MSAL for Java (MSAL4J)** to sign a user in and obtain an ID token that may contain the groups claim. Based on the groups present in the claim, the signed in user will be able to access two protected pages, Admin Page and User Page. It leverages [Microsoft Graph SDK for Java](https://github.com/microsoftgraph/msgraph-sdk-java) to obtain extra group data from Graph if this is required. You must add these to your projects using Maven. As a developer, you may copy the contents of the `helpers` and `authservlets` package folders in the `src/main/java/com/microsoft/azuresamples/msal4j` package. You'll also need an [authentication.properties file](src/main/resources/authentication.properties).
+This sample uses **MSAL for Java (MSAL4J)** to sign a user in and obtain an ID token that may contain the groups claim. If there are too many groups for emission in the ID token, the sample leverages [Microsoft Graph SDK for Java](https://github.com/microsoftgraph/msgraph-sdk-java) to obtain the group membership data from Microsoft Graph. Based on the groups the user belongs to, the signed in user will be able to access either none, one, or both of the protected pages, `Admins Only` and `Regular Users`.
+
+If you want to replicate this sample's behavior, you must add these libraries (MSAL4J and MS Graph SDK) your projects using Maven. As a developer, you may choose to copy the `pom.xml` file, and the contents of the `helpers` and `authservlets` packages in the `src/main/java/com/microsoft/azuresamples/msal4j` package. You'll also need the [authentication.properties file](src/main/resources/authentication.properties). These classes and files contain generic code that can be used in a wide array of applications. The rest of the sample may be copied as well, but the other classes and files are built specifically to address this sample's objective.
 
 A **ConfidentialClientApplication** instance is created in the [AuthHelper.java](src/main/java/com/microsoft/azuresamples/authentication/AuthHelper.java) class. This object helps craft the AAD authorization URL and also helps exchange the authentication token for an access token.
 
@@ -400,9 +404,9 @@ In this sample, these values are read from the [authentication.properties](src/m
 5. After previous step, group memberships may be extracted by calling `context.getGroups()` (an instance of `IdentityContextData`).
 6. If the user is a member of too many groups (>200), a call to `context.getGroups()` might have been empty if it weren't for the call to `handleGroupsOverage()`. Meanwhile, `context.getGroupsOverage()` will return `true`, signalling that an overage has occurred, and that getting the full list of groups will require a call to Microsoft Graph. See `handleGroupsOverage()` method in `AuthHelper.java` for this application uses `context.setGroups()` when there is an overage.
 
-#### Protecting the routes
+### Protecting the routes
 
-See `AuthenticationFilter.java` for how the sample app filters access to routes. In authentication.properties, the key `app.protect.authenticated` contains the comma-separated routes that are to be accessed by authenticated users only.
+See the contents of the `AuthenticationFilter.java` to understand how this sample app filters access to its routes. In the `authentication.properties` file, the key `app.protect.authenticated` contains the comma-separated routes that are to be accessed by authenticated users only.
 
 ```ini
 #define groups for the app
