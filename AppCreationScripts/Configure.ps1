@@ -214,8 +214,8 @@ Function ConfigureApplications
    $webAppAppKey = $pw
    # create the application 
    $webAppAadApplication = New-AzureADApplication -DisplayName "java-servlet-webapp-roles" `
-                                                  -HomePage "http://localhost:8080/msal4j-servlet-webapp/index" `
-                                                  -ReplyUrls "http://localhost:8080/msal4j-servlet-webapp/auth/redirect" `
+                                                  -HomePage "http://localhost:8080/msal4j-servlet-roles/index" `
+                                                  -ReplyUrls "http://localhost:8080/msal4j-servlet-roles/auth/redirect" `
                                                   -IdentifierUris "https://$tenantName/java-servlet-webapp-roles" `
                                                   -PasswordCredentials $key `
                                                   -PublicClient $False
