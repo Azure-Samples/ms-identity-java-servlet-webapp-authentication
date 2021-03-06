@@ -69,7 +69,7 @@ Please refer to each sample's README for sample-specific recommendations.
 
 |                 |               |
 |-----------------|---------------|
-| <img src="./ReadmeFiles/sign-in.png" width="200"> | [**4.1 Deploy to Azure App Service**](./4-Deployment/) </br> Prepare your app for deployment to Azure App Service. Learn how to package and upload files, configure authentication parameters and use various Azure services for managing your operations. |
+| <img src="./ReadmeFiles/sign-in.png" width="200"> | [**4.1 Deploy to Azure App Service**](./4-Deployment/deploy-to-azure-app-service) </br> Prepare your app for deployment to Azure App Service. Learn how to package and upload files, configure authentication parameters and use various Azure services for managing your operations. |
 
 ## We'd love your feedback!
 
