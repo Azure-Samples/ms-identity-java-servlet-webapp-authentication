@@ -4,7 +4,6 @@
 package com.microsoft.azuresamples.msal4j.helpers;
 
 import com.microsoft.aad.msal4j.*;
-import com.microsoft.graph.models.extensions.Group;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -15,7 +14,6 @@ import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
-import java.util.List;
 import java.util.UUID;
 
 /**

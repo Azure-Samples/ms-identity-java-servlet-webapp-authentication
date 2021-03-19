@@ -5,7 +5,7 @@ package com.microsoft.azuresamples.msal4j.helpers;
 
 import com.microsoft.aad.msal4j.IAccount;
 import com.microsoft.aad.msal4j.IAuthenticationResult;
-import com.microsoft.graph.models.extensions.Group;
+import com.microsoft.graph.models.Group;
 import com.nimbusds.jose.shaded.json.JSONArray;
 import com.nimbusds.jose.shaded.json.JSONObject;
 import com.nimbusds.jwt.SignedJWT;

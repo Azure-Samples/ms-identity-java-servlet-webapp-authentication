@@ -5,6 +5,7 @@ package com.microsoft.azuresamples.msal4j.helpers;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -16,7 +17,10 @@ import java.util.logging.Logger;
 
 public class Config {
     private static Logger logger = Logger.getLogger(Config.class.getName());
-    private static Properties props = instantiateProperties(); 
+    private static Properties props = instantiateProperties();
+    private static final String[] REQUIRED = {"aad.authority", "aad.clientId", "aad.secret", "aad.signOutEndpoint", "aad.postSignOutFragment", "app.stateTTL", "app.homePage", "app.redirectEndpoint", "app.sessionParam", 
+    "app.protect.authenticated"};
+    private static final List<String> REQ_PROPS = Arrays.asList(REQUIRED);
 
     private static Properties instantiateProperties() {
         final Properties props = new Properties();
@@ -46,6 +50,8 @@ public class Config {
     public static final String PROTECTED_ENDPOINTS = Config.getProperty("app.protect.authenticated");
     public static final String ROLES_PROTECTED_ENDPOINTS = Config.getProperty("app.protect.roles");
     public static final String ROLE_NAMES_AND_IDS = Config.getProperty("app.roles");
+    public static final String GROUPS_PROTECTED_ENDPOINTS = Config.getProperty("app.protect.groups");
+    public static final String GROUP_NAMES_AND_IDS = Config.getProperty("app.groups");
 
     public static String getProperty(final String key) {
         String prop = null;
@@ -54,13 +60,16 @@ public class Config {
             if (prop != null) {
                 Config.logger.log(Level.FINE, "{0} is {1}", new String[] { key, prop });
                 return prop;
-            } else {
-                Config.logger.log(Level.SEVERE, "Could not load {0}! EXITING!", key);
-                System.exit(1);
+            } else if (REQ_PROPS.contains(key)) {
+                Config.logger.log(Level.SEVERE, "FATAL: Could not load required key {0} from config! EXITING", key);
+                System.exit(1); // HANDLE THIS BETTER IN YOUR APP.
                 return null;
+            } else {
+                Config.logger.log(Level.SEVERE, "Could not load {0}!", key);
+                return "";
             }
         } else {
-            Config.logger.log(Level.SEVERE, "Could not load property reader! EXITING!");
+            Config.logger.log(Level.SEVERE, "FATAL: Could not load property reader! EXITING!");
             System.exit(1);
             return null;
         }
