@@ -22,7 +22,7 @@ import com.microsoft.azuresamples.msal4j.helpers.GraphHelper;
 import com.microsoft.azuresamples.msal4j.helpers.IdentityContextData;
 import com.microsoft.azuresamples.msal4j.helpers.IdentityContextAdapterServlet;
 import com.microsoft.graph.core.ClientException;
-import com.microsoft.graph.models.extensions.User;
+import com.microsoft.graph.models.User;
 
 /**
  * This class defines the endpoint for showing the graph /me endpoint
@@ -61,7 +61,7 @@ public class CallGraphServlet extends HttpServlet {
 
     /**
      * Take a few of the User properties obtained from the graph /me endpoint and put them into KV pairs for UI to display.
-     * @param user User object (Graph SDK com.microsoft.graph.models.extensions.User)
+     * @param user User object (Graph SDK com.microsoft.graph.models.User)
      * @return HashMap<String,String> select Key-Values from User object
      */
     private HashMap<String,String> graphUserProperties(User user) {

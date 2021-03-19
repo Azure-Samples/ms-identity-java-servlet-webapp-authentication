@@ -43,10 +43,11 @@
         </dependency>
 
         <!-- For MS Graph -->
+        <!-- Not Strictly required in this sample, but common helper code includes references to it -->
         <dependency>
             <groupId>com.microsoft.graph</groupId>
             <artifactId>microsoft-graph</artifactId>
-            <version>2.5.0</version>
+            <version>3.0.0</version>
         </dependency>
 
     </dependencies>
