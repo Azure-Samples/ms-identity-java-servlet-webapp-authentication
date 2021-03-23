@@ -6,7 +6,7 @@
     </h5>
     <div class="card-body">
         <p class="card-text">
-            Excellent! You have are a member of the group(s) that are allowed to visit this page!
+            Excellent! You are a member of the group(s) that are allowed to visit this page!
             <br>
             <a class="btn btn-success" href="<c:url value="/groups"></c:url>">Groups</a>
             <a class="btn btn-success" href="<c:url value="/admin_only"></c:url>">Admins Only</a>

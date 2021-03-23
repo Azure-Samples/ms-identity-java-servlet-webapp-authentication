@@ -61,18 +61,24 @@ public class AuthHelper {
 
         if (context.getAccount() != null) {
             logger.log(Level.INFO, "found account in session. trying to silently acquire token...");
-            acquireTokenSilently(contextAdapter, context.getAccount());
+            acquireTokenSilently(contextAdapter);
         } else {
             logger.log(Level.INFO, "did not find auth result in session. trying to interactively acquire token...");
             redirectToAuthorizationEndpoint(contextAdapter);
         }
     }
 
-    public static void acquireTokenSilently(IdentityContextAdapter contextAdapter, final IAccount account)
+    public static void acquireTokenSilently(IdentityContextAdapter contextAdapter)
             throws AuthException {
         final IdentityContextData context = contextAdapter.getContext();
-        final SilentParameters parameters = SilentParameters.builder(Collections.singleton(Config.SCOPES), account)
-                .build();
+
+        if (context.getAccount() == null) {
+            String message = "Need to have account in session in order to authorize silently";
+            logger.log(Level.WARNING, message);
+            throw new AuthException(message);
+        }
+        final SilentParameters parameters = SilentParameters.builder(Collections.singleton(Config.SCOPES), context.getAccount())
+            .build();
 
         try {
             final ConfidentialClientApplication client = getConfidentialClientInstance();
@@ -83,7 +89,7 @@ public class AuthHelper {
             if (result != null) {
                 logger.log(Level.INFO, "silent auth returned result. attempting to parse and process...");
                 context.setAuthResult(result, client.tokenCache().serialize());
-                handleGroupsOverage(context);
+                handleGroupsOverage(contextAdapter);
                 logger.log(Level.INFO, "silent auth success!");
             } else {
                 logger.log(Level.INFO, "silent auth returned null result! redirecting to authorize with code");
@@ -158,7 +164,7 @@ public class AuthHelper {
             context.setAuthResult(result, client.tokenCache().serialize());
 
             // handle groups overage if it has occurred.
-            handleGroupsOverage(context);
+            handleGroupsOverage(contextAdapter);
 
         } catch (final Exception ex) {
             context.clear(); // clear the session data since there was a problem
@@ -175,9 +181,10 @@ public class AuthHelper {
      * we must consult Microsoft Graph to get group memberships. Place the resulting
      * groups in IdentityContextData
      */
-    private static void handleGroupsOverage(IdentityContextData context) {
+    private static void handleGroupsOverage(IdentityContextAdapter contextAdapter) {
+        IdentityContextData context = contextAdapter.getContext();
         if (context.getGroupsOverage()) {
-            context.setGroups(GraphHelper.getGroups(GraphHelper.getGraphClient(context.getAccessToken())));
+            context.setGroups(GraphHelper.getGroups(GraphHelper.getGraphClient(contextAdapter)));
         }
     }
 

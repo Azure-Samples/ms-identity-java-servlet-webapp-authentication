@@ -65,7 +65,7 @@ public class Config {
                 System.exit(1); // HANDLE THIS BETTER IN YOUR APP.
                 return null;
             } else {
-                Config.logger.log(Level.SEVERE, "Could not load {0}!", key);
+                Config.logger.log(Level.WARNING, "Could not load {0}!", key);
                 return "";
             }
         } else {
