@@ -285,12 +285,6 @@ In this sample, these values are read from the [authentication.properties](src/m
 
     // set user to authenticated:
     context.setAuthResult(result, client.tokenCache().serialize());
-
-    // handle groups overage if it has occurred.
-    // optional: see groups sample.
-    // you will need aad.scopes=GroupMember.Read.All in your config file.
-    // uncomment the following method call if this is relevant to you:
-    // handleGroupsOverage(contextAdapter);
     ```
 
 ### Protecting the routes
