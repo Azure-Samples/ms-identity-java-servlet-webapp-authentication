@@ -37,12 +37,8 @@ public class CallGraphServlet extends HttpServlet {
         try {
             // re-auth (prefer silently) in case the access token is not valid anymore.
             IdentityContextAdapterServlet contextAdapter = new IdentityContextAdapterServlet(req, resp);
-            AuthHelper.authorize(contextAdapter);
-
-            // get the access token and give it to the graphclient
-            IdentityContextData context = contextAdapter.getContext();
-            String accessToken = context.getAccessToken();
-            User user = GraphHelper.getGraphClient(accessToken).me().buildRequest().get();
+            AuthHelper.acquireTokenSilently(contextAdapter);
+            User user = GraphHelper.getGraphClient(contextAdapter).me().buildRequest().get();
             if (user == null)
                 throw new NullPointerException("user returned by Graph SDK was null");
 
