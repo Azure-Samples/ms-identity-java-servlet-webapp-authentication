@@ -19,7 +19,7 @@ public class Config {
     private static Logger logger = Logger.getLogger(Config.class.getName());
     private static Properties props = instantiateProperties();
     private static final String[] REQUIRED = {"aad.authority", "aad.clientId", "aad.secret", "aad.signOutEndpoint", "aad.postSignOutFragment", "app.stateTTL", "app.homePage", "app.redirectEndpoint", "app.sessionParam", 
-    "app.protect.authenticated"};
+    "app.protect.authenticated", "aad.scopes"}; // scopes required for this sample (User.Read)
     private static final List<String> REQ_PROPS = Arrays.asList(REQUIRED);
 
     private static Properties instantiateProperties() {

@@ -164,7 +164,9 @@ public class AuthHelper {
             context.setAuthResult(result, client.tokenCache().serialize());
 
             // handle groups overage if it has occurred.
-            handleGroupsOverage(contextAdapter);
+            // you will need aad.scopes=GroupMember.Read.All in your config file.
+            // uncomment the following method call if this is relevant to you:
+            // handleGroupsOverage(contextAdapter);
 
         } catch (final Exception ex) {
             context.clear(); // clear the session data since there was a problem
