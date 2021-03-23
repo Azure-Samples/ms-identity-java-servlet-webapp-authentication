@@ -89,7 +89,11 @@ public class AuthHelper {
             if (result != null) {
                 logger.log(Level.INFO, "silent auth returned result. attempting to parse and process...");
                 context.setAuthResult(result, client.tokenCache().serialize());
-                handleGroupsOverage(contextAdapter);
+                // handle groups overage if it has occurred.
+                // optional: see groups sample.
+                // you will need aad.scopes=GroupMember.Read.All in your config file.
+                // uncomment the following method call if this is relevant to you:
+                // handleGroupsOverage(contextAdapter);
                 logger.log(Level.INFO, "silent auth success!");
             } else {
                 logger.log(Level.INFO, "silent auth returned null result! redirecting to authorize with code");
@@ -164,6 +168,7 @@ public class AuthHelper {
             context.setAuthResult(result, client.tokenCache().serialize());
 
             // handle groups overage if it has occurred.
+            // optional: see groups sample.
             // you will need aad.scopes=GroupMember.Read.All in your config file.
             // uncomment the following method call if this is relevant to you:
             // handleGroupsOverage(contextAdapter);
