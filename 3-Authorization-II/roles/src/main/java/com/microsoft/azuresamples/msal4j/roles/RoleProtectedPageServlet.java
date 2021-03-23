@@ -6,7 +6,6 @@ package com.microsoft.azuresamples.msal4j.roles;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -19,11 +18,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.microsoft.azuresamples.msal4j.helpers.AuthException;
 import com.microsoft.azuresamples.msal4j.helpers.AuthHelper;
-import com.microsoft.azuresamples.msal4j.helpers.GraphHelper;
-import com.microsoft.azuresamples.msal4j.helpers.IdentityContextData;
 import com.microsoft.azuresamples.msal4j.helpers.IdentityContextAdapterServlet;
 import com.microsoft.graph.core.ClientException;
-import com.microsoft.graph.models.extensions.User;
 
 /**
  * This class defines the endpoint for showing the graph /me endpoint
