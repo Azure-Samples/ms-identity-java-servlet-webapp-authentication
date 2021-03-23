@@ -287,7 +287,10 @@ In this sample, these values are read from the [authentication.properties](src/m
     context.setAuthResult(result, client.tokenCache().serialize());
 
     // handle groups overage if it has occurred.
-    handleGroupsOverage(context);
+    // optional: see groups sample.
+    // you will need aad.scopes=GroupMember.Read.All in your config file.
+    // uncomment the following method call if this is relevant to you:
+    // handleGroupsOverage(contextAdapter);
     ```
 
 ### Protecting the routes
@@ -301,13 +304,13 @@ app.protect.authenticated=/token_details
 
 ### Call Graph
 
-When the user navigates to `/call_graph`, the application creates an instance of the IGraphServiceClient (Java Graph SDK), passing along the signed-in user's access token. The Graph client from hereon places the access token in the Authorization headers of its requests. The app then asks the Graph Client to call the  `/me` endpoint to yield detaisl fo the currently signed-in user.
+When the user navigates to `/call_graph`, the application creates an instance of the IGraphServiceClient (Java Graph SDK), passing along the signed-in user's access token. The Graph client from hereon places the access token in the Authorization headers of its requests. The app then asks the Graph Client to call the  `/me` endpoint to yield details for the currently signed-in user.
 
 The following code is all that is required for an application developer to write for accessing the `/me` endpoint, provided that they already have a valid access token for Graph Service with the `User.Read` scope.
 
   ```java
   //CallGraphServlet.java
-  User user = GraphHelper.getGraphClient(accessToken).me().buildRequest().get();
+  User user = GraphHelper.getGraphClient(contextAdapter).me().buildRequest().get();
   ```
 
 ### Scopes

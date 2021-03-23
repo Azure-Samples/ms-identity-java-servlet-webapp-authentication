@@ -32,9 +32,9 @@ public class GroupProtectedPageServlet extends HttpServlet {
     @Override
     protected void doGet(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
         try {
-            // re-auth (prefer silently) in case the access token is not valid anymore.
+            // re-auth (prefer silently) in case the access token is not valid anymore. this gets latest groups claims.
             IdentityContextAdapterServlet contextAdapter = new IdentityContextAdapterServlet(req, resp);
-            AuthHelper.authorize(contextAdapter);
+            AuthHelper.acquireTokenSilently(contextAdapter);
             req.setAttribute("bodyContent", "content/200.jsp");
             final RequestDispatcher view = req.getRequestDispatcher("index.jsp");
             view.forward(req, resp);

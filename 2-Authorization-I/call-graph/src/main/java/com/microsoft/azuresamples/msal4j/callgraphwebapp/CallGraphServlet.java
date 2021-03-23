@@ -19,7 +19,6 @@ import javax.servlet.http.HttpServletResponse;
 import com.microsoft.azuresamples.msal4j.helpers.AuthException;
 import com.microsoft.azuresamples.msal4j.helpers.AuthHelper;
 import com.microsoft.azuresamples.msal4j.helpers.GraphHelper;
-import com.microsoft.azuresamples.msal4j.helpers.IdentityContextData;
 import com.microsoft.azuresamples.msal4j.helpers.IdentityContextAdapterServlet;
 import com.microsoft.graph.core.ClientException;
 import com.microsoft.graph.models.User;
