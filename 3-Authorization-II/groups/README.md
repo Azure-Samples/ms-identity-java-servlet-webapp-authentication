@@ -398,7 +398,7 @@ In this sample, these values are read from the [authentication.properties](src/m
     context.setAuthResult(result, client.tokenCache().serialize());
 
     // handle groups overage if it has occurred.
-    handleGroupsOverage(context);
+    handleGroupsOverage(contextAdapter);
     ```
 
 5. After previous step, group memberships may be extracted by calling `context.getGroups()` (an instance of `IdentityContextData`).
