@@ -36,11 +36,14 @@ public class GraphHelper {
      * getGraphClient prepares and returns a graphServiceClient to make API calls to
      * Graph. See docs for GraphServiceClient (GraphSDK for Java)
      * 
-     * @param accessToken String your access token for Graph
+     * * uses contextAdapter to get the latest access token from context
+     * -> make sure you're updating AT in context with AuthHelper.acquireTokenSilently() before each API call.
+     * 
+     * @param contextAdapter IdentityContextAdapter instance of IdentityContextAdapter
      * @return GraphServiceClient IGraphServiceClient
      */
-    public static GraphServiceClient getGraphClient(String accessToken) {
-        return GraphServiceClient.builder().authenticationProvider(new MsalGraphAuthenticationProvider(accessToken))
+    public static GraphServiceClient getGraphClient(@Nonnull IdentityContextAdapter contextAdapter) {
+        return GraphServiceClient.builder().authenticationProvider(new MsalGraphAuthenticationProvider(contextAdapter))
                 .buildClient();
     }
 
@@ -51,35 +54,34 @@ public class GraphHelper {
     private static class MsalGraphAuthenticationProvider
             extends BaseAuthenticationProvider {
 
-        private String accessToken;
+        private IdentityContextAdapter contextAdapter;
 
         /**
          * Set up the MsalGraphAuthenticationProvider. Allows accessToken to be
          * used by GraphServiceClient through the interface IAuthenticationProvider
          * 
-         * Make sure you either:
-         * 1) get a fresh, valid access token to put here, OR
-         * 2) make your own implementation where you will call MSAL's acquireTokenSilently (from getAuthorizationTokenAsync) get a valid token per request
+         * uses contextAdapter to get the latest access token from context
+         * -> make sure you're updating AT in context with AuthHelper.acquireTokenSilently() before each API call.
          * 
-         * @param accessToken String your access token for Graph
+         * @param contextAdapter IdentityContextAdapter for getting your access token for Graph
          */
-        public MsalGraphAuthenticationProvider(@Nonnull String accessToken) {
-           this.accessToken = accessToken;
+        public MsalGraphAuthenticationProvider(@Nonnull IdentityContextAdapter contextAdapter) {
+           this.contextAdapter = contextAdapter;
         }
 
         /**
-         * This implementation of the IAuthenticationProvider injects the Graph access
+         * This implementation of the IAuthenticationProvider helps injects the Graph access
          * token from Azure AD into the headers of the IHttp request used by GraphSDK.
          * 
-         * 1) get a fresh, valid access token to put here, OR
-         * 2) make your own implementation where you will call MSAL's acquireTokenSilently to get a valid token per request
+         * uses contextAdapter to get the latest access token from context
+         * -> make sure you're updating AT in context with AuthHelper.acquireTokenSilently() before each API call.
          *
          * @param requestUrl the outgoing request URL
          * @return a future with the token
          */
         @Override
-        public CompletableFuture<String> getAuthorizationTokenAsync(@Nonnull final URL requestUrl) {
-            return CompletableFuture.completedFuture(accessToken);
+        public CompletableFuture<String> getAuthorizationTokenAsync(@Nonnull final URL requestUrl){
+            return CompletableFuture.completedFuture(contextAdapter.getContext().getAccessToken());
         }
     }
 
