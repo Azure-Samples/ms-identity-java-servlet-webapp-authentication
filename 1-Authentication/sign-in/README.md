@@ -274,9 +274,6 @@ In this sample, these values are read from the [authentication.properties](src/m
 
     // set user to authenticated:
     context.setAuthResult(result, client.tokenCache().serialize());
-
-    // handle groups overage if it has occurred.
-    handleGroupsOverage(context);
     ```
 
 ### Protecting the routes
