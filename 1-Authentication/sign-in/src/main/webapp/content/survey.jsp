@@ -1,5 +1,4 @@
 
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <div class="card" style="width:fit-content">
     <h5 class="card-header bg-primary">
         Tell us how we did!
