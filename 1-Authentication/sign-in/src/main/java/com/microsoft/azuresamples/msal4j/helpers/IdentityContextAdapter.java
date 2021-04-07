@@ -3,6 +3,8 @@
 
 package com.microsoft.azuresamples.msal4j.helpers;
 
+import java.io.IOException;
+
 /**
  * Implement this so that AuthHelper can be customized to your needs!
  * This Sample project implements this in IdentityContextAdapterServlet.java
@@ -11,6 +13,6 @@ package com.microsoft.azuresamples.msal4j.helpers;
 public interface IdentityContextAdapter {
     public void setContext(IdentityContextData context);
     public IdentityContextData getContext();
-    public void redirectUser(String location);
+    public void redirectUser(String location) throws IOException;
     public String getParameter(String parameterName);
 }

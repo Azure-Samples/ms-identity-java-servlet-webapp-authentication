@@ -41,24 +41,6 @@ public class IdentityContextData implements Serializable {
     private boolean hasChanged = false;
     private boolean groupsOverage = false;
 
-    public void clear() {
-        nonce = null;
-        state = null;
-        stateDate = null;
-        policy = null;
-        authenticated = false;
-        username = null;
-        accessToken = null;
-        idToken = null;
-        groups = new ArrayList<>();
-        account = null;
-        idTokenClaims = new HashMap<>();
-        tokenCache = null;
-        groupsOverage = false;
-        roles = new ArrayList<>();
-        setHasChanged(true);
-    }
-
     public boolean hasChanged() {
         return hasChanged;
     }

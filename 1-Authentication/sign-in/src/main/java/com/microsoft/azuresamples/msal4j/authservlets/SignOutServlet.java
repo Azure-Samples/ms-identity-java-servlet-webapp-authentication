@@ -33,6 +33,8 @@ public class SignOutServlet extends HttpServlet {
             logger.log(Level.WARNING, "Unable to sign out");
             logger.log(Level.WARNING, ex.getMessage());
             logger.log(Level.FINEST, Arrays.toString(ex.getStackTrace()));
+            resp.sendRedirect(resp.encodeRedirectURL(String.format(req.getContextPath() + "/auth_error_details?details=%s", ex.getMessage())));
+
         }
     }
 }

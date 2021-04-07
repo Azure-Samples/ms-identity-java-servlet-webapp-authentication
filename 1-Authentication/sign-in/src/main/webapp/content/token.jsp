@@ -10,7 +10,7 @@
                 <br>
             </c:forEach>
             <br>
-            Click here to see your <a class="btn btn-success" href="<c:url value="./sign_in_status"></c:url>">Sign-in Status</a>
+            Click here to see your <a class="btn btn-success" href="sign_in_status">Sign-in Status</a>
         </p>
     </div>
 </div>
