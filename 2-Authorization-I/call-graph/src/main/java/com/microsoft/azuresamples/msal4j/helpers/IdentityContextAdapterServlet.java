@@ -51,8 +51,7 @@ public class IdentityContextAdapterServlet implements IdentityContextAdapter, Ht
         if (this.context == null)
             this.context = new IdentityContextData();
 
-        if (this.context.hasChanged())
-            this.session.setAttribute(Config.SESSION_PARAM, context);
+        this.session.setAttribute(Config.SESSION_PARAM, context);
     }
 
     public void loadContext() {
@@ -75,13 +74,9 @@ public class IdentityContextAdapterServlet implements IdentityContextAdapter, Ht
     }
 
     @Override
-    public void redirectUser(String location) {
+    public void redirectUser(String location) throws IOException {
         logger.log(Level.INFO, "Redirecting user to {0}", location);
-        try {
-            this.response.sendRedirect(location);
-        } catch (IOException ex) {
-            logger.log(Level.WARNING, ex.getMessage());
-        }
+        this.response.sendRedirect(location);
     }
 
     @Override

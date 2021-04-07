@@ -34,7 +34,7 @@ public class SignInServlet extends HttpServlet {
             logger.log(Level.WARNING, ex.getMessage());
             logger.log(Level.WARNING, Arrays.toString(ex.getStackTrace()));
             logger.log(Level.INFO, "redirecting to error page to display auth error to user.");
-            resp.sendRedirect(resp.encodeRedirectURL(String.format("/auth_error_details?details=%s", ex.getMessage())));
+            resp.sendRedirect(resp.encodeRedirectURL(String.format(req.getContextPath() + "/auth_error_details?details=%s", ex.getMessage())));
         }
     }
 }

@@ -3,10 +3,8 @@
         401: Unauthorized
     </h5>
     <div class="card-body">
-        <!-- <h5 class="card-title"></h5> -->
         <p class="card-text">
-            Visiting this page requires you to be <b>authenticated</b>. Use the button on the top right to sign in.
+            Visiting this page requires you to be <strong>authenticated</strong>. Use the button on the top right to sign in.
         </p>
-        <!-- <div class="card-footer"></div> -->
     </div>
 </div>
