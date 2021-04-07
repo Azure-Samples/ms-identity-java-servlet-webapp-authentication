@@ -48,7 +48,7 @@ public class AuthHelper {
     }
 
     public static void redirectToSignOutEndpoint(IdentityContextAdapter contextAdapter) throws IOException {
-        contextAdapter.getContext().clear();
+        contextAdapter.setContext(null);
         final String redirect = String.format("%s%s%s%s", Config.AUTHORITY, Config.SIGN_OUT_ENDPOINT,
                 Config.POST_SIGN_OUT_FRAGMENT, URLEncoder.encode(Config.HOME_PAGE, "UTF-8"));
         contextAdapter.redirectUser(redirect);
@@ -175,8 +175,7 @@ public class AuthHelper {
             // handleGroupsOverage(contextAdapter);
 
         } catch (final Exception ex) {
-            context.clear(); // clear the session data since there was a problem
-            contextAdapter.setContext(context); // save the clear
+            contextAdapter.setContext(null); // clear the session data since there was a problem
             String message = String.format("Unable to exchange auth code for token:%n %s", ex.getMessage());
             logger.log(Level.WARNING, message);
             logger.log(Level.FINEST, Arrays.toString(ex.getStackTrace()));
