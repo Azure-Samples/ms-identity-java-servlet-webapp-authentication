@@ -114,6 +114,7 @@ public class AuthHelper {
         final String nonce = UUID.randomUUID().toString();
 
         context.setStateAndNonce(state, nonce);
+        contextAdapter.setContext(context);
 
         final ConfidentialClientApplication client = getConfidentialClientInstance();
         AuthorizationRequestUrlParameters parameters = AuthorizationRequestUrlParameters
