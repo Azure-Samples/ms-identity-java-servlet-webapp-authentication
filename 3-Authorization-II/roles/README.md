@@ -359,7 +359,7 @@ app.protect.roles=/admin_only admin, /regular_user admin user
 
 ## Deploy to Azure
 
-Follow [this guide](https://github.com/Azure-Samples/ms-identity-java-servlet-webapp-deployment) to deploy this app to **Azure App Service**.
+Follow [this guide](https://github.com/Azure-Samples/ms-identity-java-servlet-webapp-authentication/tree/main/4-Deployment/deploy-to-azure-app-service) to deploy this app to **Azure App Service**.
 
 ## More information
 
