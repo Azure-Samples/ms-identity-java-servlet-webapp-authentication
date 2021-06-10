@@ -66,7 +66,7 @@ This sample demonstrates a Java Servlet web app that signs in users and obtains 
 
 ## Prerequisites
 
-- [JDK Version 15](https://jdk.java.net/15/). This sample has been developed on Java 15 but should be compatible with some lower versions.
+- Java 8 or above. This sample has been developed on [JDK Version 15](https://jdk.java.net/15/) but should be compatible with some lower versions.
 - [Maven 3](https://maven.apache.org/download.cgi)
 - [Tomcat 9](https://tomcat.apache.org/download-90.cgi)
 - An Azure Active Directory (Azure AD) tenant. For more information on how to get an Azure AD tenant, see [How to get an Azure AD tenant](https://azure.microsoft.com/documentation/articles/active-directory-howto-tenant/)
