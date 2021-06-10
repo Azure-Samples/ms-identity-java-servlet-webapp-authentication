@@ -74,7 +74,7 @@ In the configuration file of your web app:
 Add a `pfx_path` key and set its value to your pfx location on disk.
 Add a `pfx_password` key and set its value to your pfx password.
 
-1. Open your code editor and find the initialization of your confidential client. (In Java servlet app, this is in `src/main/java/.../msal4j/helpers/AuthHelper.java`)
+1. Open your code editor and find the initialization of your confidential client. (In Java servlet sample apps, this is in `src/main/java/com/microsoft/azuresamples/msal4j/helpers/AuthHelper.java`)
 2. Replace the `secret` variable assignment as follows:
 
     ```java
