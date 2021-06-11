@@ -12,7 +12,7 @@ In order to use certificates, you'll need to:
 1. Register the certificate with your application registration  in the Azure AD portal.
 1. Update your application code to utilize the certificate.
 
-### 1. Generate a Self Signed certificate
+### Step 1. Generate a Self Signed certificate
 
 If you already have valid certificate available, you may skip this step.
 
@@ -58,7 +58,7 @@ Enter an export password when prompted and make a note of it.
 The following files should be generated: `webapp.key`, `webapp.cer` and `webapp.pfx`.
 </details>
 
-### 2. Add the certificate to your app registration on Azure portal
+### Step 2. Add the certificate to your app registration on Azure portal
 
 1. Navigate back to the [Azure portal](https://portal.azure.com).
 1. In the left-hand navigation pane, select the **Azure Active Directory** service, and then select **App registrations**.
@@ -67,7 +67,7 @@ The following files should be generated: `webapp.key`, `webapp.cer` and `webapp.
 1. Select **Upload certificate** and, in select the browse button on the right to select the certificate you just exported, webapp.cer (or your existing certificate).
 1. Select **Add**.
 
-### 3. Update your application configuration and code
+### Step 3. Update your application configuration and code
 
 In the configuration file of your web app:
 
