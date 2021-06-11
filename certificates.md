@@ -2,14 +2,14 @@
 
 The Microsoft identity platform allows an application to use certificates anywhere a client secret could be used, for example, in confidential client web apps, and web services that utilize the on-behalf-of (OBO) flow.
 
-The certificate consists of a private key and a public key. The public key is uploaded to Azure AD, whereas the confidential client applications keep their private keys. There are various options for obtaining certificates. This readme will guide the developer to generate and use a self-signed certificate in confidential client apps.
+The certificate consists of a private key and a public key. The public key is uploaded to Azure AD, whereas the confidential client application has access to itsprivate keys. There are various options for obtaining certificates. This readme will guide the developer to generate and use a self-signed certificate in confidential client apps.
 
 ## Use a self-signed certificate
 
 In order to use certificates, you'll need to:
 
 1. Generate a certificate and export it, if you don't have one already.
-1. Register the certificate with your application registration  in the Azure AD portal.
+1. Register the certificate with your application registration in the Azure AD portal.
 1. Update your application code to utilize the certificate.
 
 ### Step 1. Generate a Self Signed certificate
