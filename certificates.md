@@ -58,6 +58,8 @@ Enter an export password when prompted and make a note of it.
 The following files should be generated: `webapp.key`, `webapp.cer` and `webapp.pfx`.
 </details>
 
+Place your `webapp.pfx` file in the `src/main/resources` folder of your Java web app sample.
+
 ### Step 2. Add the certificate to your app registration on Azure portal
 
 1. Navigate back to the [Azure portal](https://portal.azure.com).
