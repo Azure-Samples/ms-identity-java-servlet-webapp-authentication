@@ -84,7 +84,7 @@ Add a `pfx_password` key and set its value to your pfx password.
     ```
 
     ```java
-    final IClientCertificate secret = ClientCredentialFactory.createFromCertificate(ClassLoader.getResourceAsStream(Config.getProperty("pfx_path")), Config.getProperty("pfx_password"));
+    final IClientCertificate secret = ClientCredentialFactory.createFromCertificate(AuthHelper.class.getClassLoader().getResourceAsStream(Config.getProperty("pfx_path")), Config.getProperty("pfx_password"));
     confClientInstance = ConfidentialClientApplication.builder(Config.CLIENT_ID, secret)
                     .authority(Config.AUTHORITY).build();
     ```
