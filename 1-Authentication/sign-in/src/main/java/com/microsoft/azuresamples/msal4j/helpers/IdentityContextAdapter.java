@@ -10,6 +10,13 @@ import java.io.IOException;
  * This Sample project implements this in IdentityContextAdapterServlet.java
  * MUST BE INSTANTIATED ONCE PER REQUEST IN WEB APPS / WEB APIs before passing to AuthHelper
  */
+/* why this called adapter ? is it reference to adapter structural design pattern
+ (allows objects with incompatible interfaces to collaborate)*
+
+ not comments to induvidual methods,  not clear what getParameter is supposed to do
+
+ not sure that I understand intenion of this interface
+ */
 public interface IdentityContextAdapter {
     public void setContext(IdentityContextData context);
     public IdentityContextData getContext();

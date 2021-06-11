@@ -47,6 +47,11 @@ public class AuthenticationFilter implements Filter {
         IdentityContextData context = new IdentityContextAdapterServlet(request, response).getContext();
         // let the UI templates know whether user is authenticated
         req.setAttribute("isAuthenticated", context.getAuthenticated());
+        /*
+            using this approach authenticated state will never expire,
+            id token also has expiration date
+         */
+
         // surface username to UI templates
         req.setAttribute("username", context.getUsername());
         // send 401 for unauthorized access to the protected endpoints

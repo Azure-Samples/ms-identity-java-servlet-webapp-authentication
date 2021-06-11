@@ -137,9 +137,16 @@ public class AuthHelper {
 
             // if the state matches, continue, try to interpret any error codes.
             // e.g. redirect to pw reset. this will throw an error & cancel code x-change
+            /*
+              "try to interpret any error codes" is it recommendation ?
+              sample does not show how to do it
+             */
             processErrorCodes(contextAdapter);
 
             // if no errors in request, continue to try to process auth code x-change:
+            /*
+                code style - constants instead of in line strings
+             */
             final String authCode = contextAdapter.getParameter("code");
             logger.log(Level.FINE, "request code param is {0}", authCode);
             if (authCode == null) // if no auth code, error out:
@@ -216,6 +223,10 @@ public class AuthHelper {
         context.setState(null); // don't allow re-use of state
     }
 
+    /*
+        Naming might be a bit imroved to better convey what is gonna to happend if errors present,
+        process is to vague
+     */
     private static void processErrorCodes(IdentityContextAdapter contextAdapter) throws AuthException {
         final String error = contextAdapter.getParameter("error");
         logger.log(Level.INFO, "error is {0}", error);

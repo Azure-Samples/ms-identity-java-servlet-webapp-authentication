@@ -18,15 +18,27 @@ import java.util.logging.Logger;
 public class Config {
     private static Logger logger = Logger.getLogger(Config.class.getName());
     private static Properties props = instantiateProperties();
+    /*
+       formatting - line does not fit into screen
+     */
     private static final String[] REQUIRED = {"aad.authority", "aad.clientId", "aad.secret", "aad.signOutEndpoint", "aad.postSignOutFragment", "app.stateTTL", "app.homePage", "app.redirectEndpoint", "app.sessionParam", 
     "app.protect.authenticated"};
+    /*
+       upper case is used for constans in Java, unmodifiableList should be used
+     */
     private static final List<String> REQ_PROPS = Arrays.asList(REQUIRED);
 
     private static Properties instantiateProperties() {
         final Properties props = new Properties();
         try {
+            /*
+                constant should be used
+             */
             props.load(Config.class.getClassLoader().getResourceAsStream("authentication.properties"));
         } catch (final IOException ex) {
+            /*
+             why to print to standard output if you use logger ?
+             */
             ex.printStackTrace();
             logger.log(Level.SEVERE, "Could not load properties file. Exiting");
             logger.log(Level.SEVERE, Arrays.toString(ex.getStackTrace()));
@@ -36,6 +48,10 @@ public class Config {
         return props;
     }
 
+    /*
+       no need to spesify class name if it id dedined in the same class
+       enumeration might be used to improve readability
+     */
     public static final String AUTHORITY = Config.getProperty("aad.authority");
     public static final String CLIENT_ID = Config.getProperty("aad.clientId");
     public static final String SECRET = Config.getProperty("aad.secret");
