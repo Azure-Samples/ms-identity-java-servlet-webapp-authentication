@@ -75,7 +75,7 @@ Please refer to each sample's README for sample-specific recommendations.
 
 |                 |               |
 |-----------------|---------------|
-| <img src="./ReadmeFiles/pki.png" width="200"> | [**PKI app certificates**](./certificates) </br> Use public key infrastructure with x509 certificates to validate web apps that connect to your Azure Active Directory tenant. |
+| <img src="./ReadmeFiles/pki.png" width="200"> | [**PKI app certificates**](./certificates.md) </br> Use public key infrastructure with x509 certificates to validate web apps that connect to your Azure Active Directory tenant. |
 
 ## We'd love your feedback!
 
