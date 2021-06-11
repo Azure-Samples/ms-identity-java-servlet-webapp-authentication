@@ -71,6 +71,12 @@ Please refer to each sample's README for sample-specific recommendations.
 |-----------------|---------------|
 | <img src="./ReadmeFiles/sign-in.png" width="200"> | [**4.1 Deploy to Azure App Service**](./4-Deployment/deploy-to-azure-app-service) </br> Prepare your app for deployment to Azure App Service. Learn how to package and upload files, configure authentication parameters and use various Azure services for managing your operations. |
 
+### Security: Public Key Infrastructure (PKI) certificates for MSAL4J apps
+
+|                 |               |
+|-----------------|---------------|
+| <img src="./ReadmeFiles/pki.png" width="200"> | [**PKI app certificates**](./certificates) </br> Use public key infrastructure with x509 certificates to validate web apps that connect to your Azure Active Directory tenant. |
+
 ## We'd love your feedback!
 
 Were we successful in addressing your learning objective? Consider taking a moment to [share your experience with us](https://forms.office.com/Pages/ResponsePage.aspx?id=v4j5cvGGr0GRqy180BHbR73pcsbpbxNJuZCMKN0lURpURDQwVUxQWENUMlpLUlA0QzdJNVE3TUJRSyQlQCN0PWcu).
