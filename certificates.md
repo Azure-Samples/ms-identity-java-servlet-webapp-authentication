@@ -4,7 +4,7 @@ The Microsoft identity platform allows an application to use certificates anywhe
 
 The certificate consists of a private key and a public key. The public key is uploaded to Azure AD, whereas the confidential client application has access to itsprivate keys. There are various options for obtaining certificates. This readme will guide the developer to generate and use a self-signed certificate in confidential client apps.
 
-## Use a self-signed certificate
+## Configure your app to use certificates
 
 In order to use certificates, you'll need to:
 
@@ -12,7 +12,7 @@ In order to use certificates, you'll need to:
 1. Register the certificate with your application registration in the Azure AD portal.
 1. Update your application code to utilize the certificate.
 
-### Step 1. Generate a Self Signed certificate
+### Step 1. Generate a self-signed certificate
 
 If you already have valid certificate available, you may skip this step.
 
@@ -53,14 +53,18 @@ Generate the webapp.pfx certificate with below command:
 openssl pkcs12 -export -out webapp.pfx -inkey webapp.key -in webapp.cer
 ```
 
-Enter an export password when prompted and make a note of it.
+Enter an export password  prompted and make a note of it. If you are not prompted for a password, use the following command instead, making sure to replace the phrase `YOUR_EXPORT_PASSWORD_HERE` with a secure password.
+
+```console
+openssl pkcs12 -export -out webapp.pfx -inkey webapp.key -in webapp.cer -passout pass:YOUR_EXPORT_PASSWORD_HERE
+```
 
 The following files should be generated: `webapp.key`, `webapp.cer` and `webapp.pfx`.
 </details>
 
 Place your `webapp.pfx` file in the `src/main/resources` folder of your Java web app sample.
 
-### Step 2. Add the certificate to your app registration on Azure portal
+### Step 2. Add the public certificate to your app registration on Azure portal
 
 1. Navigate back to the [Azure portal](https://portal.azure.com).
 1. In the left-hand navigation pane, select the **Azure Active Directory** service, and then select **App registrations**.
@@ -73,11 +77,22 @@ Place your `webapp.pfx` file in the `src/main/resources` folder of your Java web
 
 In the configuration file of your web app:
 
-Add a `pfx_path` key and set its value to your pfx location on disk.
-Add a `pfx_password` key and set its value to your pfx password.
+1. Open `src/main/resources/authentication.properties`.
+1. Add a `pfx_path` key and set its value to your pfx location on disk.
+     - It is recommended to place the pfx file directly in your `src/main/resources` folder.
+     - If the file is in the resources folder, the value for `pfx_path` should  simply be the file name of the pfx file, for example `webapp.pfx`
+1. Add a `pfx_password` key and set its value to your pfx password.
+
+```ini
+# authentication.properties
+pfx_path=webapp.pfx
+pfx_password=YOUR_EXPORT_PASSWORD_HERE
+```
+
+In the initialization code of your MSAL confidential client:
 
 1. Open your code editor and find the initialization of your confidential client. (In Java servlet sample apps, this is in `src/main/java/com/microsoft/azuresamples/msal4j/helpers/AuthHelper.java`)
-2. Replace the `secret` variable assignment as follows:
+1. Replace the `secret` variable assignment as follows:
 
     ```java
     final IClientSecret secret = ClientCredentialFactory.createFromSecret(Config.SECRET);
