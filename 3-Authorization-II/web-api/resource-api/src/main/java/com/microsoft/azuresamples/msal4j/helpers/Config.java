@@ -18,7 +18,7 @@ import java.util.logging.Logger;
 public class Config {
     private static Logger logger = Logger.getLogger(Config.class.getName());
     private static Properties props = instantiateProperties();
-    private static final String[] REQUIRED = {"aad.authority", "aad.clientId", "aad.scopes"}; // scopes required for this sample (User.Read)
+    private static final String[] REQUIRED = {"aad.tenantId", "aad.clientId", "aad.scopes", "aad.version"}; // scopes required for this sample (access_as_user)
     private static final List<String> REQ_PROPS = Arrays.asList(REQUIRED);
 
     private static Properties instantiateProperties() {
@@ -35,7 +35,7 @@ public class Config {
         return props;
     }
 
-    public static final String AUTHORITY = Config.getProperty("aad.authority");
+    public static final String TENANT_ID = Config.getProperty("aad.tenantId");
     public static final String CLIENT_ID = Config.getProperty("aad.clientId");
     public static final String SCOPES = Config.getProperty("aad.scopes");
     public static final String VERSION = Config.getProperty("aad.version");

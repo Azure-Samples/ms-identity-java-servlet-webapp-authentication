@@ -35,23 +35,26 @@ public class AzureAccessTokenFilter implements Filter {
     private static final Logger logger = Logger.getLogger(AzureAccessTokenFilter.class.getName());
     private static final String AUTHORIZATION_HEADER_NAME = "Authorization";
     private static final String TOKEN_PREFIX = "Bearer ";
-    private static final String AZURE_PUBLIC_KEY_URL = String.format("%s/discovery/v2.0/keys", Config.AUTHORITY);
+    private static final String AAD_V1 = "https://sts.windows.net";
+    private static final String AAD_V2 = "https://login.microsoftonline.com";
+    private static final String AZURE_PUBLIC_KEY_URL = String.format("%s/%s/discovery/v2.0/keys", AAD_V2, Config.TENANT_ID);
+
 
     JwtVerifier verifier;
 
     public AzureAccessTokenFilter() {
         try {
             // make an instance of the verifier (found in helpers.JwtVerifier)
-            // use AUTHORITY value from config for issuer.
+            // use TENANT_ID value from config for issuer.
             // use CLIENT_ID value from config for audience.
             // use SCOPES value from config for scopes.
             String issuer;
             String audience;
             if (Config.VERSION.equals("1")) {
-                issuer = String.format("%s/", Config.AUTHORITY);
+                issuer = String.format("%s/%s/", AAD_V1, Config.TENANT_ID);
                 audience = String.format("api://%s", Config.CLIENT_ID);
             } else {
-                issuer = String.format("%s/v2.0", Config.AUTHORITY);
+                issuer = String.format("%s/%s/v2.0", AAD_V2, Config.TENANT_ID);
                 audience = Config.CLIENT_ID;
             }
 
