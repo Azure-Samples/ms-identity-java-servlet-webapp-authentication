@@ -45,7 +45,14 @@ public class AzureAccessTokenFilter implements Filter {
             // use AUTHORITY value from config for issuer.
             // use CLIENT_ID value from config for audience.
             // use SCOPES value from config for scopes.
-            verifier = new JwtVerifier(AZURE_PUBLIC_KEY_URL, Config.AUTHORITY, Config.CLIENT_ID, Config.SCOPES);
+            String issuer;
+            if (Config.VERSION == "1") {
+                issuer = String.format("%s/", Config.AUTHORITY);
+            } else {
+                issuer = String.format("%s/v2.0", Config.AUTHORITY);
+            }
+
+            verifier = new JwtVerifier(AZURE_PUBLIC_KEY_URL, issuer, Config.CLIENT_ID, Config.SCOPES);
         } catch(MalformedURLException e) {
             logger.log(Level.SEVERE, "FATAL: Could not initialize JwtVerifier due to malformed URL - check your azurePublicKeyUrl param!");
             System.exit(1);

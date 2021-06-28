@@ -38,6 +38,7 @@ public class Config {
     public static final String AUTHORITY = Config.getProperty("aad.authority");
     public static final String CLIENT_ID = Config.getProperty("aad.clientId");
     public static final String SCOPES = Config.getProperty("aad.scopes");
+    public static final String VERSION = Config.getProperty("aad.version");
 
     public static String getProperty(final String key) {
         String prop = null;
