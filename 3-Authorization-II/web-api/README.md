@@ -246,8 +246,11 @@ This sample contains two projects. The client uses **MSAL for Java (MSAL4J)** to
 
 The JwtVerifier is initialized by sending the azurePublicKeyUrl, the issuer, audience, and scopes. These are required for correct token verification.
 
-```java
+```Java
 public JwtVerifier(String azurePublicKeyUrl, String issuer, String audience, String scopes) throws MalformedURLException
+{
+   //...
+}
 ```
 
 **azurePublicKeyUrl:** This is where the signing keys for your Azure AD tenant are published. The default address is `https://login.microsoftonline.com/Enter_Your_Tenant_ID_Here/discovery/v2.0/keys`. The JwtVerifier instance will cache the keys so it doesn't need to access them each time.
@@ -258,6 +261,16 @@ public JwtVerifier(String azurePublicKeyUrl, String issuer, String audience, Str
 **scopes** This is so required scopes can be verified. The sample project only requires the `access_as_user` scope.
 
 Other claims having to do with token validity and expiration do not need to be configured, as the values and will be automatically read from the token and verified.
+
+The `getJWTClaimsSet(String accessToken)` method processes and verifies a given access token from string format. If verification is successful, it returns a decoded JWTClaimsSet object.
+
+``` Java
+public JWTClaimsSet getJWTClaimsSet(String accessToken) throws ParseException, BadJOSEException, JOSEException
+{
+   //...
+}
+```
+
 
 ## Deployment
 
