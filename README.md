@@ -71,6 +71,12 @@ Please refer to each sample's README for sample-specific recommendations.
 |-----------------|---------------|
 | <img src="./ReadmeFiles/sign-in.png" width="200"> | [**4.1 Deploy to Azure App Service**](./4-Deployment/deploy-to-azure-app-service) </br> Prepare your app for deployment to Azure App Service. Learn how to package and upload files, configure authentication parameters and use various Azure services for managing your operations. |
 
+### Security: Use certificates instead of client secrets in your Java apps secured by MSAL4J
+
+|                 |               |
+|-----------------|---------------|
+| <img src="./ReadmeFiles/pki.png" width="200"> | [**App certificates**](./certificates.md) </br> Use private key + public key certificates instead of client secrets to validate web apps that connect to your Azure Active Directory tenant. |
+
 ## We'd love your feedback!
 
 Were we successful in addressing your learning objective? Consider taking a moment to [share your experience with us](https://forms.office.com/Pages/ResponsePage.aspx?id=v4j5cvGGr0GRqy180BHbR73pcsbpbxNJuZCMKN0lURpURDQwVUxQWENUMlpLUlA0QzdJNVE3TUJRSyQlQCN0PWcu).

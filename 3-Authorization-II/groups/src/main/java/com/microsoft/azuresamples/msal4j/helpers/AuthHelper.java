@@ -23,7 +23,7 @@ import java.util.UUID;
 public class AuthHelper {
     private static Logger logger = Logger.getLogger(AuthHelper.class.getName());
 
-    public static ConfidentialClientApplication getConfidentialClientInstance() throws MalformedURLException {
+    public static ConfidentialClientApplication getConfidentialClientInstance() throws AuthException {
         ConfidentialClientApplication confClientInstance = null;
         logger.log(Level.INFO, "Getting confidential client instance");
         try {
@@ -32,7 +32,7 @@ public class AuthHelper {
                     .authority(Config.AUTHORITY).build();
         } catch (final Exception ex) {
             logger.log(Level.SEVERE, "Failed to create Confidential Client Application.");
-            throw ex;
+            throw new AuthException("Couldn't create confidential client");
         }
         return confClientInstance;
     }
@@ -103,7 +103,7 @@ public class AuthHelper {
         }
     }
 
-    private static void redirectToAuthorizationEndpoint(IdentityContextAdapter contextAdapter) throws IOException {
+    private static void redirectToAuthorizationEndpoint(IdentityContextAdapter contextAdapter) throws IOException, AuthException {
         final IdentityContextData context = contextAdapter.getContext();
 
         final String state = UUID.randomUUID().toString();
