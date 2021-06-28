@@ -204,14 +204,19 @@ Open the project in your IDE (like Visual Studio or Visual Studio Code) to confi
 
     ```Shell
     cd project-directory
-    cd sub-project # client or api
+    cd client-web-api
     mvn clean package
     ```
 
-1. Find the resulting `.war` file in `./client-web-api/target/msal4j-servlet-client.war` and deploy it to Tomcat or any other J2EE container solution.
-     - To deploy to Tomcat, copy this `.war` file to the `/webapps/` directory in your Tomcat installation directory and start the Tomcat server.
-1. Find the resulting `.war` file in `./resource-api/target/msal4j-servlet-api.war` and deploy it to Tomcat or any other J2EE container solution.
-     - To deploy to Tomcat, copy this `.war` file to the `/webapps/` directory in your Tomcat installation directory and start the Tomcat server.
+   1. Find the resulting `.war` file in `./client-web-api/target/msal4j-servlet-client.war` and deploy it to Tomcat or any other J2EE container solution. To deploy to Tomcat, copy this `.war` file to the `/webapps/` directory in your Tomcat installation directory and start the Tomcat server.
+
+       ```Shell
+      cd project-directory
+      cd resource-api
+      mvn clean package
+      ```
+
+   1. Find the resulting `.war` file in `./resource-api/target/msal4j-servlet-api.war` and deploy it to Tomcat or any other J2EE container solution. To deploy to Tomcat, copy this `.war` file to the `/webapps/` directory in your Tomcat installation directory and start the Tomcat server.
 1. Ensure that the context path that the app is served on is `/msal4j-servlet-client` (or change the `app.homePage` value in your [authentication.properties](src/main/resources/authentication.properties) file and in the AAD app registration). If you change the properties file, you'll needs to repeat step 3 above (maven clean and package).
 1. Open your browser and navigate to `http://localhost:8080/msal4j-servlet-client/`
 
@@ -237,7 +242,22 @@ Were we successful in addressing your learning objective? Consider taking a mome
 
 ## About the code
 
-This sample contains two projects. The client uses **MSAL for Java (MSAL4J)** to sign a user in and obtain a token for your API. The client side app is similar to the call-graph sample in chapter 2. The API app processes the incoming request and verifies that it has a valid access token. It leverages Nimbusds library to process and verify the incoming token. Please see the `resource-api/src/main/java.../helpers/JwtVerifier.java` for how the JWTverifier is set up, and `resource-api/src/main/java.../servlets/AzureAccessTokenFilter.java`
+This sample contains two projects. The client uses **MSAL for Java (MSAL4J)** to sign a user in and obtain a token for your API. The client side app is similar to the call-graph sample in chapter 2. The API app processes the incoming request and verifies that it has a valid access token. It leverages Nimbusds library to process and verify the incoming token. Please see the `resource-api/src/main/java.../helpers/JwtVerifier.java` for how the JwtVerifier is set up, and `resource-api/src/main/java.../servlets/AzureAccessTokenFilter.java`
+
+The JwtVerifier is initialized by sending the azurePublicKeyUrl, the issuer, audience, and scopes. These are required for correct token verification.
+
+```java
+public JwtVerifier(String azurePublicKeyUrl, String issuer, String audience, String scopes) throws MalformedURLException
+```
+
+**azurePublicKeyUrl:** This is where the signing keys for your Azure AD tenant are published. The default address is `https://login.microsoftonline.com/Enter_Your_Tenant_ID_Here/discovery/v2.0/keys`. The JwtVerifier instance will cache the keys so it doesn't need to access them each time.
+**issuer:** The issuer will depend on which token version you have configured, which Azure AD instance is issuing the token (e.g., public, national cloud, etc), and your tenant ID.
+    - For v2, the issuer is `https://login.microsoftonline.com/Enter_Your_Tenant_ID_Here/`
+    - For v1, the issuer is `https://sts.windows.net/Enter_Your_Tenant_ID_Here/`
+**audience:** This is to verify that this token is intended for your app rather than another app.
+**scopes** This is so required scopes can be verified. The sample project only requires the `access_as_user` scope.
+
+Other claims having to do with token validity and expiration do not need to be configured, as the values and will be automatically read from the token and verified.
 
 ## Deployment
 
@@ -255,6 +275,7 @@ There is one web app in this sample. To deploy it to **Azure App Services**, you
 - create an **Azure App Service**
 - publish the projects to the **App Services**, and
 - update its client(s) to call the website instead of the local environment.
+
 #### Update the Azure AD app registration (java-servlet-webapp-client)
 
 1. Navigate back to to the [Azure portal](https://portal.azure.com).
