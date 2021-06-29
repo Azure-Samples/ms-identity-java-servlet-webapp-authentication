@@ -16,7 +16,7 @@
             "HomePage": "http://localhost:8080/msal4j-servlet-api",
             "ManualSteps": [
                 {
-                    "Comment": "Go to your java-servlet-resource-api AAD app registration. Select the `Manifest` blade on the left. Set the 'acceptedTokenVersion' to '2'. Save your changes."
+                    "Comment": "Go to your java-servlet-resource-api AAD app registration. Select the `Manifest` blade on the left. Set the 'accessTokenAcceptedVersion' to '2'. Save your changes."
                 }
             ]
         },

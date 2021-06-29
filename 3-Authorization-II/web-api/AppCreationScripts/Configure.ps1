@@ -347,7 +347,7 @@ Function ConfigureApplications
    Write-Host "IMPORTANT: Please follow the instructions below to complete a few manual step(s) in the Azure portal":
    Write-Host "- For service"
    Write-Host "  - Navigate to $servicePortalUrl"
-   Write-Host "  - Go to your java-servlet-resource-api AAD app registration. Select the `Manifest` blade on the left. Set the 'acceptedTokenVersion' to '2'. Save your changes." -ForegroundColor Red 
+   Write-Host "  - Go to your java-servlet-resource-api AAD app registration. Select the `Manifest` blade on the left. Set the 'accessTokenAcceptedVersion' to '2'. Save your changes." -ForegroundColor Red 
 
    Write-Host -ForegroundColor Green "------------------------------------------------------------------------------------------------" 
       if($isOpenSSL -eq 'Y')
