@@ -1,0 +1,81 @@
+{
+    "Sample": {
+        "Title": "Protect your Java Servlet web API with the Microsoft identity platform",
+        "Level": 200,
+        "Client": "Java Spring web application",
+        "Service": "Java Spring web API",
+        "RepositoryUrl": "ms-identity-java-servlet-webapp-authentication",
+        "Endpoint": "AAD v2.0"
+    },
+    "AADApps": [
+        {
+            "Id": "service",
+            "Name": "java-servlet-resource-api",
+            "Kind": "WebApi",
+            "Audience": "AzureADMyOrg",
+            "HomePage": "http://localhost:8080/msal4j-servlet-api",
+            "ManualSteps": [
+                {
+                    "Comment": "Go to your java-servlet-resource-api AAD app registration. Select the `Manifest` blade on the left. Set the 'accessTokenAcceptedVersion' to '2'. Save your changes."
+                }
+            ]
+        },
+        {
+            "Id": "client",
+            "Name": "java-servlet-webapp-client",
+            "Kind": "WebApp ",
+            "Audience": "AzureADMyOrg",
+            "PasswordCredentials": "Auto",
+            "HomePage": "http://localhost:8080/",
+            "ReplyUrls": "http://localhost:8080/msal4j-servlet-client/auth/redirect",
+            "RequiredResourcesAccess": [
+                {
+                    "Resource": "service",
+                    "DelegatedPermissions": [
+                        "access_as_user"
+                    ]
+                }
+            ]
+        }
+    ],
+    "CodeConfiguration": [
+        {
+            "App": "service",
+            "SettingKind": "Replace",
+            "SettingFile": "\\..\\resource-api\\src\\main\\resources\\authentication.properties",
+            "Mappings": [
+                {
+                    "key": "Enter_Your_Tenant_ID_Here",
+                    "value": "$tenantId"
+                },
+                {
+                    "key": "Enter_Your_Client_ID_Here",
+                    "value": ".AppId"
+                }
+            ]
+        },
+        {
+            "App": "client",
+            "SettingKind": "Replace",
+            "SettingFile": "\\..\\client-web-app\\src\\main\\resources\\authentication.properties",
+            "Mappings": [
+                {
+                    "key": "Enter_Your_Tenant_ID_Here",
+                    "value": "$tenantId"
+                },
+                {
+                    "key": "Enter_Your_Client_ID_Here",
+                    "value": ".AppId"
+                },
+                {
+                    "key": "Enter_Your_Client_Secret_Here",
+                    "value": ".AppKey"
+                },
+                {
+                    "key": "Enter_Your_WebAPI_Client_ID_Here",
+                    "value": "service.AppId"
+                }
+            ]
+        }
+    ]
+}
