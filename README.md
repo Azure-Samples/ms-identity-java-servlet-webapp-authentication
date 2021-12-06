@@ -24,7 +24,7 @@ We recommend following the chapters in successive order. However, the code sampl
 
 ## Prerequisites
 
-- [JDK Version 15](https://jdk.java.net/15/). This sample has been developed on Java 15 but should be compatible with some lower versions.
+- Java 8. This sample has been developed on Java 8 but should be compatible with some higher versions.
 - [Maven 3](https://maven.apache.org/download.cgi)
 - [Tomcat 9](https://tomcat.apache.org/download-90.cgi)
 - [Visual Studio Code](https://code.visualstudio.com/download)
