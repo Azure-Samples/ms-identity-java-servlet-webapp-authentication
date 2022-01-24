@@ -163,21 +163,44 @@ Open the project in your IDE to configure the code.
 
 </details>
 
-## Running the sample
+## Running The Sample
+###Build .war File Using Maven
 
-1. Make certain that your Tomcat server is running and you have privileges to deploy a web app to it.
-2. Make certain that your server host address is `http://localhost:8080` (or change the `app.homePage` value in your [authentication.properties](src/main/resources/authentication.properties) file and in the AAD app registration).
-3. Compile and package the project using **Maven**:
-
-    ```Shell
-    cd project-directory
+1. Navigate to the directory containing the pom.xml file for this sample (the same directory as this README), and run the following Maven command:
+    ```
     mvn clean package
     ```
+1. This should generate a `.war` file which can be run on a variety of application servers
 
-4. Find the resulting `.war` file in `./target/msal4j-servlet-auth.war` and deploy it to Tomcat or any other J2EE container solution.
-     - To deploy to Tomcat, copy this `.war` file to the `/webapps/` directory in your Tomcat installation directory and start the Tomcat server.
-5. Ensure that the context path that the app is served on is `/msal4j-servlet-auth` (or change the `app.homePage` value in your [authentication.properties](src/main/resources/authentication.properties) file and in the AAD app registration). If you change the properties file, you'll needs to repeat step 3 above (maven clean and package).
-6. Open your browser and navigate to `http://localhost:8080/msal4j-servlet-auth/`
+###Running on Tomcat
+(These instructions assume you have installed Tomcat)
+
+To run the sample on Tomcat:
+1. In your Tomcat installation, ensure there is a `<connector>` entry in `tomcat/conf/server.xml` for the host address the sample expects
+    1. By default, the sample expects to connect to `http://localhost:8080`, as defined in the `app.homePage` value in  [authentication.properties](src/main/resources/authentication.properties) file
+1. Copy the `.war` file to the `/webapps/` directory in your Tomcat installation, and start the Tomcat server
+1. Open your browser and navigate to `http://localhost:8080/msal4j-servlet-auth/` to view the sample
+
+###Running on WebLogic
+(These instructions assume you have installed WebLogic and set up some server domain)
+
+To deploy the sample to WebLogic via the web console:
+1. Start the WebLogic server with `DOMAIN_NAME\bin\startWebLogic.cmd`
+1. Navigate to the WebLogic web console in your browser, `http://localhost:7001/console`
+1. Go to `Domain Structure > Deployments`, click `Install`, click `upload your files`, and find the `.war` file you built
+1. Select `Install this deployment as an application`, click `Next`, click `Finish`, and then `Save`
+1. Go back to `Domain Structure > Deployments`, and `Start` your application
+1. Once the application starts, navigate to `http://localhost:7001/msal4j-servlet-auth/` to view the sample
+
+###Running on JBoss EAP
+(These instructions assume you have installed JBoss EAP)
+
+To deploy the sample to JBoss EAP via the web console:
+1. Start the JBoss server with `%JBOSS_HOME%\bin\standalone.bat`
+1. Navigate to the JBoss web console in your browser, `http://localhost:9990`
+1. Go to `Deployments`, click `Add`, and upload the `.war` you built (default settings should be fine)
+1. Select the `.war` file you uploaded, click `En/Disable`, and `Confirm` to start the application
+1. Once the application starts, navigate to `http://localhost:9990/msal4j-servlet-auth/` to view the sample
 
 ![Experience](./ReadmeFiles/app.png)
 
