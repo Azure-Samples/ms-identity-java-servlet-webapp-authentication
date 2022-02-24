@@ -38,6 +38,9 @@ public class IdentityContextData implements Serializable {
     private IAccount account = null;
     private Map<String, Object> idTokenClaims = new HashMap<>();
     private String tokenCache = null;
+    /*
+     why not to use session directly, so no need to use hasChanged
+     */
     private boolean hasChanged = false;
     private boolean groupsOverage = false;
 

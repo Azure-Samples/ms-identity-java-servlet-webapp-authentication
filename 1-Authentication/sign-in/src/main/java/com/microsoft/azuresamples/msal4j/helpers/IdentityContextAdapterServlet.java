@@ -14,6 +14,14 @@ import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+/*
+    1. lifecycle of servlet is not supposed to be managed by app,
+    it is responsibiliy of servlet container
+
+    2. usually there is only one instance of servlet in servlet container
+
+    this entity clearly is not servlet
+ */
 /**
  * Implementation of IdentityContextAdapter for AuthHelper for use with Java
  * HttpServletRequests/Responses MUST BE INSTANTIATED ONCE PER REQUEST IN WEB
@@ -24,6 +32,10 @@ public class IdentityContextAdapterServlet implements IdentityContextAdapter, Ht
     private static Logger logger = Logger.getLogger(IdentityContextAdapterServlet.class.getName());
     private HttpSession session = null;
     private IdentityContextData context = null;
+    /*
+        same instance of the servlet can be used to process requests from different sessions,
+        so persiting any state there is a subject for race conditions
+     */
     private HttpServletRequest request = null;
     private HttpServletResponse response = null;
 
@@ -34,6 +46,7 @@ public class IdentityContextAdapterServlet implements IdentityContextAdapter, Ht
     }
 
     // load from session on session activation
+    // why to not just use session ? what is the point of copy data from and to session ?
     @Override
     public void sessionDidActivate(HttpSessionEvent se) {
         this.session = se.getSession();
