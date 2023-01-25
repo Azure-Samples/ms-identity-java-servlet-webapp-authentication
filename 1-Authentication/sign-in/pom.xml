@@ -17,7 +17,7 @@
         <dependency>
             <groupId>com.microsoft.azure</groupId>
             <artifactId>msal4j</artifactId>
-            <version>1.9.1</version>
+            <version>1.13.4</version>
         </dependency>
 
         <!-- Some distributions of Java SDK do not include javax servlets. -->
